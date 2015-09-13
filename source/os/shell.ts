@@ -79,6 +79,23 @@ module TSOS {
                                   "<string> - Sets the prompt.");
             this.commandList[this.commandList.length] = sc;
 
+            //date
+            sc = new ShellCommand(this.shellDate,
+                                "date",
+                                " - This displays the date and time.");
+            this.commandList[this.commandList.length] = sc;
+
+            sc = new ShellCommand(this.shellWhereAmI,
+                                "location",
+                                " - This displays where you are.");
+            this.commandList[this.commandList.length] = sc;
+
+            sc = new ShellCommand(this.shellMyZork,
+                                "zork",
+                                "- Plays the PEAR-OS version of Zork");
+            this.commandList[this.commandList.length] = sc;
+
+
             // ps  - list the running processes and their IDs
             // kill <id> - kills the specified process id.
 
@@ -285,6 +302,18 @@ module TSOS {
             } else {
                 _StdOut.putText("Usage: prompt <string>  Please supply a string.");
             }
+        }
+
+        public shellDate(args) {
+            _StdOut.putText("This is the date.")
+        }
+
+        public shellWhereAmI(args) {
+            _StdOut.putText("You are in Narnia.")
+        }
+
+        public shellMyZork(args) {
+             _StdOut.putText("Plays the game I made in Alan's SD1 course")
         }
 
     }
