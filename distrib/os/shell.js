@@ -254,7 +254,8 @@ var TSOS;
             }
         };
         Shell.prototype.shellDate = function (args) {
-            _StdOut.putText("This is the date.");
+            var date = new Date();
+            _StdOut.putText("The Current Date is " + date.toLocaleDateString());
         };
         Shell.prototype.shellWhereAmI = function (args) {
             _StdOut.putText("You are in Narnia.");

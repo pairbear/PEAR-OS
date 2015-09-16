@@ -305,15 +305,16 @@ module TSOS {
         }
 
         public shellDate(args) {
-            _StdOut.putText("This is the date.")
+            var date = new Date();
+            _StdOut.putText("The Current Date is " + date.toLocaleDateString());
         }
 
         public shellWhereAmI(args) {
-            _StdOut.putText("You are in Narnia.")
+            _StdOut.putText("You are in Narnia.");
         }
 
         public shellMyZork(args) {
-             _StdOut.putText("Plays the game I made in Alan's SD1 course")
+             _StdOut.putText("Plays the game I made in Alan's SD1 course");
         }
 
     }
