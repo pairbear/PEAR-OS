@@ -37,6 +37,8 @@ var TSOS;
             // Clear the log text box.
             // Use the TypeScript cast to HTMLInputElement
             document.getElementById("taHostLog").value = "";
+            //Adds things to the status bar
+            TSOS.Globals.time = document.getElementById('time');
             // Set focus on the start button.
             // Use the TypeScript cast to HTMLInputElement
             document.getElementById("btnStartOS").focus();
@@ -55,6 +57,8 @@ var TSOS;
             var clock = _OSclock;
             // Note the REAL clock in milliseconds since January 1, 1970.
             var now = new Date().getTime();
+            var date = new Date();
+            TSOS.Globals.time.textContent = "Time : " + date.toLocaleDateString() + " " + date.toLocaleTimeString();
             // Build the log string.
             var str = "({ clock:" + clock + ", source:" + source + ", msg:" + msg + ", now:" + now + " })" + "\n";
             // Update the log console.

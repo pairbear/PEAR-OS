@@ -22,6 +22,7 @@ module TSOS {
         public commandList = [];
         public curses = "[fuvg],[cvff],[shpx],[phag],[pbpxfhpxre],[zbgureshpxre],[gvgf]";
         public apologies = "[sorry]";
+        public statusStr = "";
 
         constructor() {
         }
@@ -85,14 +86,21 @@ module TSOS {
                                 " - This displays the date and time.");
             this.commandList[this.commandList.length] = sc;
 
+            //Where Ami I
             sc = new ShellCommand(this.shellWhereAmI,
                                 "location",
                                 " - This displays where you are.");
             this.commandList[this.commandList.length] = sc;
 
+            //Plays my own Version of Zork
             sc = new ShellCommand(this.shellMyZork,
                                 "zork",
                                 "- Plays the PEAR-OS version of Zork");
+            this.commandList[this.commandList.length] = sc;
+
+            sc = new ShellCommand(this.shellStatus,
+                                "status",
+                                "- displays the current status set by the user");
             this.commandList[this.commandList.length] = sc;
 
 
@@ -304,9 +312,10 @@ module TSOS {
             }
         }
 
+
         public shellDate(args) {
             var date = new Date();
-            _StdOut.putText("The Current Date is " + date.toLocaleDateString());
+            _StdOut.putText("The Current Date is " + date.toLocaleDateString() + " " + date.toLocaleTimeString());
         }
 
         public shellWhereAmI(args) {
@@ -315,6 +324,14 @@ module TSOS {
 
         public shellMyZork(args) {
              _StdOut.putText("Plays the game I made in Alan's SD1 course");
+        }
+
+        public shellStatus(args) {
+            if (args.length > 0) {
+                _OsShell.statusStr = args[0];
+            } else {
+                _StdOut.putText("Usage: status <string>  Please supply a string.");
+            }
         }
 
     }

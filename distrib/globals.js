@@ -16,6 +16,18 @@ var CPU_CLOCK_INTERVAL = 100; // This is in ms (milliseconds) so 1000 = 1 second
 var TIMER_IRQ = 0; // Pages 23 (timer), 9 (interrupts), and 561 (interrupt priority).
 // NOTE: The timer is different from hardware/host clock pulses. Don't confuse these.
 var KEYBOARD_IRQ = 1;
+var TSOS;
+(function (TSOS) {
+    var Globals = (function () {
+        function Globals() {
+        }
+        Globals.time = null;
+        return Globals;
+    })();
+    TSOS.Globals = Globals;
+    ;
+})(TSOS || (TSOS = {}));
+;
 //
 // Global Variables
 // TODO: Make a global object and use that instead of the "_" naming convention in the global namespace.
@@ -28,6 +40,7 @@ var _DrawingContext; // = _Canvas.getContext("2d");  // Assigned here for type s
 var _DefaultFontFamily = "sans"; // Ignored, I think. The was just a place-holder in 2008, but the HTML canvas may have use for it.
 var _DefaultFontSize = 13;
 var _FontHeightMargin = 4; // Additional space added to font size when advancing a line.
+//var _Time: HTMLLabelElement = null;
 var _Trace = true; // Default the OS trace to be on.
 // The OS Kernel and its queues.
 var _Kernel;

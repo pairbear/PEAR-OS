@@ -20,6 +20,7 @@ var TSOS;
             this.commandList = [];
             this.curses = "[fuvg],[cvff],[shpx],[phag],[pbpxfhpxre],[zbgureshpxre],[gvgf]";
             this.apologies = "[sorry]";
+            this.statusStr = "";
         }
         Shell.prototype.init = function () {
             var sc;
@@ -52,9 +53,13 @@ var TSOS;
             //date
             sc = new TSOS.ShellCommand(this.shellDate, "date", " - This displays the date and time.");
             this.commandList[this.commandList.length] = sc;
+            //Where Ami I
             sc = new TSOS.ShellCommand(this.shellWhereAmI, "location", " - This displays where you are.");
             this.commandList[this.commandList.length] = sc;
+            //Plays my own Version of Zork
             sc = new TSOS.ShellCommand(this.shellMyZork, "zork", "- Plays the PEAR-OS version of Zork");
+            this.commandList[this.commandList.length] = sc;
+            sc = new TSOS.ShellCommand(this.shellStatus, "status", "- displays the current status set by the user");
             this.commandList[this.commandList.length] = sc;
             // ps  - list the running processes and their IDs
             // kill <id> - kills the specified process id.
@@ -255,13 +260,21 @@ var TSOS;
         };
         Shell.prototype.shellDate = function (args) {
             var date = new Date();
-            _StdOut.putText("The Current Date is " + date.toLocaleDateString());
+            _StdOut.putText("The Current Date is " + date.toLocaleDateString() + " " + date.toLocaleTimeString());
         };
         Shell.prototype.shellWhereAmI = function (args) {
             _StdOut.putText("You are in Narnia.");
         };
         Shell.prototype.shellMyZork = function (args) {
             _StdOut.putText("Plays the game I made in Alan's SD1 course");
+        };
+        Shell.prototype.shellStatus = function (args) {
+            if (args.length > 0) {
+                _OsShell.statusStr = args[0];
+            }
+            else {
+                _StdOut.putText("Usage: status <string>  Please supply a string.");
+            }
         };
         return Shell;
     })();

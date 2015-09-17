@@ -43,6 +43,9 @@ module TSOS {
             // Use the TypeScript cast to HTMLInputElement
             (<HTMLInputElement> document.getElementById("taHostLog")).value="";
 
+            //Adds things to the status bar
+            Globals.time = <HTMLLabelElement>document.getElementById('time');
+
             // Set focus on the start button.
             // Use the TypeScript cast to HTMLInputElement
             (<HTMLInputElement> document.getElementById("btnStartOS")).focus();
@@ -63,6 +66,8 @@ module TSOS {
 
             // Note the REAL clock in milliseconds since January 1, 1970.
             var now: number = new Date().getTime();
+            var date = new Date();
+            Globals.time.textContent = "Time : " + date.toLocaleDateString() + " " + date.toLocaleTimeString();
 
             // Build the log string.
             var str: string = "({ clock:" + clock + ", source:" + source + ", msg:" + msg + ", now:" + now  + " })"  + "\n";
