@@ -45,6 +45,11 @@ module TSOS {
                     _OsShell.handleInput(this.buffer);
                     // ... and reset our buffer.
                     this.buffer = "";
+
+                } else if(chr === String.fromCharCode(8))
+                {
+                    this.deleteCharacter();
+
                 } else {
                     // This is a "normal" character, so ...
                     // ... draw it on the screen...
@@ -87,5 +92,18 @@ module TSOS {
 
             // TODO: Handle scrolling. (iProject 1)
         }
+
+        public deleteCharacter(): void {
+            if (this.buffer.length > 0) {
+
+                var offset:number = _DrawingContext.measureText(this.currentFont, this.currentFontSize, this.buffer.slice(-1));
+                var xPosition:number = this.currentXPosition - offset;
+                var yPosition:number = this.currentYPosition + 1 - this.currentFontSize;
+                _DrawingContext.clearRect(xPosition, yPosition, this.currentXPosition, this.currentYPosition);
+                this.currentXPosition = xPosition;
+                this.buffer = this.buffer.substr(0, this.buffer.length - 1);
+            }
+        }
+
     }
  }

@@ -45,6 +45,9 @@ var TSOS;
                     // ... and reset our buffer.
                     this.buffer = "";
                 }
+                else if (chr === String.fromCharCode(8)) {
+                    this.deleteCharacter();
+                }
                 else {
                     // This is a "normal" character, so ...
                     // ... draw it on the screen...
@@ -82,6 +85,16 @@ var TSOS;
                 _DrawingContext.fontDescent(this.currentFont, this.currentFontSize) +
                 _FontHeightMargin;
             // TODO: Handle scrolling. (iProject 1)
+        };
+        Console.prototype.deleteCharacter = function () {
+            if (this.buffer.length > 0) {
+                var offset = _DrawingContext.measureText(this.currentFont, this.currentFontSize, this.buffer.slice(-1));
+                var xPosition = this.currentXPosition - offset;
+                var yPosition = this.currentYPosition + 1 - this.currentFontSize;
+                _DrawingContext.clearRect(xPosition, yPosition, this.currentXPosition, this.currentYPosition);
+                this.currentXPosition = xPosition;
+                this.buffer = this.buffer.substr(0, this.buffer.length - 1);
+            }
         };
         return Console;
     })();

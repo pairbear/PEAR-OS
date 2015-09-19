@@ -100,7 +100,7 @@ module TSOS {
 
             sc = new ShellCommand(this.shellStatus,
                                 "status",
-                                "- displays the current status set by the user");
+                                "- sets the status ");
             this.commandList[this.commandList.length] = sc;
 
 
@@ -115,6 +115,7 @@ module TSOS {
         public putPrompt() {
             _StdOut.putText(this.promptStr);
         }
+
 
         public handleInput(buffer) {
             _Kernel.krnTrace("Shell Command~" + buffer);
@@ -312,7 +313,6 @@ module TSOS {
             }
         }
 
-
         public shellDate(args) {
             var date = new Date();
             _StdOut.putText("The Current Date is " + date.toLocaleDateString() + " " + date.toLocaleTimeString());
@@ -328,7 +328,13 @@ module TSOS {
 
         public shellStatus(args) {
             if (args.length > 0) {
-                _OsShell.statusStr = args[0];
+                //var status = new status();
+                var status: string = "";
+                for (var i: number = 0; i < args.length; ++i)
+                {
+                    status += args[i] + " ";
+                }
+                _StdOut.putText("Status updated to " + status);
             } else {
                 _StdOut.putText("Usage: status <string>  Please supply a string.");
             }

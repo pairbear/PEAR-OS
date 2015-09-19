@@ -45,10 +45,201 @@ module TSOS {
                 _KernelInputQueue.enqueue(chr);
             } else if (((keyCode >= 48) && (keyCode <= 57)) ||   // digits
                         (keyCode == 32)                     ||   // space
+                        (keyCode == 8) ||
                         (keyCode == 13)) {                       // enter
                 chr = String.fromCharCode(keyCode);
                 _KernelInputQueue.enqueue(chr);
+
+            } else if ((keyCode >= 186 && keyCode <= 222 && isShifted) ||
+                       (keyCode >= 48  && keyCode <= 57  && isShifted)) {
+                switch (keyCode)
+                { //switch case to get symbols when shift is pressed
+                    case 192: {
+                        chr =  "~";
+                        break;
+                    }
+                    case 49: {
+                        chr =  "!";
+                        break;
+                    }
+                    case 50: {
+                        chr = "@";
+                        break;
+                    }
+                    case 51: {
+                        chr = "#";
+                        break;
+                    }
+                    case 52: {
+                        chr = "$";
+                        break;
+                    }
+                    case 53: {
+                        chr = "%";
+                        break;
+                    }
+                    case 54: {
+                        chr = "^";
+                        break;
+                    }
+                    case 55: {
+                        chr = "&";
+                        break;
+                    }
+                    case 56: {
+                        chr = "*";
+                        break;
+                    }
+                    case 57: {
+                        chr = "(";
+                        break;
+                    }
+                    case 48: {
+                        chr = ")";
+                        break;
+                    }
+                    case 189: {
+                        chr = "_";
+                        break;
+                    }
+                    case 187: {
+                        chr = "+";
+                        break;
+                    }
+                    case 219: {
+                        chr = "{";
+                        break;
+                    }
+                    case 221: {
+                        chr = "}";
+                        break;
+                    }
+                    case 220: {
+                        chr = "|";
+                        break;
+                    }
+                    case 186: {
+                        chr = ":";
+                        break;
+                    }
+                    case 222: {
+                        chr = "\"";
+                        break;
+                    }
+                    case 188: {
+                        chr = "<";
+                        break;
+                    }
+                    case 190: {
+                        chr = ">";
+                        break;
+                    }
+                    case 191: {
+                        chr = "?";
+                        break;
+                    }
+                    default: {
+                        _StdOut.putText("Shalom!")
+                    }
+                }
+                _KernelInputQueue.enqueue(chr);
             }
-        }
+            else if ((keyCode >= 186 && keyCode <= 222) ||
+                (keyCode >= 48  && keyCode <= 57)) {
+                switch (keyCode)
+                { //switch case to get symbols when shift is pressed
+                    case 192: {
+                        chr =  "`";
+                        break;
+                    }
+                    case 49: {
+                        chr =  "1";
+                        break;
+                    }
+                    case 50: {
+                        chr = "2";
+                        break;
+                    }
+                    case 51: {
+                        chr = "3";
+                        break;
+                    }
+                    case 52: {
+                        chr = "4";
+                        break;
+                    }
+                    case 53: {
+                        chr = "5";
+                        break;
+                    }
+                    case 54: {
+                        chr = "6";
+                        break;
+                    }
+                    case 55: {
+                        chr = "7";
+                        break;
+                    }
+                    case 56: {
+                        chr = "8";
+                        break;
+                    }
+                    case 57: {
+                        chr = "9";
+                        break;
+                    }
+                    case 48: {
+                        chr = "0";
+                        break;
+                    }
+                    case 189: {
+                        chr = "-";
+                        break;
+                    }
+                    case 187: {
+                        chr = "=";
+                        break;
+                    }
+                    case 219: {
+                        chr = "[";
+                        break;
+                    }
+                    case 221: {
+                        chr = "]";
+                        break;
+                    }
+                    case 220: {
+                        chr = "\\";
+                        break;
+                    }
+                    case 186: {
+                        chr = ";";
+                        break;
+                    }
+                    case 222: {
+                        chr = "\'";
+                        break;
+                    }
+                    case 188: {
+                        chr = ",";
+                        break;
+                    }
+                    case 190: {
+                        chr = ".";
+                        break;
+                    }
+                    case 191: {
+                        chr = "/";
+                        break;
+                    }
+                    default: {
+                        _StdOut.putText("Shalom!")
+                    }
+                }
+                _KernelInputQueue.enqueue(chr);
+            }
+
+            }
+
     }
 }
