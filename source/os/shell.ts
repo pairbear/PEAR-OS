@@ -103,6 +103,11 @@ module TSOS {
                                 "- sets the status ");
             this.commandList[this.commandList.length] = sc;
 
+            //sc = new ShellCommand(this.shellBSOD,
+            //                    "bsod",
+            //                    " - This tests when the kernel traps an OS error");
+            //this.commandList[this.commandList.length] = sc;
+
 
             // ps  - list the running processes and their IDs
             // kill <id> - kills the specified process id.
@@ -328,17 +333,30 @@ module TSOS {
 
         public shellStatus(args) {
             if (args.length > 0) {
-                //var status = new status();
+
                 var status: string = "";
                 for (var i: number = 0; i < args.length; ++i)
                 {
                     status += args[i] + " ";
                 }
                 _StdOut.putText("Status updated to " + status);
+                //Globals.Status = status;
+
             } else {
                 _StdOut.putText("Usage: status <string>  Please supply a string.");
             }
         }
+
+        /*public shellStatus(args) {
+            if (args.length > 0) {
+                var status = args[0];
+                (<HTMLInputElement>document.getElementById('Status')).value = status;
+            } else {
+                _StdOut.putText("Usage: status <string>  Please supply a string.");
+            }
+        }*/
+
+
 
     }
 }

@@ -61,6 +61,10 @@ var TSOS;
             this.commandList[this.commandList.length] = sc;
             sc = new TSOS.ShellCommand(this.shellStatus, "status", "- sets the status ");
             this.commandList[this.commandList.length] = sc;
+            //sc = new ShellCommand(this.shellBSOD,
+            //                    "bsod",
+            //                    " - This tests when the kernel traps an OS error");
+            //this.commandList[this.commandList.length] = sc;
             // ps  - list the running processes and their IDs
             // kill <id> - kills the specified process id.
             //
@@ -270,7 +274,6 @@ var TSOS;
         };
         Shell.prototype.shellStatus = function (args) {
             if (args.length > 0) {
-                //var status = new status();
                 var status = "";
                 for (var i = 0; i < args.length; ++i) {
                     status += args[i] + " ";
