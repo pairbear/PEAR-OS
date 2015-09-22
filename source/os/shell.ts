@@ -23,6 +23,8 @@ module TSOS {
         public curses = "[fuvg],[cvff],[shpx],[phag],[pbpxfhpxre],[zbgureshpxre],[gvgf]";
         public apologies = "[sorry]";
         public statusStr = "";
+        public userInput = "";
+        //public programInput = null;
 
         constructor() {
         }
@@ -88,7 +90,7 @@ module TSOS {
 
             //Where Am I
             sc = new ShellCommand(this.shellWhereAmI,
-                                "location",
+                                "whereami",
                                 " - This displays where you are.");
             this.commandList[this.commandList.length] = sc;
 
@@ -106,14 +108,19 @@ module TSOS {
 
             //Tells you the cake is a lie even though you should already know that
             sc = new ShellCommand(this.shellCake,
-                "cake",
-                "- find out");
+                                "cake",
+                                "- find out");
             this.commandList[this.commandList.length] = sc;
 
             //Initiates the Blue Screen of Death
             sc = new ShellCommand(this.shellBSOD,
                                 "bsod",
                                 " - This tests when the kernel traps an OS error");
+            this.commandList[this.commandList.length] = sc;
+
+            sc = new ShellCommand(this.shellLoad,
+                                "load",
+                                " - runs a test to validate the user code in HTML5");
             this.commandList[this.commandList.length] = sc;
 
 
@@ -365,6 +372,14 @@ module TSOS {
             _Kernel.krnTrapError("BSOD, muahahahahaha");
         }
 
+        public shellLoad(args) {
+            var userInput = (<HTMLInputElement>document.getElementById("taProgramInput")).value;
+            if (!userInput.match( /^0|1|2|3|4|5|6|7|8|9|"a"|"b"|"c"|"d"|"e"|"f"$/)){
+                _StdOut.putText("you call that hex?!")
+            } else {
+                _StdOut.putText("That's some great looking hex!")
+            }
+        }
 
     }
 }

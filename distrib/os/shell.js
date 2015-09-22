@@ -14,6 +14,7 @@
 var TSOS;
 (function (TSOS) {
     var Shell = (function () {
+        //public programInput = null;
         function Shell() {
             // Properties
             this.promptStr = ">";
@@ -21,6 +22,7 @@ var TSOS;
             this.curses = "[fuvg],[cvff],[shpx],[phag],[pbpxfhpxre],[zbgureshpxre],[gvgf]";
             this.apologies = "[sorry]";
             this.statusStr = "";
+            this.userInput = "";
         }
         Shell.prototype.init = function () {
             var sc;
@@ -54,7 +56,7 @@ var TSOS;
             sc = new TSOS.ShellCommand(this.shellDate, "date", " - This displays the date and time.");
             this.commandList[this.commandList.length] = sc;
             //Where Am I
-            sc = new TSOS.ShellCommand(this.shellWhereAmI, "location", " - This displays where you are.");
+            sc = new TSOS.ShellCommand(this.shellWhereAmI, "whereami", " - This displays where you are.");
             this.commandList[this.commandList.length] = sc;
             //Plays my own Version of Zork
             sc = new TSOS.ShellCommand(this.shellMyZork, "zork", "- Plays the PEAR-OS version of Zork");
@@ -67,6 +69,8 @@ var TSOS;
             this.commandList[this.commandList.length] = sc;
             //Initiates the Blue Screen of Death
             sc = new TSOS.ShellCommand(this.shellBSOD, "bsod", " - This tests when the kernel traps an OS error");
+            this.commandList[this.commandList.length] = sc;
+            sc = new TSOS.ShellCommand(this.shellLoad, "load", " - runs a test to validate the user code in HTML5");
             this.commandList[this.commandList.length] = sc;
             // ps  - list the running processes and their IDs
             // kill <id> - kills the specified process id.
@@ -297,6 +301,15 @@ var TSOS;
         // runs a kernel trap error to test the bsod
         Shell.prototype.shellBSOD = function (args) {
             _Kernel.krnTrapError("BSOD, muahahahahaha");
+        };
+        Shell.prototype.shellLoad = function (args) {
+            var userInput = document.getElementById("taProgramInput").value;
+            if (!userInput.match(/^0|1|2|3|4|5|6|7|8|9|"a"|"b"|"c"|"d"|"e"|"f"$/)) {
+                _StdOut.putText("you call that hex?!");
+            }
+            else {
+                _StdOut.putText("That's some great looking hex!");
+            }
         };
         return Shell;
     })();

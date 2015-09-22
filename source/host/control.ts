@@ -47,6 +47,7 @@ module TSOS {
             Time = <HTMLDivElement>document.getElementById('time');
             Status = <HTMLDivElement>document.getElementById('status');
 
+
             // Set focus on the start button.
             // Use the TypeScript cast to HTMLInputElement
             (<HTMLInputElement> document.getElementById("btnStartOS")).focus();
