@@ -63,7 +63,7 @@ var TSOS;
             sc = new TSOS.ShellCommand(this.shellStatus, "status", "- sets the status ");
             this.commandList[this.commandList.length] = sc;
             //Tells you the cake is a lie even though you should already know that
-            sc = new TSOS.ShellCommand(this.shellCake, "cake", "- ;-)");
+            sc = new TSOS.ShellCommand(this.shellCake, "cake", "- find out");
             this.commandList[this.commandList.length] = sc;
             //Initiates the Blue Screen of Death
             sc = new TSOS.ShellCommand(this.shellBSOD, "bsod", " - This tests when the kernel traps an OS error");
@@ -289,9 +289,11 @@ var TSOS;
                 _StdOut.putText("Usage: status <string>  Please supply a string.");
             }
         };
+        // runs a fun extra function, I'm going to add a picture of a cake later :)
         Shell.prototype.shellCake = function (args) {
             _StdOut.putText("The Cake is a Lie");
         };
+        // runs a kernel trap error to test the bsod
         Shell.prototype.shellBSOD = function (args) {
             _Kernel.krnTrapError("BSOD, muahahahahaha");
         };

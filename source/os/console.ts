@@ -17,6 +17,8 @@ module TSOS {
                     public currentFontSize = _DefaultFontSize,
                     public currentXPosition = 0,
                     public currentYPosition = _DefaultFontSize,
+                    public commandHistory =[""],
+                    public previousCommands = 0,
                     public buffer = "") {
         }
 
@@ -44,13 +46,21 @@ module TSOS {
                     // ... tell the shell ...
                     _OsShell.handleInput(this.buffer);
                     // ... and reset our buffer.
+                    this.commandHistory.push(this.buffer);
+                    this.previousCommands = this.commandHistory.length;
                     this.buffer = "";
+
 
                 } else if(chr === String.fromCharCode(8))
                 {
                     this.deleteCharacter();
 
-                } else {
+                } else if (chr === String.fromCharCode(38) /*||
+                           chr === String.fromCharCode(40) */) {
+                    this.getPreviousCommand(chr);
+                }
+
+                else {
                     // This is a "normal" character, so ...
                     // ... draw it on the screen...
                     this.putText(chr);
@@ -118,9 +128,18 @@ module TSOS {
             var bsodImg = new Image();
             bsodImg.onload = function() {
                 _DrawingContext.drawImage(bsodImg, 0, 0);
-                //_DrawingContext.height = 500;
             };
             bsodImg.src = "http://i.imgur.com/3SXEdEA.jpg"
+        }
+
+        public getPreviousCommand(chr): void {
+            //if (chr = "38" && this.previousCommands > 0) {
+                this.previousCommands--;
+                _OsShell.putPrompt();
+                this.putText(this.commandHistory[this.previousCommands]);
+                this.buffer = this.commandHistory[this.previousCommands];
+            //}
+
         }
 
     }

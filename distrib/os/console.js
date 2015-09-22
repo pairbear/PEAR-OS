@@ -10,16 +10,20 @@
 var TSOS;
 (function (TSOS) {
     var Console = (function () {
-        function Console(currentFont, currentFontSize, currentXPosition, currentYPosition, buffer) {
+        function Console(currentFont, currentFontSize, currentXPosition, currentYPosition, commandHistory, previousCommands, buffer) {
             if (currentFont === void 0) { currentFont = _DefaultFontFamily; }
             if (currentFontSize === void 0) { currentFontSize = _DefaultFontSize; }
             if (currentXPosition === void 0) { currentXPosition = 0; }
             if (currentYPosition === void 0) { currentYPosition = _DefaultFontSize; }
+            if (commandHistory === void 0) { commandHistory = [""]; }
+            if (previousCommands === void 0) { previousCommands = 0; }
             if (buffer === void 0) { buffer = ""; }
             this.currentFont = currentFont;
             this.currentFontSize = currentFontSize;
             this.currentXPosition = currentXPosition;
             this.currentYPosition = currentYPosition;
+            this.commandHistory = commandHistory;
+            this.previousCommands = previousCommands;
             this.buffer = buffer;
         }
         Console.prototype.init = function () {
@@ -43,10 +47,16 @@ var TSOS;
                     // ... tell the shell ...
                     _OsShell.handleInput(this.buffer);
                     // ... and reset our buffer.
+                    this.commandHistory.push(this.buffer);
+                    this.previousCommands = this.commandHistory.length;
                     this.buffer = "";
                 }
                 else if (chr === String.fromCharCode(8)) {
                     this.deleteCharacter();
+                }
+                else if (chr === String.fromCharCode(38) /*||
+                           chr === String.fromCharCode(40) */) {
+                    this.getPreviousCommand(chr);
                 }
                 else {
                     // This is a "normal" character, so ...
@@ -110,9 +120,16 @@ var TSOS;
             var bsodImg = new Image();
             bsodImg.onload = function () {
                 _DrawingContext.drawImage(bsodImg, 0, 0);
-                //_DrawingContext.height = 500;
             };
             bsodImg.src = "http://i.imgur.com/3SXEdEA.jpg";
+        };
+        Console.prototype.getPreviousCommand = function (chr) {
+            //if (chr = "38" && this.previousCommands > 0) {
+            this.previousCommands--;
+            _OsShell.putPrompt();
+            this.putText(this.commandHistory[this.previousCommands]);
+            this.buffer = this.commandHistory[this.previousCommands];
+            //}
         };
         return Console;
     })();
