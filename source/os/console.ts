@@ -55,8 +55,10 @@ module TSOS {
                 {
                     this.deleteCharacter();
 
-                } else if (chr === String.fromCharCode(38) /*||
-                           chr === String.fromCharCode(40) */) {
+                } else if (chr === String.fromCharCode(38) ||
+                           chr === String.fromCharCode(40) ) {
+                    this.putText("");
+                    this.buffer = "";
                     this.getPreviousCommand(chr);
                 }
 
@@ -132,14 +134,22 @@ module TSOS {
             bsodImg.src = "http://i.imgur.com/3SXEdEA.jpg"
         }
 
+        // This enables the up and down keys to be used to recall previously used commands
         public getPreviousCommand(chr): void {
-            //if (chr = "38" && this.previousCommands > 0) {
+            if (chr === String.fromCharCode(38) && this.previousCommands > 0) {
+                this.putText("");
+                this.buffer = "";
                 this.previousCommands--;
                 _OsShell.putPrompt();
                 this.putText(this.commandHistory[this.previousCommands]);
                 this.buffer = this.commandHistory[this.previousCommands];
-            //}
-
+            } else if (chr === String.fromCharCode(40) && this.previousCommands > 0) {
+                this.putText("");
+                this.previousCommands++;
+                _OsShell.putPrompt();
+                this.putText(this.commandHistory[this.previousCommands]);
+                this.buffer = this.commandHistory[this.previousCommands];
+            }
         }
 
     }

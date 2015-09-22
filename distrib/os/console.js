@@ -54,8 +54,10 @@ var TSOS;
                 else if (chr === String.fromCharCode(8)) {
                     this.deleteCharacter();
                 }
-                else if (chr === String.fromCharCode(38) /*||
-                           chr === String.fromCharCode(40) */) {
+                else if (chr === String.fromCharCode(38) ||
+                    chr === String.fromCharCode(40)) {
+                    this.putText("");
+                    this.buffer = "";
                     this.getPreviousCommand(chr);
                 }
                 else {
@@ -123,13 +125,23 @@ var TSOS;
             };
             bsodImg.src = "http://i.imgur.com/3SXEdEA.jpg";
         };
+        // This enables the up and down keys to be used to recall previously used commands
         Console.prototype.getPreviousCommand = function (chr) {
-            //if (chr = "38" && this.previousCommands > 0) {
-            this.previousCommands--;
-            _OsShell.putPrompt();
-            this.putText(this.commandHistory[this.previousCommands]);
-            this.buffer = this.commandHistory[this.previousCommands];
-            //}
+            if (chr === String.fromCharCode(38) && this.previousCommands > 0) {
+                this.putText("");
+                this.buffer = "";
+                this.previousCommands--;
+                _OsShell.putPrompt();
+                this.putText(this.commandHistory[this.previousCommands]);
+                this.buffer = this.commandHistory[this.previousCommands];
+            }
+            else if (chr === String.fromCharCode(40) && this.previousCommands > 0) {
+                this.putText("");
+                this.previousCommands++;
+                _OsShell.putPrompt();
+                this.putText(this.commandHistory[this.previousCommands]);
+                this.buffer = this.commandHistory[this.previousCommands];
+            }
         };
         return Console;
     })();

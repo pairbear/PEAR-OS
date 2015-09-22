@@ -284,6 +284,7 @@ var TSOS;
                     status += args[i] + " ";
                 }
                 _StdOut.putText("Status updated to " + status);
+                Status.textContent = "status: " + status;
             }
             else {
                 _StdOut.putText("Usage: status <string>  Please supply a string.");
