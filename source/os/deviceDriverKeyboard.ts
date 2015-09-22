@@ -43,11 +43,11 @@ module TSOS {
                 }
                 // TODO: Check for caps-lock and handle as shifted if so.
                 _KernelInputQueue.enqueue(chr);
-            } else if (((keyCode >= 48) && (keyCode <= 57)) ||   // digits
-                        (keyCode == 32)                     ||   // space
+            } else if ( (keyCode == 32)                     ||   // space
                         (keyCode == 8)                      ||   // backspace
-                        (keyCode == 38)                     ||   //up
-                        (keyCode == 40)                     ||   //down
+                        (keyCode == 38)                     ||   // up
+                        (keyCode == 40)                     ||   // down
+                        (keyCode == 9)                      ||   // tab
                         (keyCode == 13)) {                       // enter
                 chr = String.fromCharCode(keyCode);
                 _KernelInputQueue.enqueue(chr);
@@ -146,15 +146,15 @@ module TSOS {
                 }
                 _KernelInputQueue.enqueue(chr);
             }
-            else if ((keyCode >= 186 && keyCode <= 222)/* ||
-                (keyCode >= 48  && keyCode <= 57)*/) {
+            else if ((keyCode >= 186 && keyCode <= 222) ||
+                (keyCode >= 48  && keyCode <= 57)) {
                 switch (keyCode)
                 { //switch case to get symbols when shift is pressed
                     case 192: {
                         chr =  "`";
                         break;
                     }
-                    /*case 49: {
+                    case 49: {
                         chr =  "1";
                         break;
                     }
@@ -193,7 +193,7 @@ module TSOS {
                     case 48: {
                         chr = "0";
                         break;
-                    } */
+                    }
                     case 189: {
                         chr = "-";
                         break;

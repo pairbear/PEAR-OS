@@ -57,9 +57,14 @@ module TSOS {
 
                 } else if (chr === String.fromCharCode(38) ||
                            chr === String.fromCharCode(40) ) {
+
                     this.putText("");
                     this.buffer = "";
                     this.getPreviousCommand(chr);
+
+                } else if (chr === String.fromCharCode(8)){
+
+                    //this.autoComplete(chr);
                 }
 
                 else {
@@ -137,20 +142,22 @@ module TSOS {
         // This enables the up and down keys to be used to recall previously used commands
         public getPreviousCommand(chr): void {
             if (chr === String.fromCharCode(38) && this.previousCommands > 0) {
-                this.putText("");
-                this.buffer = "";
+                //_DrawingContext.clearRect(10, this.currentYPosition-20, 500, 500);
+                //this.currentXPosition = this.currentXPosition-20;
                 this.previousCommands--;
                 _OsShell.putPrompt();
                 this.putText(this.commandHistory[this.previousCommands]);
                 this.buffer = this.commandHistory[this.previousCommands];
             } else if (chr === String.fromCharCode(40) && this.previousCommands > 0) {
-                this.putText("");
+                //_DrawingContext.clearRect(10, this.currentYPosition-20, 500, 500);
+                //this.currentXPosition = this.currentXPosition-20;
                 this.previousCommands++;
                 _OsShell.putPrompt();
                 this.putText(this.commandHistory[this.previousCommands]);
                 this.buffer = this.commandHistory[this.previousCommands];
             }
         }
+
 
     }
  }
