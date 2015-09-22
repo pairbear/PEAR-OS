@@ -10,18 +10,16 @@
 var TSOS;
 (function (TSOS) {
     var Console = (function () {
-        function Console(currentFont, currentFontSize, currentXPosition, currentYPosition, currentLine, buffer) {
+        function Console(currentFont, currentFontSize, currentXPosition, currentYPosition, buffer) {
             if (currentFont === void 0) { currentFont = _DefaultFontFamily; }
             if (currentFontSize === void 0) { currentFontSize = _DefaultFontSize; }
             if (currentXPosition === void 0) { currentXPosition = 0; }
             if (currentYPosition === void 0) { currentYPosition = _DefaultFontSize; }
-            if (currentLine === void 0) { currentLine = 0; }
             if (buffer === void 0) { buffer = ""; }
             this.currentFont = currentFont;
             this.currentFontSize = currentFontSize;
             this.currentXPosition = currentXPosition;
             this.currentYPosition = currentYPosition;
-            this.currentLine = currentLine;
             this.buffer = buffer;
         }
         Console.prototype.init = function () {
@@ -86,17 +84,17 @@ var TSOS;
             this.currentYPosition += _DefaultFontSize +
                 _DrawingContext.fontDescent(this.currentFont, this.currentFontSize) +
                 _FontHeightMargin;
-            this.currentLine++;
-            // TODO: Handle scrolling. (iProject 1)
+            // This scrolls the canvas, but I would like to work on some of the tight spacing later
             if (this.currentYPosition >= _Canvas.height) {
                 var canvas = _DrawingContext.getImageData(0, 0, _Canvas.width, _Canvas.height);
                 this.clearScreen();
-                _DrawingContext.putImageData(canvas, 0, _Canvas.height - this.currentYPosition - 5, 0, 0, _Canvas.width, _Canvas.height);
+                _DrawingContext.putImageData(canvas, 0, _Canvas.height - this.currentYPosition - 6, 0, 0, _Canvas.width, _Canvas.height);
                 this.currentYPosition -= _DefaultFontSize +
                     _DrawingContext.fontDescent(this.currentFont, this.currentFontSize) +
-                    _FontHeightMargin + 1;
+                    _FontHeightMargin;
             }
         };
+        // this enables the backspace key to delete characters
         Console.prototype.deleteCharacter = function () {
             if (this.buffer.length > 0) {
                 var offset = _DrawingContext.measureText(this.currentFont, this.currentFontSize, this.buffer.slice(-1));
@@ -106,6 +104,15 @@ var TSOS;
                 this.currentXPosition = xPosition;
                 this.buffer = this.buffer.substr(0, this.buffer.length - 1);
             }
+        };
+        // This displays the image for the blue screen of death
+        Console.prototype.bsodDisplay = function () {
+            var bsodImg = new Image();
+            bsodImg.onload = function () {
+                _DrawingContext.drawImage(bsodImg, 0, 0);
+                //_DrawingContext.height = 500;
+            };
+            bsodImg.src = "http://i.imgur.com/3SXEdEA.jpg";
         };
         return Console;
     })();

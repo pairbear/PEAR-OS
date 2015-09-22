@@ -17,7 +17,6 @@ module TSOS {
                     public currentFontSize = _DefaultFontSize,
                     public currentXPosition = 0,
                     public currentYPosition = _DefaultFontSize,
-                    public currentLine = 0,
                     public buffer = "") {
         }
 
@@ -90,24 +89,22 @@ module TSOS {
             this.currentYPosition += _DefaultFontSize +
                                      _DrawingContext.fontDescent(this.currentFont, this.currentFontSize) +
                                      _FontHeightMargin;
-            this.currentLine++;
 
-            // TODO: Handle scrolling. (iProject 1)
+            // This scrolls the canvas, but I would like to work on some of the tight spacing later
             if (this.currentYPosition >= _Canvas.height) {
                 var canvas = _DrawingContext.getImageData(0, 0, _Canvas.width, _Canvas.height);
                 this.clearScreen();
-                _DrawingContext.putImageData(canvas, 0, _Canvas.height - this.currentYPosition - 5, 0, 0, _Canvas.width, _Canvas.height);
+                _DrawingContext.putImageData(canvas, 0, _Canvas.height - this.currentYPosition - 6, 0, 0, _Canvas.width, _Canvas.height);
                 this.currentYPosition -= _DefaultFontSize +
                                          _DrawingContext.fontDescent(this.currentFont, this.currentFontSize) +
-                                         _FontHeightMargin + 1;
+                                         _FontHeightMargin;
             }
         }
 
 
-
+        // this enables the backspace key to delete characters
         public deleteCharacter(): void {
             if (this.buffer.length > 0) {
-
                 var offset:number = _DrawingContext.measureText(this.currentFont, this.currentFontSize, this.buffer.slice(-1));
                 var xPosition:number = this.currentXPosition - offset;
                 var yPosition:number = this.currentYPosition + 1 - this.currentFontSize;
@@ -115,6 +112,15 @@ module TSOS {
                 this.currentXPosition = xPosition;
                 this.buffer = this.buffer.substr(0, this.buffer.length - 1);
             }
+        }
+        // This displays the image for the blue screen of death
+        public bsodDisplay(): void {
+            var bsodImg = new Image();
+            bsodImg.onload = function() {
+                _DrawingContext.drawImage(bsodImg, 0, 0);
+                //_DrawingContext.height = 500;
+            };
+            bsodImg.src = "http://i.imgur.com/3SXEdEA.jpg"
         }
 
     }

@@ -86,7 +86,7 @@ module TSOS {
                                 " - This displays the date and time.");
             this.commandList[this.commandList.length] = sc;
 
-            //Where Ami I
+            //Where Am I
             sc = new ShellCommand(this.shellWhereAmI,
                                 "location",
                                 " - This displays where you are.");
@@ -98,15 +98,23 @@ module TSOS {
                                 "- Plays the PEAR-OS version of Zork");
             this.commandList[this.commandList.length] = sc;
 
+            //sets the status
             sc = new ShellCommand(this.shellStatus,
                                 "status",
                                 "- sets the status ");
             this.commandList[this.commandList.length] = sc;
 
-            //sc = new ShellCommand(this.shellBSOD,
-            //                    "bsod",
-            //                    " - This tests when the kernel traps an OS error");
-            //this.commandList[this.commandList.length] = sc;
+            //Tells you the cake is a lie even though you should already know that
+            sc = new ShellCommand(this.shellCake,
+                "cake",
+                "- ;-)");
+            this.commandList[this.commandList.length] = sc;
+
+            //Initiates the Blue Screen of Death
+            sc = new ShellCommand(this.shellBSOD,
+                                "bsod",
+                                " - This tests when the kernel traps an OS error");
+            this.commandList[this.commandList.length] = sc;
 
 
             // ps  - list the running processes and their IDs
@@ -171,8 +179,10 @@ module TSOS {
             if (_StdOut.currentXPosition > 0) {
                 _StdOut.advanceLine();
             }
-            // ... and finally write the prompt again.
-            this.putPrompt();
+            if ( fn !== this.shellBSOD && fn !== this.shellShutdown) {
+                // ... and finally write the prompt again.
+                this.putPrompt();
+            }
         }
 
         public parseInput(buffer): UserCommand {
@@ -347,15 +357,13 @@ module TSOS {
             }
         }
 
-        /*public shellStatus(args) {
-            if (args.length > 0) {
-                var status = args[0];
-                (<HTMLInputElement>document.getElementById('Status')).value = status;
-            } else {
-                _StdOut.putText("Usage: status <string>  Please supply a string.");
-            }
-        }*/
+       public shellCake(args) {
+           _StdOut.putText("The Cake is a Lie");
+       }
 
+        public shellBSOD(args){
+            _Kernel.krnTrapError("BSOD, muahahahahaha");
+        }
 
 
     }

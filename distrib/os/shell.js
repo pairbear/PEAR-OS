@@ -53,18 +53,21 @@ var TSOS;
             //date
             sc = new TSOS.ShellCommand(this.shellDate, "date", " - This displays the date and time.");
             this.commandList[this.commandList.length] = sc;
-            //Where Ami I
+            //Where Am I
             sc = new TSOS.ShellCommand(this.shellWhereAmI, "location", " - This displays where you are.");
             this.commandList[this.commandList.length] = sc;
             //Plays my own Version of Zork
             sc = new TSOS.ShellCommand(this.shellMyZork, "zork", "- Plays the PEAR-OS version of Zork");
             this.commandList[this.commandList.length] = sc;
+            //sets the status
             sc = new TSOS.ShellCommand(this.shellStatus, "status", "- sets the status ");
             this.commandList[this.commandList.length] = sc;
-            //sc = new ShellCommand(this.shellBSOD,
-            //                    "bsod",
-            //                    " - This tests when the kernel traps an OS error");
-            //this.commandList[this.commandList.length] = sc;
+            //Tells you the cake is a lie even though you should already know that
+            sc = new TSOS.ShellCommand(this.shellCake, "cake", "- ;-)");
+            this.commandList[this.commandList.length] = sc;
+            //Initiates the Blue Screen of Death
+            sc = new TSOS.ShellCommand(this.shellBSOD, "bsod", " - This tests when the kernel traps an OS error");
+            this.commandList[this.commandList.length] = sc;
             // ps  - list the running processes and their IDs
             // kill <id> - kills the specified process id.
             //
@@ -126,8 +129,10 @@ var TSOS;
             if (_StdOut.currentXPosition > 0) {
                 _StdOut.advanceLine();
             }
-            // ... and finally write the prompt again.
-            this.putPrompt();
+            if (fn !== this.shellBSOD && fn !== this.shellShutdown) {
+                // ... and finally write the prompt again.
+                this.putPrompt();
+            }
         };
         Shell.prototype.parseInput = function (buffer) {
             var retVal = new TSOS.UserCommand();
@@ -283,6 +288,12 @@ var TSOS;
             else {
                 _StdOut.putText("Usage: status <string>  Please supply a string.");
             }
+        };
+        Shell.prototype.shellCake = function (args) {
+            _StdOut.putText("The Cake is a Lie");
+        };
+        Shell.prototype.shellBSOD = function (args) {
+            _Kernel.krnTrapError("BSOD, muahahahahaha");
         };
         return Shell;
     })();
