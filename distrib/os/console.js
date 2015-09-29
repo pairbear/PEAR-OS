@@ -33,6 +33,22 @@ var TSOS;
         Console.prototype.clearScreen = function () {
             _DrawingContext.clearRect(0, 0, _Canvas.width, _Canvas.height);
         };
+        Console.prototype.clearLine = function () {
+            //_DrawingContext.clearRect(0, 0, _Canvas.width, _Canvas.height-20);
+            //_DrawingContext.clearRect(this.currentXPosition - 10, this.currentYPosition-10, _Canvas.width, this.currentFontSize);
+            //clears a line of the console by drawing a rectangle of the console color over it
+            /*_DrawingContext.fillStyle = CONSOLE_BGC;
+            _DrawingContext.fillRect(0, this.currentYPosition - _DefaultFontSize, _Canvas.width, _DefaultFontSize + _FontHeightMargin+1);
+            this.currentXPosition=0;
+            this.buffer="" */
+            //clears a line of the console by drawing a rectangle of the console color over it
+            var offset = _DrawingContext.measureText(this.currentFont, this.currentFontSize, this.buffer);
+            var xPosition = this.currentXPosition - offset;
+            var yPosition = this.currentYPosition + 1 - this.currentFontSize;
+            _DrawingContext.clearRect(xPosition, yPosition, this.currentXPosition, this.currentYPosition);
+            this.currentXPosition = xPosition;
+            this.buffer = "";
+        };
         Console.prototype.resetXY = function () {
             this.currentXPosition = 0;
             this.currentYPosition = this.currentFontSize;
@@ -101,7 +117,6 @@ var TSOS;
             // This scrolls the canvas, but I would like to work on some of the tight spacing later
             if (this.currentYPosition >= _Canvas.height) {
                 var canvas = _DrawingContext.getImageData(0, 0, _Canvas.width, _Canvas.height);
-                this.clearScreen();
                 _DrawingContext.putImageData(canvas, 0, _Canvas.height - this.currentYPosition - 6, 0, 0, _Canvas.width, _Canvas.height);
                 this.currentYPosition -= _DefaultFontSize +
                     _DrawingContext.fontDescent(this.currentFont, this.currentFontSize) +
@@ -130,16 +145,14 @@ var TSOS;
         // This enables the up and down keys to be used to recall previously used commands
         Console.prototype.getPreviousCommand = function (chr) {
             if (chr === String.fromCharCode(38) && this.previousCommands > 0) {
-                //_DrawingContext.clearRect(10, this.currentYPosition-20, 500, 500);
-                //this.currentXPosition = this.currentXPosition-20;
+                this.clearLine();
                 this.previousCommands--;
                 _OsShell.putPrompt();
                 this.putText(this.commandHistory[this.previousCommands]);
                 this.buffer = this.commandHistory[this.previousCommands];
             }
             else if (chr === String.fromCharCode(40) && this.previousCommands > 0) {
-                //_DrawingContext.clearRect(10, this.currentYPosition-20, 500, 500);
-                //this.currentXPosition = this.currentXPosition-20;
+                this.clearLine();
                 this.previousCommands++;
                 _OsShell.putPrompt();
                 this.putText(this.commandHistory[this.previousCommands]);
