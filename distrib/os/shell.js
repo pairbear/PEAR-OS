@@ -72,6 +72,8 @@ var TSOS;
             this.commandList[this.commandList.length] = sc;
             sc = new TSOS.ShellCommand(this.shellLoad, "load", " - runs a test to validate the user code in HTML5");
             this.commandList[this.commandList.length] = sc;
+            sc = new TSOS.ShellCommand(this.shellRun, "run", " - runs the loaded user code");
+            this.commandList[this.commandList.length] = sc;
             // ps  - list the running processes and their IDs
             // kill <id> - kills the specified process id.
             //
@@ -308,8 +310,13 @@ var TSOS;
                 _StdOut.putText("you call that hex?!");
             }
             else {
-                _StdOut.putText("That's some great looking hex!");
+                var programString = userInput.replace(/\s/g, " ");
+                memoryManager.loadProgram(programString);
+                _StdOut.putText(programString);
             }
+        };
+        Shell.prototype.shellRun = function (args) {
+            _StdOut.putText("Hey look, you can load a program except nah");
         };
         return Shell;
     })();

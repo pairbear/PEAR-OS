@@ -123,6 +123,11 @@ module TSOS {
                                 " - runs a test to validate the user code in HTML5");
             this.commandList[this.commandList.length] = sc;
 
+            sc = new ShellCommand(this.shellRun,
+                                "run",
+                                " - runs the loaded user code");
+            this.commandList[this.commandList.length] = sc;
+
 
             // ps  - list the running processes and their IDs
             // kill <id> - kills the specified process id.
@@ -377,8 +382,14 @@ module TSOS {
             if (!userInput.match( /^0|1|2|3|4|5|6|7|8|9|"a"|"b"|"c"|"d"|"e"|"f"$/)){
                 _StdOut.putText("you call that hex?!")
             } else {
-                _StdOut.putText("That's some great looking hex!")
+                var programString = userInput.replace(/\s/g, " ");
+                memoryManager.loadProgram(programString);
+                _StdOut.putText(programString);
             }
+        }
+
+        public shellRun (args) {
+            _StdOut.putText("Hey look, you can load a program except nah")
         }
 
     }

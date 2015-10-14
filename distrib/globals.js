@@ -22,7 +22,12 @@ var KEYBOARD_IRQ = 1;
 //
 var Status = null;
 var Time = null;
-var programInput = null;
+var memoryManager;
+var memorySize = programNumbers * programSize;
+var programSize = 256;
+var programs = [];
+var programNumbers = 1;
+var currentPID = 0;
 var _CPU; // Utilize TypeScript's type annotation system to ensure that _CPU is an instance of the Cpu class.
 var _OSclock = 0; // Page 23.
 var _Mode = 0; // (currently unused)  0 = Kernel Mode, 1 = User Mode.  See page 21.

@@ -28,7 +28,12 @@ const KEYBOARD_IRQ: number = 1;
 var Status:HTMLDivElement = null;
 var Time:HTMLDivElement = null;
 
-var programInput = null;
+var memoryManager: TSOS.MemoryManager;
+var memorySize = programNumbers * programSize;
+var programSize = 256;
+var programs =[];
+var programNumbers = 1;
+var currentPID = 0;
 
 var _CPU: TSOS.Cpu;  // Utilize TypeScript's type annotation system to ensure that _CPU is an instance of the Cpu class.
 

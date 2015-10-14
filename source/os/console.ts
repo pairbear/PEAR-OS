@@ -124,16 +124,17 @@ module TSOS {
              * Font height margin is extra spacing between the lines.
              */
             this.currentYPosition += _DefaultFontSize +
-                                     _DrawingContext.fontDescent(this.currentFont, this.currentFontSize) +
-                                     _FontHeightMargin;
+                _DrawingContext.fontDescent(this.currentFont, this.currentFontSize) +
+                _FontHeightMargin;
 
             // This scrolls the canvas, but I would like to work on some of the tight spacing later
             if (this.currentYPosition >= _Canvas.height) {
                 var canvas = _DrawingContext.getImageData(0, 0, _Canvas.width, _Canvas.height);
+                this.clearScreen();
                 _DrawingContext.putImageData(canvas, 0, _Canvas.height - this.currentYPosition - 6, 0, 0, _Canvas.width, _Canvas.height);
-                this.currentYPosition -= _DefaultFontSize +
-                                         _DrawingContext.fontDescent(this.currentFont, this.currentFontSize) +
-                                         _FontHeightMargin;
+                    this.currentYPosition -= _DefaultFontSize +
+                    _DrawingContext.fontDescent(this.currentFont, this.currentFontSize) +
+                    _FontHeightMargin;
             }
         }
 
@@ -156,6 +157,7 @@ module TSOS {
                 _DrawingContext.drawImage(bsodImg, 0, 0);
             };
             bsodImg.src = "http://i.imgur.com/3SXEdEA.jpg"
+
         }
 
         // This enables the up and down keys to be used to recall previously used commands
