@@ -7,7 +7,7 @@
    This code references page numbers in the text book:
    Operating System Concepts 8th edition by Silberschatz, Galvin, and Gagne.  ISBN 978-0-470-12872-5
    ------------ */
-//5
+//
 // Global CONSTANTS (TypeScript 1.5 introduced const. Very cool.)
 //
 var APP_NAME = "PEAR-OS"; // 'cause Bob and I were at a loss for a better name.
@@ -22,13 +22,16 @@ var KEYBOARD_IRQ = 1;
 //
 var Status = null;
 var Time = null;
-var memoryManager;
-var memorySize = programNumbers * programSize;
-var programSize = 256;
-var programs = [];
-var programNumbers = 1;
-var currentPID = 0;
 var _CPU; // Utilize TypeScript's type annotation system to ensure that _CPU is an instance of the Cpu class.
+var memoryManager;
+var memory;
+var programs = [];
+var programSize = 256;
+var programNumbers = 1;
+var memorySize = programNumbers * programSize;
+var currentPID = 0;
+var memoryViolationIRQ = 6;
+var executingProgram;
 var _OSclock = 0; // Page 23.
 var _Mode = 0; // (currently unused)  0 = Kernel Mode, 1 = User Mode.  See page 21.
 var _Canvas; // Initialized in Control.hostInit().

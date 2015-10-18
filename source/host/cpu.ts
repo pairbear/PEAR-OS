@@ -41,6 +41,43 @@ module TSOS {
             _Kernel.krnTrace('CPU cycle');
             // TODO: Accumulate CPU usage and profiling statistics here.
             // Do the real work here. Be sure to set this.isExecuting appropriately.
+
         }
+
+        public execute(instructions): void {
+            if (instructions = "A9") {
+                //Loads the accumulator with a constant
+                this.Acc = memoryManager.convertHex(memoryManager.getMemory(++this.PC))
+                assemblerCode = "LDA #$" + memoryManager.getMemory(this.PC)
+            } else if (instructions = "AD"){
+                //loads the accumulator from memory
+            } else if (instructions = "6D"){
+                //
+            } else if (instructions = "A2"){
+                //
+            } else if (instructions = "AE"){
+                //
+            } else if (instructions = "A0"){
+                 //
+            } else if (instructions = "AC"){
+                 //
+            } else if (instructions = "EA"){
+                //
+            } else if (instructions = "00"){
+                //
+            } else if (instructions = "EC"){
+                //
+            } else if (instructions = "D0"){
+                //
+            } else if (instructions = "EE"){
+                //
+            } else if (instructions = "FF"){
+                //
+            }
+        }
+
+
+
+
     }
 }

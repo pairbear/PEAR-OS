@@ -8,7 +8,7 @@
    Operating System Concepts 8th edition by Silberschatz, Galvin, and Gagne.  ISBN 978-0-470-12872-5
    ------------ */
 
-//5
+//
 // Global CONSTANTS (TypeScript 1.5 introduced const. Very cool.)
 //
 const APP_NAME: string    = "PEAR-OS";   // 'cause Bob and I were at a loss for a better name.
@@ -28,14 +28,18 @@ const KEYBOARD_IRQ: number = 1;
 var Status:HTMLDivElement = null;
 var Time:HTMLDivElement = null;
 
-var memoryManager: TSOS.MemoryManager;
-var memorySize = programNumbers * programSize;
-var programSize = 256;
-var programs =[];
-var programNumbers = 1;
-var currentPID = 0;
-
 var _CPU: TSOS.Cpu;  // Utilize TypeScript's type annotation system to ensure that _CPU is an instance of the Cpu class.
+var assemblerCode = "";
+
+var memoryManager: TSOS.MemoryManager;
+var memory: TSOS.Memory;
+var programs =[];
+var programSize = 256;
+var programNumbers = 1;
+var memorySize = programNumbers * programSize;
+var currentPID = 0;
+var memoryViolationIRQ: number = 6;
+var executingProgram;
 
 var _OSclock: number = 0;  // Page 23.
 

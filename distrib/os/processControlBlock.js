@@ -1,8 +1,7 @@
 var TSOS;
 (function (TSOS) {
     var processControlBlock = (function () {
-        function processControlBlock(PID, //++processControlBlock.PID,
-            Priority, Counter, PC, Acc, Xreg, Yreg, Zflag, base, limit) {
+        function processControlBlock(PID, Priority, Counter, PC, Acc, Xreg, Yreg, Zflag, base, limit) {
             if (PID === void 0) { PID = 0; }
             if (Priority === void 0) { Priority = 0; }
             if (Counter === void 0) { Counter = 0; }

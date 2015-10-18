@@ -44,6 +44,10 @@ var TSOS;
             }
             return retVal;
         };
+        Utils.createHexIndex = function (numDec) {
+            var numHex = numDec.toString(16).toUpperCase();
+            return "0x" + Array(3 - (numHex.length - 1)).join("0") + numHex;
+        };
         return Utils;
     })();
     TSOS.Utils = Utils;

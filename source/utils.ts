@@ -43,5 +43,12 @@ module TSOS {
             }
             return retVal;
         }
+
+
+        public static createHexIndex(numDec){
+            var numHex = numDec.toString(16).toUpperCase();
+            return "0x" + Array(3-(numHex.length-1)).join("0") + numHex;
+        }
+
     }
 }

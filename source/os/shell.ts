@@ -23,8 +23,7 @@ module TSOS {
         public curses = "[fuvg],[cvff],[shpx],[phag],[pbpxfhpxre],[zbgureshpxre],[gvgf]";
         public apologies = "[sorry]";
         public statusStr = "";
-        public userInput = "";
-        //public programInput = null;
+        public G_UserProgram = "";
 
         constructor() {
         }
@@ -350,7 +349,7 @@ module TSOS {
         }
 
         public shellMyZork(args) {
-             _StdOut.putText("Plays the game I made in Alan's SD1 course");
+             _StdOut.putText("when I put this here, I forgot/ didn't realize I would have to rewrite my program from Alan's SD1 class.");
         }
 
         public shellStatus(args) {
@@ -379,12 +378,13 @@ module TSOS {
 
         public shellLoad(args) {
             var userInput = (<HTMLInputElement>document.getElementById("taProgramInput")).value;
+            this.G_UserProgram = userInput;
+
             if (!userInput.match( /^0|1|2|3|4|5|6|7|8|9|"a"|"b"|"c"|"d"|"e"|"f"$/)){
                 _StdOut.putText("you call that hex?!")
             } else {
-                var programString = userInput.replace(/\s/g, " ");
-                memoryManager.loadProgram(programString);
-                _StdOut.putText(programString);
+                var programString = userInput.split(" ");
+                _StdOut.putText("PID " + memoryManager.loadProgram(programString));
             }
         }
 

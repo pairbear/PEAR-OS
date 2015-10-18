@@ -100,11 +100,18 @@ module TSOS {
             _CPU = new Cpu();  // Note: We could simulate multi-core systems by instantiating more than one instance of the CPU here.
             _CPU.init();       //       There's more to do, like dealing with scheduling and such, but this would be a start. Pretty cool.
 
+            // initiates the memory manger
+            memoryManager = new MemoryManager();
+            memoryManager.init();
+
             // ... then set the host clock pulse ...
             _hardwareClockID = setInterval(Devices.hostClockPulse, CPU_CLOCK_INTERVAL);
             // .. and call the OS Kernel Bootstrap routine.
+
             _Kernel = new Kernel();
             _Kernel.krnBootstrap();  // _GLaDOS.afterStartup() will get called in there, if configured.
+
+
         }
 
         public static hostBtnHaltOS_click(btn): void {
@@ -124,5 +131,13 @@ module TSOS {
             // be reloaded from the server. If it is false or not specified the browser may reload the
             // page from its cache, which is not what we want.
         }
+
+        public static updateMemoryDisplay(output)
+        {
+            document.getElementById("memDisplay").innerHTML = output;
+        }
+
+
+
     }
 }

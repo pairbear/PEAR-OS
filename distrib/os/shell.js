@@ -14,7 +14,6 @@
 var TSOS;
 (function (TSOS) {
     var Shell = (function () {
-        //public programInput = null;
         function Shell() {
             // Properties
             this.promptStr = ">";
@@ -22,7 +21,7 @@ var TSOS;
             this.curses = "[fuvg],[cvff],[shpx],[phag],[pbpxfhpxre],[zbgureshpxre],[gvgf]";
             this.apologies = "[sorry]";
             this.statusStr = "";
-            this.userInput = "";
+            this.G_UserProgram = "";
         }
         Shell.prototype.init = function () {
             var sc;
@@ -281,7 +280,7 @@ var TSOS;
             _StdOut.putText("You are in Narnia.");
         };
         Shell.prototype.shellMyZork = function (args) {
-            _StdOut.putText("Plays the game I made in Alan's SD1 course");
+            _StdOut.putText("when I put this here, I forgot/ didn't realize I would have to rewrite my program from Alan's SD1 class.");
         };
         Shell.prototype.shellStatus = function (args) {
             if (args.length > 0) {
@@ -306,13 +305,13 @@ var TSOS;
         };
         Shell.prototype.shellLoad = function (args) {
             var userInput = document.getElementById("taProgramInput").value;
+            this.G_UserProgram = userInput;
             if (!userInput.match(/^0|1|2|3|4|5|6|7|8|9|"a"|"b"|"c"|"d"|"e"|"f"$/)) {
                 _StdOut.putText("you call that hex?!");
             }
             else {
-                var programString = userInput.replace(/\s/g, " ");
-                memoryManager.loadProgram(programString);
-                _StdOut.putText(programString);
+                var programString = userInput.split(" ");
+                _StdOut.putText("PID " + memoryManager.loadProgram(programString));
             }
         };
         Shell.prototype.shellRun = function (args) {
