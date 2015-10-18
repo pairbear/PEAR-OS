@@ -19,6 +19,9 @@ const CPU_CLOCK_INTERVAL: number = 100;   // This is in ms (milliseconds) so 100
 const TIMER_IRQ: number = 0;  // Pages 23 (timer), 9 (interrupts), and 561 (interrupt priority).
                               // NOTE: The timer is different from hardware/host clock pulses. Don't confuse these.
 const KEYBOARD_IRQ: number = 1;
+const CPU_BRK_IRQ: number = 2;
+const CPU_SYS_IRQ: number = 3;
+const CPU_EXECUTE_PROGRAM: number = 4;
 
 //
 // Global Variables
@@ -30,6 +33,7 @@ var Time:HTMLDivElement = null;
 
 var _CPU: TSOS.Cpu;  // Utilize TypeScript's type annotation system to ensure that _CPU is an instance of the Cpu class.
 var assemblerCode = "";
+var _ExecutingProgram
 
 var memoryManager: TSOS.MemoryManager;
 var memory: TSOS.Memory;
@@ -38,8 +42,6 @@ var programSize = 256;
 var programNumbers = 1;
 var memorySize = programNumbers * programSize;
 var currentPID = 0;
-var memoryViolationIRQ: number = 6;
-var executingProgram;
 
 var _OSclock: number = 0;  // Page 23.
 

@@ -20,42 +20,33 @@ var TSOS;
             TSOS.Control.updateMemoryDisplay(output);
         };
         MemoryManager.prototype.loadProgram = function (program) {
-            var newPCB = new TSOS.processControlBlock();
+            var newPCB = new TSOS.ProcessControlBlock();
             newPCB.base = 0;
             newPCB.limit = newPCB.base + programSize;
             programs[newPCB.PID] = newPCB;
-            alert(this.memory.userProgram);
             for (var i = 0; i < program.length; i++) {
                 this.memory.userProgram[i] = program[i];
             }
-            alert(this.memory.userProgram);
             this.updateMemoryDisplay();
             return (newPCB.PID).toString();
         };
         MemoryManager.prototype.getMemory = function (address) {
-            alert("is this even set off?");
             return this.memory.userProgram[address];
         };
-        MemoryManager.prototype.convertHexData = function (data) {
-            var retvalue = _OsShell.G_UserProgram;
-            return parseInt(retvalue, 16);
+        MemoryManager.prototype.convertHex = function (data) {
+            return parseInt(data, 16);
         };
-        MemoryManager.prototype.getNextTwoDataBytes = function (startAddress) {
-            return this.getMemory(this.getMemory(startAddress + 1) + this.getMemory(startAddress));
+        MemoryManager.prototype.getNext2Bytes = function (beginningAddress) {
+            return this.getMemory(this.getMemory(beginningAddress + 1) + this.getMemory(beginningAddress));
         };
-        MemoryManager.prototype.getDecAddressFromHex = function (startAddress) {
-            return this.convertHexData(this.getMemory(startAddress + 1) + this.getMemory(startAddress));
+        MemoryManager.prototype.getDecFromHex = function (beginningAddress) {
+            return this.convertHex(this.getMemory(beginningAddress + 1) + this.getMemory(beginningAddress));
         };
-        MemoryManager.prototype.storeInMemory = function (startAddress, value) {
-            //debugger;
-            var valueHex = value.toString(16).toUpperCase();
-            valueHex = Array(2 - (valueHex.length - 1)).join("0") + valueHex;
-            var position = this.getDecAddressFromHex(startAddress);
-            //check if memory is in bounds
-            if (position >= programs[executingProgram].limit || position < programs[executingProgram].base)
-                _KernelInterruptQueue.enqueue(new TSOS.Interrupt(memoryViolationIRQ, startAddress));
-            else
-                this.memory.userProgram[position] = valueHex;
+        MemoryManager.prototype.storeInMemory = function (beginningAddress, value) {
+            var hexValue = value.toString(16).toUpperCase();
+            hexValue = Array(2 - (hexValue.length - 1)).join("0") + hexValue;
+            var position = this.getDecFromHex(beginningAddress);
+            this.memory.userProgram[position] = hexValue;
         };
         return MemoryManager;
     })();

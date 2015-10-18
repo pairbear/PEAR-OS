@@ -1,6 +1,6 @@
 module TSOS {
 
-export class processControlBlock {
+export class ProcessControlBlock {
     constructor (
         public PID: number = 0,
         public Priority: number = 0,

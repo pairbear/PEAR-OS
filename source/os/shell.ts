@@ -349,7 +349,9 @@ module TSOS {
         }
 
         public shellMyZork(args) {
-             _StdOut.putText("when I put this here, I forgot/ didn't realize I would have to rewrite my program from Alan's SD1 class.");
+             _StdOut.putText("when I put this here, I forgot/ didn't realize");
+             _StdOut.advanceLine();
+             _StdOut.putText("I would have to rewrite my program from Alan's SD1 class.")
         }
 
         public shellStatus(args) {
@@ -389,7 +391,9 @@ module TSOS {
         }
 
         public shellRun (args) {
-            _StdOut.putText("Hey look, you can load a program except nah")
+            _ExecutingProgram = parseInt(args[0]);
+            _KernelInterruptQueue.enqueue(new Interrupt(CPU_EXECUTE_PROGRAM, 4));
+            _StdOut.putText("hi...?")
         }
 
     }

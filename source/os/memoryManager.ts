@@ -25,7 +25,7 @@ module TSOS {
 
 
         public loadProgram(program) {
-            var newPCB = new TSOS.processControlBlock();
+            var newPCB = new TSOS.ProcessControlBlock();
             newPCB.base = 0;
             newPCB.limit = newPCB.base + programSize;
             programs[newPCB.PID] = newPCB;
@@ -40,29 +40,24 @@ module TSOS {
             return this.memory.userProgram[address];
         }
 
+
         public convertHex(data):number {
-            //var retvalue = _OsShell.G_UserProgram;
             return parseInt(data, 16);
         }
 
-        public getNext2Bytes(startAddress) {
-            return this.getMemory(this.getMemory(startAddress + 1) + this.getMemory(startAddress));
+        public getNext2Bytes(beginningAddress) {
+            return this.getMemory(this.getMemory(beginningAddress + 1) + this.getMemory(beginningAddress));
         }
 
-        public getDecFromHex(startAddress) {
-            return this.convertHex(this.getMemory(startAddress + 1) + this.getMemory(startAddress));
+        public getDecFromHex(beginningAddress) {
+            return this.convertHex(this.getMemory(beginningAddress + 1) + this.getMemory(beginningAddress));
         }
 
-        public storeInMemory(startAddress, value) {
-            //debugger;
-            var valueHex = value.toString(16).toUpperCase();
-            valueHex = Array(2 - (valueHex.length - 1)).join("0") + valueHex;
-            var position = this.getDecFromHex(startAddress);
-            //check if memory is in bounds
-            if (position >= programs[executingProgram].limit || position < programs[executingProgram].base)
-                _KernelInterruptQueue.enqueue(new Interrupt(memoryViolationIRQ, startAddress));
-            else
-                this.memory.userProgram[position] = valueHex;
+        public storeInMemory(beginningAddress, value) {
+            var hexValue = value.toString(16).toUpperCase();
+            hexValue = Array(2 - (hexValue.length - 1)).join("0") + hexValue;
+            var position = this.getDecFromHex(beginningAddress);
+            this.memory.userProgram[position] = hexValue;
 
         }
 

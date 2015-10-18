@@ -280,7 +280,9 @@ var TSOS;
             _StdOut.putText("You are in Narnia.");
         };
         Shell.prototype.shellMyZork = function (args) {
-            _StdOut.putText("when I put this here, I forgot/ didn't realize I would have to rewrite my program from Alan's SD1 class.");
+            _StdOut.putText("when I put this here, I forgot/ didn't realize");
+            _StdOut.advanceLine();
+            _StdOut.putText("I would have to rewrite my program from Alan's SD1 class.");
         };
         Shell.prototype.shellStatus = function (args) {
             if (args.length > 0) {
@@ -315,7 +317,9 @@ var TSOS;
             }
         };
         Shell.prototype.shellRun = function (args) {
-            _StdOut.putText("Hey look, you can load a program except nah");
+            _ExecutingProgram = parseInt(args[0]);
+            _KernelInterruptQueue.enqueue(new TSOS.Interrupt(CPU_EXECUTE_PROGRAM, 4));
+            _StdOut.putText("hi...?");
         };
         return Shell;
     })();
