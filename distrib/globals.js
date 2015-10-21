@@ -7,7 +7,7 @@
    This code references page numbers in the text book:
    Operating System Concepts 8th edition by Silberschatz, Galvin, and Gagne.  ISBN 978-0-470-12872-5
    ------------ */
-//5
+//
 // Global CONSTANTS (TypeScript 1.5 introduced const. Very cool.)
 //
 var APP_NAME = "PEAR-OS"; // 'cause Bob and I were at a loss for a better name.
@@ -16,14 +16,25 @@ var CPU_CLOCK_INTERVAL = 100; // This is in ms (milliseconds) so 1000 = 1 second
 var TIMER_IRQ = 0; // Pages 23 (timer), 9 (interrupts), and 561 (interrupt priority).
 // NOTE: The timer is different from hardware/host clock pulses. Don't confuse these.
 var KEYBOARD_IRQ = 1;
+var CPU_BRK_IRQ = 2;
+var CPU_SYS_IRQ = 3;
+var CPU_EXECUTE_PROGRAM = 4;
 //
 // Global Variables
 // TODO: Make a global object and use that instead of the "_" naming convention in the global namespace.
 //
 var Status = null;
 var Time = null;
-var programInput = null;
 var _CPU; // Utilize TypeScript's type annotation system to ensure that _CPU is an instance of the Cpu class.
+var assemblerCode = "";
+var _ExecutingProgram;
+var memoryManager;
+var memory;
+var programs = [];
+var programSize = 256;
+var programNumbers = 1;
+var memorySize = programNumbers * programSize;
+var currentPID = 0;
 var _OSclock = 0; // Page 23.
 var _Mode = 0; // (currently unused)  0 = Kernel Mode, 1 = User Mode.  See page 21.
 var _Canvas; // Initialized in Control.hostInit().
