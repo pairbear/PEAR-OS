@@ -131,7 +131,6 @@ module TSOS {
                 case "00" :{
                     //Break
                     this.updateCPU();
-                    alert("00")
                     assemblerCode = "BRK";
                     _KernelInterruptQueue.enqueue(new Interrupt(CPU_BRK_IRQ, 2));
                     break;
