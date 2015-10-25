@@ -130,7 +130,7 @@ module TSOS {
                     _CPU.isExecuting = false;
                     break;
                 case CPU_SYS_IRQ:
-                    //this will do something eventually
+                    _StdOut.systemOpCodeHandler();
                     break;
                 case CPU_EXECUTE_PROGRAM:
                     _CPU.isExecuting = true;

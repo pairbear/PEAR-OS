@@ -108,6 +108,11 @@ var TSOS;
         };
         Control.updateMemoryDisplay = function (output) {
             document.getElementById("memDisplay").innerHTML = output;
+            document.getElementById("assembledCode").innerHTML = assemblerCode;
+        };
+        Control.updateAssemblerCode = function () {
+            alert(assemblerCode);
+            document.getElementById("assembledCode").innerHTML = assemblerCode;
         };
         return Control;
     })();

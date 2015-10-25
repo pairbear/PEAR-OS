@@ -37,7 +37,31 @@ module TSOS {
         }
 
         public getMemory(address:any) {
-            return this.memory.userProgram[address];
+
+            //return this.memory.userProgram[address];
+
+             if (typeof address==="number"){
+                //checking memory in bounds
+                if (address>= programs[_ExecutingProgram].limit || address <programs[_ExecutingProgram].base ) {
+                    //_KernelInterruptQueue.enqueue(new Interrupt(MEMORY_ACCESS_VIOLATION_IRQ, Utils.dec2hex(address)));
+                    alert("something is borked")
+                }
+                else {
+                    return this.memory.userProgram[address];
+                }
+            }
+            else {
+                var decAddress = this.convertHex(address);
+                //checking memory in bounds
+                 // alert(decAddress);
+                if (decAddress >= programs[_ExecutingProgram].limit || decAddress < programs[_ExecutingProgram].base) {
+                    //_KernelInterruptQueue.enqueue(new Interrupt(MEMORY_ACCESS_VIOLATION_IRQ, address));
+                    alert("something else is borked");
+                }
+                else {
+                    return this.memory.userProgram[decAddress];
+                }
+            }
         }
 
 
