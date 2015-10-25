@@ -160,6 +160,25 @@ var TSOS;
                 this.buffer = this.commandHistory[this.previousCommands];
             }
         };
+        Console.prototype.systemOpCodeHandler = function () {
+            if (_CPU.Xreg === 1) {
+                this.putText((_CPU.Yreg).toString());
+                this.advanceLine();
+                _OsShell.putPrompt();
+            }
+            else if (_CPU.Xreg === 2) {
+                var string = "";
+                var curPos = _CPU.Yreg;
+                var curData = memoryManager.getMemory(curPos);
+                while (curData !== "00") {
+                    string += String.fromCharCode(memoryManager.convertHex(curData));
+                    curData = memoryManager.getMemory(++curPos);
+                }
+                this.putText(string);
+                this.advanceLine();
+                _OsShell.putPrompt();
+            }
+        };
         return Console;
     })();
     TSOS.Console = Console;

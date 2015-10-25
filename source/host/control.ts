@@ -135,6 +135,12 @@ module TSOS {
         public static updateMemoryDisplay(output)
         {
             document.getElementById("memDisplay").innerHTML = output;
+            document.getElementById("assembledCode").innerHTML = assemblerCode;
+        }
+
+        public static updateAssemblerCode() {
+            alert(assemblerCode);
+            document.getElementById("assembledCode").innerHTML = assemblerCode;
         }
 
 

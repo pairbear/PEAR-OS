@@ -46,6 +46,7 @@ var TSOS;
             // Do the real work here. Be sure to set this.isExecuting appropriately.
             this.execute(memoryManager.getMemory(this.PC));
             this.updateCPU();
+            TSOS.Control.updateAssemblerCode();
         };
         Cpu.prototype.updateCPU = function () {
             if (this.isExecuting) {
@@ -83,6 +84,12 @@ var TSOS;
                     this.PC++;
                     break;
                 }
+                case "8D": {
+                    memoryManager.storeInMemory(++this.PC, this.Acc);
+                    assemblerCode = "STA $" + memoryManager.getMemory(this.PC);
+                    this.PC++;
+                    break;
+                }
                 case "6D": {
                     //Adds with Carry: Adds contents of an address to the contents
                     // of the accumulator and keeps the result in the accumulator
@@ -95,7 +102,6 @@ var TSOS;
                     //Loads the X register with a constant
                     this.Xreg = memoryManager.convertHex(memoryManager.getMemory(++this.PC));
                     assemblerCode = "LDX #$" + memoryManager.getMemory(this.PC);
-                    this.PC++;
                     break;
                 }
                 case "AE": {
@@ -134,6 +140,7 @@ var TSOS;
                 case "EC": {
                     //Compares a byte in memory to the the X register
                     //Sets the Z (zero) flag if equal
+                    alert("EC");
                     if ((memoryManager.convertHex(memoryManager.getNext2Bytes(++this.PC)) == this.Xreg)) {
                         this.Zflag = 1;
                     }
@@ -158,8 +165,10 @@ var TSOS;
                 }
                 case "EE": {
                     //Increment the value of a byte
-                    memoryManager.storeInMemory(this.PC + 1, memoryManager.convertHex(memoryManager.getNext2Bytes(++this.PC)));
-                    assemblerCode = "INC" + memoryManager.getNext2Bytes(++this.PC);
+                    alert("EE" + memoryManager.getNext2Bytes(++this.PC));
+                    alert("EE 2" + memoryManager.convertHex(memoryManager.getNext2Bytes(++this.PC)) + 1);
+                    memoryManager.storeInMemory(this.PC + 1, (memoryManager.convertHex(memoryManager.getNext2Bytes(++this.PC)) + 1));
+                    assemblerCode = "INC $" + memoryManager.getNext2Bytes(this.PC);
                     this.PC++;
                     break;
                 }
@@ -167,6 +176,11 @@ var TSOS;
                     //System Call
                     assemblerCode = "SYS";
                     _KernelInterruptQueue.enqueue(new TSOS.Interrupt(CPU_SYS_IRQ, 3));
+                    break;
+                }
+                default: {
+                    //fuck your chicken strips...
+                    alert("default");
                     break;
                 }
             }
