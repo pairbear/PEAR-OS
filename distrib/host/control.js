@@ -111,7 +111,7 @@ var TSOS;
             document.getElementById("assembledCode").innerHTML = assemblerCode;
         };
         Control.updateAssemblerCode = function () {
-            alert(assemblerCode);
+            //alert("Assembler code = " + assemblerCode);
             document.getElementById("assembledCode").innerHTML = assemblerCode;
         };
         return Control;

@@ -140,7 +140,6 @@ var TSOS;
                 case "EC": {
                     //Compares a byte in memory to the the X register
                     //Sets the Z (zero) flag if equal
-                    alert("EC");
                     if ((memoryManager.convertHex(memoryManager.getNext2Bytes(++this.PC)) == this.Xreg)) {
                         this.Zflag = 1;
                     }
@@ -156,17 +155,18 @@ var TSOS;
                     if (this.Zflag == 0) {
                         assemblerCode = "BNE $" + memoryManager.getMemory(this.PC + 1);
                         this.PC += memoryManager.convertHex(memoryManager.getMemory(++this.PC)) + 1;
+                        if (this.PC >= 256) {
+                            this.PC -= 256;
+                        }
                     }
                     else {
                         assemblerCode = "BNE $" + memoryManager.getMemory(this.PC);
+                        this.PC++;
                     }
-                    this.PC++;
                     break;
                 }
                 case "EE": {
                     //Increment the value of a byte
-                    alert("EE" + memoryManager.getNext2Bytes(++this.PC));
-                    alert("EE 2" + memoryManager.convertHex(memoryManager.getNext2Bytes(++this.PC)) + 1);
                     memoryManager.storeInMemory(this.PC + 1, (memoryManager.convertHex(memoryManager.getNext2Bytes(++this.PC)) + 1));
                     assemblerCode = "INC $" + memoryManager.getNext2Bytes(this.PC);
                     this.PC++;
@@ -179,8 +179,7 @@ var TSOS;
                     break;
                 }
                 default: {
-                    //fuck your chicken strips...
-                    alert("default");
+                    //fucking chicken strips...
                     break;
                 }
             }
