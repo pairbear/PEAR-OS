@@ -93,8 +93,12 @@ var TSOS;
                 case "6D": {
                     //Adds with Carry: Adds contents of an address to the contents
                     // of the accumulator and keeps the result in the accumulator
-                    memoryManager.storeInMemory(++this.PC, this.Acc);
-                    assemblerCode = "6D ADC $" + memoryManager.getMemory(this.PC);
+                    //memoryManager.storeInMemory(++this.PC, this.Acc);
+                    //assemblerCode = "6D ADC $" + memoryManager.getMemory(this.PC);
+                    //this.PC++;
+                    //break;
+                    this.Acc += memoryManager.convertHex(memoryManager.getNext2Bytes(++this.PC));
+                    assemblerCode = "6D ADC $" + memoryManager.getNext2Bytes(this.PC);
                     this.PC++;
                     break;
                 }
@@ -116,7 +120,6 @@ var TSOS;
                     //Loads the Y register with a constant
                     this.Yreg = memoryManager.convertHex(memoryManager.getMemory(++this.PC));
                     assemblerCode = "A0 LDY #$" + memoryManager.getMemory(this.PC);
-                    //this.PC++;
                     break;
                 }
                 case "AC": {
@@ -156,6 +159,7 @@ var TSOS;
                     if (this.Zflag == 0) {
                         assemblerCode = "D0 BNE $" + memoryManager.getMemory(this.PC + 1);
                         this.PC += memoryManager.convertHex(memoryManager.getMemory(++this.PC)) + 1;
+                        //alert(this.PC)
                         if (this.PC >= 256) {
                             this.PC -= 256;
                         }
@@ -181,6 +185,7 @@ var TSOS;
                 }
                 default: {
                     //fucking chicken strips...
+                    alert("this better not have happened... or Alan or anyone that uses this will not be happy");
                     break;
                 }
             }

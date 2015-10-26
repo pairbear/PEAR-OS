@@ -139,7 +139,7 @@ module TSOS {
         }
 
         public static updateAssemblerCode() {
-            alert("Assembler code = " + assemblerCode);
+            //alert("Assembler code = " + assemblerCode);
             document.getElementById("assembledCode").innerHTML = assemblerCode;
         }
 
