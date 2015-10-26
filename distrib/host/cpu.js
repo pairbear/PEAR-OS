@@ -74,19 +74,19 @@ var TSOS;
                 case "A9": {
                     //Loads the accumulator with a constant
                     this.Acc = memoryManager.convertHex(memoryManager.getMemory(++this.PC));
-                    assemblerCode = "LDA #$" + memoryManager.getMemory(this.PC);
+                    assemblerCode = "A9 LDA #$" + memoryManager.getMemory(this.PC);
                     break;
                 }
                 case "AD": {
                     //loads the accumulator from memory
                     this.Acc = memoryManager.convertHex(memoryManager.getNext2Bytes(++this.PC));
-                    assemblerCode = "LDA $" + memoryManager.getMemory(this.PC);
+                    assemblerCode = "AD LDA $" + memoryManager.getMemory(this.PC);
                     this.PC++;
                     break;
                 }
                 case "8D": {
                     memoryManager.storeInMemory(++this.PC, this.Acc);
-                    assemblerCode = "STA $" + memoryManager.getMemory(this.PC);
+                    assemblerCode = "8D STA $" + memoryManager.getMemory(this.PC);
                     this.PC++;
                     break;
                 }
@@ -94,46 +94,47 @@ var TSOS;
                     //Adds with Carry: Adds contents of an address to the contents
                     // of the accumulator and keeps the result in the accumulator
                     memoryManager.storeInMemory(++this.PC, this.Acc);
-                    assemblerCode = "ADC $" + memoryManager.getMemory(this.PC);
+                    assemblerCode = "6D ADC $" + memoryManager.getMemory(this.PC);
                     this.PC++;
                     break;
                 }
                 case "A2": {
                     //Loads the X register with a constant
                     this.Xreg = memoryManager.convertHex(memoryManager.getMemory(++this.PC));
-                    assemblerCode = "LDX #$" + memoryManager.getMemory(this.PC);
+                    assemblerCode = "A2 LDX #$" + memoryManager.getMemory(this.PC);
                     break;
                 }
                 case "AE": {
                     //Loads the X register from memory
                     this.Xreg = memoryManager.convertHex(memoryManager.getNext2Bytes(++this.PC));
-                    assemblerCode = "LDX $" + memoryManager.getMemory(this.PC);
+                    //alert("xreg = " + this.Xreg);
+                    assemblerCode = "AE LDX $" + memoryManager.getMemory(this.PC);
                     this.PC++;
                     break;
                 }
                 case "A0": {
                     //Loads the Y register with a constant
                     this.Yreg = memoryManager.convertHex(memoryManager.getMemory(++this.PC));
-                    assemblerCode = "LDY #$" + memoryManager.getMemory(this.PC);
-                    this.PC++;
+                    assemblerCode = "A0 LDY #$" + memoryManager.getMemory(this.PC);
+                    //this.PC++;
                     break;
                 }
                 case "AC": {
                     //Loads the Y register from memory
                     this.Yreg = memoryManager.convertHex(memoryManager.getNext2Bytes(++this.PC));
-                    assemblerCode = "LDY $" + memoryManager.getMemory(this.PC);
+                    assemblerCode = "AC LDY $" + memoryManager.getMemory(this.PC);
                     this.PC++;
                     break;
                 }
                 case "EA": {
                     //No operation
-                    assemblerCode = "NOP";
+                    assemblerCode = "EA NOP";
                     break;
                 }
                 case "00": {
                     //Break
                     this.updateCPU();
-                    assemblerCode = "BRK";
+                    assemblerCode = "00 BRK";
                     _KernelInterruptQueue.enqueue(new TSOS.Interrupt(CPU_BRK_IRQ, 2));
                     break;
                 }
@@ -146,21 +147,21 @@ var TSOS;
                     else {
                         this.Zflag = 0;
                     }
-                    assemblerCode = "CPX $" + memoryManager.getNext2Bytes(this.PC);
+                    assemblerCode = "EC CPX $" + memoryManager.getNext2Bytes(this.PC);
                     this.PC++;
                     break;
                 }
                 case "D0": {
                     //Branch N bytes if Z flag = 0
                     if (this.Zflag == 0) {
-                        assemblerCode = "BNE $" + memoryManager.getMemory(this.PC + 1);
+                        assemblerCode = "D0 BNE $" + memoryManager.getMemory(this.PC + 1);
                         this.PC += memoryManager.convertHex(memoryManager.getMemory(++this.PC)) + 1;
                         if (this.PC >= 256) {
                             this.PC -= 256;
                         }
                     }
                     else {
-                        assemblerCode = "BNE $" + memoryManager.getMemory(this.PC);
+                        assemblerCode = "D0 BNE $" + memoryManager.getMemory(this.PC);
                         this.PC++;
                     }
                     break;
@@ -168,13 +169,13 @@ var TSOS;
                 case "EE": {
                     //Increment the value of a byte
                     memoryManager.storeInMemory(this.PC + 1, (memoryManager.convertHex(memoryManager.getNext2Bytes(++this.PC)) + 1));
-                    assemblerCode = "INC $" + memoryManager.getNext2Bytes(this.PC);
+                    assemblerCode = "EE INC $" + memoryManager.getNext2Bytes(this.PC);
                     this.PC++;
                     break;
                 }
                 case "FF": {
                     //System Call
-                    assemblerCode = "SYS";
+                    assemblerCode = "FF SYS";
                     _KernelInterruptQueue.enqueue(new TSOS.Interrupt(CPU_SYS_IRQ, 3));
                     break;
                 }
