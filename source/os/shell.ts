@@ -391,7 +391,7 @@ module TSOS {
         }
 
         public shellRun (args) {
-            _ExecutingProgram = parseInt(args[0]);
+            executingProgram = parseInt(args[0]);
             _KernelInterruptQueue.enqueue(new Interrupt(CPU_EXECUTE_PROGRAM, 4));
             _StdOut.putText("hi...?")
         }

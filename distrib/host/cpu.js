@@ -47,27 +47,19 @@ var TSOS;
             this.execute(memoryManager.getMemory(this.PC));
             this.updateCPU();
             TSOS.Control.updateAssemblerCode();
+            TSOS.Control.updateCPUDisplay();
+            TSOS.Control.updatePCBDisplay();
         };
         Cpu.prototype.updateCPU = function () {
             if (this.isExecuting) {
-                programs[_ExecutingProgram].PC = this.PC;
-                programs[_ExecutingProgram].Instruction = this.Instruction;
-                programs[_ExecutingProgram].Acc = this.Acc;
-                programs[_ExecutingProgram].Xreg = this.Xreg;
-                programs[_ExecutingProgram].Yreg = this.Yreg;
-                programs[_ExecutingProgram].Zflag = this.Zflag;
+                programs[executingProgram].PC = this.PC;
+                programs[executingProgram].Instruction = this.Instruction;
+                programs[executingProgram].Acc = this.Acc;
+                programs[executingProgram].Xreg = this.Xreg;
+                programs[executingProgram].Yreg = this.Yreg;
+                programs[executingProgram].Zflag = this.Zflag;
             }
         };
-        /*public runProgram() {
-            this.cycle()
-                var PCB = new TSOS.ProcessControlBlock();
-                PCB.PC = this.PC;
-                PCB.Acc = this.Acc;
-                PCB.Xreg = this.Xreg;
-                PCB.Yreg = this.Yreg;
-                PCB.Zflag = this.Zflag;
-
-        }*/
         Cpu.prototype.execute = function (instructions) {
             this.Instruction = instructions.toUpperCase();
             switch (this.Instruction) {
@@ -93,10 +85,6 @@ var TSOS;
                 case "6D": {
                     //Adds with Carry: Adds contents of an address to the contents
                     // of the accumulator and keeps the result in the accumulator
-                    //memoryManager.storeInMemory(++this.PC, this.Acc);
-                    //assemblerCode = "6D ADC $" + memoryManager.getMemory(this.PC);
-                    //this.PC++;
-                    //break;
                     this.Acc += memoryManager.convertHex(memoryManager.getNext2Bytes(++this.PC));
                     assemblerCode = "6D ADC $" + memoryManager.getNext2Bytes(this.PC);
                     this.PC++;

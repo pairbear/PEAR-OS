@@ -27,7 +27,7 @@ var Status = null;
 var Time = null;
 var _CPU; // Utilize TypeScript's type annotation system to ensure that _CPU is an instance of the Cpu class.
 var assemblerCode = "";
-var _ExecutingProgram;
+var executingProgram;
 var memoryManager;
 var memory;
 var programs = [];

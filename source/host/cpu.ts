@@ -45,29 +45,20 @@ module TSOS {
             this.execute(memoryManager.getMemory(this.PC));
             this.updateCPU();
             TSOS.Control.updateAssemblerCode();
+            TSOS.Control.updateCPUDisplay();
+            TSOS.Control.updatePCBDisplay();
         }
 
         public updateCPU(){
             if (this.isExecuting) {
-                programs[_ExecutingProgram].PC = this.PC;
-                programs[_ExecutingProgram].Instruction = this.Instruction;
-                programs[_ExecutingProgram].Acc = this.Acc;
-                programs[_ExecutingProgram].Xreg = this.Xreg;
-                programs[_ExecutingProgram].Yreg = this.Yreg;
-                programs[_ExecutingProgram].Zflag = this.Zflag;
+                programs[executingProgram].PC = this.PC;
+                programs[executingProgram].Instruction = this.Instruction;
+                programs[executingProgram].Acc = this.Acc;
+                programs[executingProgram].Xreg = this.Xreg;
+                programs[executingProgram].Yreg = this.Yreg;
+                programs[executingProgram].Zflag = this.Zflag;
             }
         }
-
-        /*public runProgram() {
-            this.cycle()
-                var PCB = new TSOS.ProcessControlBlock();
-                PCB.PC = this.PC;
-                PCB.Acc = this.Acc;
-                PCB.Xreg = this.Xreg;
-                PCB.Yreg = this.Yreg;
-                PCB.Zflag = this.Zflag;
-
-        }*/
 
         public execute(instructions):void {
 

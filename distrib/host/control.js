@@ -114,6 +114,21 @@ var TSOS;
             //alert("Assembler code = " + assemblerCode);
             document.getElementById("assembledCode").innerHTML = assemblerCode;
         };
+        Control.updateCPUDisplay = function () {
+            document.getElementById("cpuPC").innerHTML = String(_CPU.PC);
+            document.getElementById("cpuACC").innerHTML = String(_CPU.Acc);
+            document.getElementById("cpuX").innerHTML = String(_CPU.Xreg);
+            document.getElementById("cpuY").innerHTML = String(_CPU.Yreg);
+            document.getElementById("cpuZ").innerHTML = String(_CPU.Zflag);
+        };
+        Control.updatePCBDisplay = function () {
+            document.getElementById("pcbPC").innerHTML = String(programs[executingProgram].PC);
+            document.getElementById("PCBInstruction").innerHTML = String(programs[executingProgram].Instruction);
+            document.getElementById("pcbACC").innerHTML = String(programs[executingProgram].Acc);
+            document.getElementById("pcbX").innerHTML = String(programs[executingProgram].Xreg);
+            document.getElementById("pcbY").innerHTML = String(programs[executingProgram].Yreg);
+            document.getElementById("pcbZ").innerHTML = String(programs[executingProgram].Zflag);
+        };
         return Control;
     })();
     TSOS.Control = Control;
