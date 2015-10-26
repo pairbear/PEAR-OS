@@ -27,13 +27,12 @@ var Status = null;
 var Time = null;
 var _CPU; // Utilize TypeScript's type annotation system to ensure that _CPU is an instance of the Cpu class.
 var assemblerCode = "";
-var _ExecutingProgram;
+var executingProgram;
 var memoryManager;
 var memory;
 var programs = [];
-var programSize = 256;
 var programNumbers = 1;
-var memorySize = programNumbers * programSize;
+var memorySize = programNumbers * 256;
 var currentPID = 0;
 var _OSclock = 0; // Page 23.
 var _Mode = 0; // (currently unused)  0 = Kernel Mode, 1 = User Mode.  See page 21.

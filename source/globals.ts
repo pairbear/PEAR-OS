@@ -33,15 +33,14 @@ var Time:HTMLDivElement = null;
 
 var _CPU: TSOS.Cpu;  // Utilize TypeScript's type annotation system to ensure that _CPU is an instance of the Cpu class.
 var assemblerCode = "";
-var _ExecutingProgram
-
+var executingProgram;
 var memoryManager: TSOS.MemoryManager;
 var memory: TSOS.Memory;
 var programs =[];
-var programSize = 256;
 var programNumbers = 1;
-var memorySize = programNumbers * programSize;
+var memorySize = programNumbers * 256;
 var currentPID = 0;
+
 
 var _OSclock: number = 0;  // Page 23.
 

@@ -27,7 +27,7 @@ module TSOS {
         public loadProgram(program) {
             var newPCB = new TSOS.ProcessControlBlock();
             newPCB.base = 0;
-            newPCB.limit = newPCB.base + programSize;
+            newPCB.limit = newPCB.base + 256;
             programs[newPCB.PID] = newPCB;
             for (var i = 0; i < program.length; i++) {
                 this.memory.userProgram[i] = program[i];
@@ -37,30 +37,13 @@ module TSOS {
         }
 
         public getMemory(address:any) {
-
-            //return this.memory.userProgram[address];
-
              if (typeof address==="number"){
-                //checking memory in bounds
-                if (address>= programs[_ExecutingProgram].limit || address <programs[_ExecutingProgram].base ) {
-                    //_KernelInterruptQueue.enqueue(new Interrupt(MEMORY_ACCESS_VIOLATION_IRQ, Utils.dec2hex(address)));
-                    alert("something is borked")
-                }
-                else {
                     return this.memory.userProgram[address];
-                }
             }
             else {
                 var decAddress = this.convertHex(address);
                 //checking memory in bounds
-                 // alert(decAddress);
-                if (decAddress >= programs[_ExecutingProgram].limit || decAddress < programs[_ExecutingProgram].base) {
-                    //_KernelInterruptQueue.enqueue(new Interrupt(MEMORY_ACCESS_VIOLATION_IRQ, address));
-                    alert("something else is borked");
-                }
-                else {
                     return this.memory.userProgram[decAddress];
-                }
             }
         }
 
