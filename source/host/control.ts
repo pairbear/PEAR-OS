@@ -152,12 +152,19 @@ module TSOS {
         }
 
         public  static updatePCBDisplay() {
-            document.getElementById("pcbPC").innerHTML = String(programs[executingProgram].PC);
-            document.getElementById("PCBInstruction").innerHTML = String(programs[executingProgram].Instruction);
-            document.getElementById("pcbACC").innerHTML = String(programs[executingProgram].Acc);
-            document.getElementById("pcbX").innerHTML = String(programs[executingProgram].Xreg);
-            document.getElementById("pcbY").innerHTML = String(programs[executingProgram].Yreg);
-            document.getElementById("pcbZ").innerHTML = String(programs[executingProgram].Zflag);
+            //document.getElementById("pcbPC").innerHTML = String(programs[executingProgram].PC);
+            //document.getElementById("PCBInstruction").innerHTML = String(programs[executingProgram].Instruction);
+            //document.getElementById("pcbACC").innerHTML = String(programs[executingProgram].Acc);
+            //document.getElementById("pcbX").innerHTML = String(programs[executingProgram].Xreg);
+            //document.getElementById("pcbY").innerHTML = String(programs[executingProgram].Yreg);
+            //document.getElementById("pcbZ").innerHTML = String(programs[executingProgram].Zflag);
+
+            document.getElementById("pcbPC").innerHTML = String(executingProgram.PC);
+            document.getElementById("PCBInstruction").innerHTML = String(executingProgram.Instruction);
+            document.getElementById("pcbACC").innerHTML = String(executingProgram.Acc);
+            document.getElementById("pcbX").innerHTML = String(executingProgram.Xreg);
+            document.getElementById("pcbY").innerHTML = String(executingProgram.Yreg);
+            document.getElementById("pcbZ").innerHTML = String(executingProgram.Zflag);
 
         }
 

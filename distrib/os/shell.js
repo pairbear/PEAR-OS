@@ -313,13 +313,12 @@ var TSOS;
             }
             else {
                 var programString = userInput.split(" ");
-                _StdOut.putText("PID " + memoryManager.loadProgram(programString));
+                _StdOut.putText("PID: " + memoryManager.loadProgram(programString));
             }
         };
         Shell.prototype.shellRun = function (args) {
-            executingProgram = parseInt(args[0]);
+            executingProgramPID = parseInt(args[0]);
             _KernelInterruptQueue.enqueue(new TSOS.Interrupt(CPU_EXECUTE_PROGRAM, 4));
-            _StdOut.putText("hi...?");
         };
         return Shell;
     })();

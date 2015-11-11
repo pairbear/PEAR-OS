@@ -168,7 +168,7 @@ var TSOS;
             }
             else if (_CPU.Xreg === 2) {
                 var string = "";
-                var curPos = _CPU.Yreg;
+                var curPos = _CPU.Yreg + executingProgram.base;
                 var curData = memoryManager.getMemory(curPos);
                 while (curData !== "00") {
                     string += String.fromCharCode(memoryManager.convertHex(curData));

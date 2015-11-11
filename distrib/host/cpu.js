@@ -45,23 +45,40 @@ var TSOS;
             // TODO: Accumulate CPU usage and profiling statistics here.
             // Do the real work here. Be sure to set this.isExecuting appropriately.
             this.execute(memoryManager.getMemory(this.PC));
-            this.updateCPU();
+            alert(executingProgram.PC);
+            this.updatePCB();
             TSOS.Control.updateAssemblerCode();
             TSOS.Control.updateCPUDisplay();
             TSOS.Control.updatePCBDisplay();
         };
         Cpu.prototype.updateCPU = function () {
             if (this.isExecuting) {
-                programs[executingProgram].PC = this.PC;
-                programs[executingProgram].Instruction = this.Instruction;
-                programs[executingProgram].Acc = this.Acc;
-                programs[executingProgram].Xreg = this.Xreg;
-                programs[executingProgram].Yreg = this.Yreg;
-                programs[executingProgram].Zflag = this.Zflag;
+                this.PC = executingProgram.PC;
+                this.Instruction = executingProgram.Instruction;
+                this.Acc = executingProgram.Acc;
+                this.Xreg = executingProgram.Xreg;
+                this.Yreg = executingProgram.Yreg;
+                this.Zflag = executingProgram.Zflag;
             }
+        };
+        Cpu.prototype.updatePCB = function () {
+            //update program pcb
+            alert("A");
+            alert(executingProgram.PC);
+            alert("AA");
+            executingProgram.PC = _CPU.PC;
+            alert("B");
+            executingProgram.Instruction = _CPU.Instruction;
+            alert("C");
+            executingProgram.Acc = _CPU.Acc;
+            alert("D");
+            executingProgram.Xreg = _CPU.Xreg;
+            executingProgram.Yreg = _CPU.Yreg;
+            executingProgram.Zflag = _CPU.Zflag;
         };
         Cpu.prototype.execute = function (instructions) {
             this.Instruction = instructions.toUpperCase();
+            //alert(this.Instruction);
             switch (this.Instruction) {
                 case "A9": {
                     //Loads the accumulator with a constant
@@ -77,6 +94,7 @@ var TSOS;
                     break;
                 }
                 case "8D": {
+                    //store the accumulator in memory
                     memoryManager.storeInMemory(++this.PC, this.Acc);
                     assemblerCode = "8D STA $" + memoryManager.getMemory(this.PC);
                     this.PC++;
@@ -124,7 +142,7 @@ var TSOS;
                 }
                 case "00": {
                     //Break
-                    this.updateCPU();
+                    this.updatePCB();
                     assemblerCode = "00 BRK";
                     _KernelInterruptQueue.enqueue(new TSOS.Interrupt(CPU_BRK_IRQ, 2));
                     break;
