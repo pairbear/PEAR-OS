@@ -2,7 +2,8 @@ module TSOS {
 
     export class MemoryManager {
 
-        constructor(public memory:Memory = new Memory(memorySize)) {
+        constructor(public memory:Memory = new Memory(memorySize),
+                    public nextOpenMemoryBlock: number = 0) {
         }
 
         public init():void {
@@ -23,15 +24,29 @@ module TSOS {
 
         }
 
+        public findNextOpenBlock() {
+            for (var i =0; i< 256 * programNumbers; i+=256){
+                if (this.memory.userProgram[i]==="00")
+                    return i;
+            }
+            return null;
+    }
+
+        public setNextOpenBlock(pcb) {
+            this.nextOpenMemoryBlock =  pcb.base;
+        }
+
 
         public loadProgram(program) {
             var newPCB = new TSOS.ProcessControlBlock();
-            newPCB.base = 0;
+            newPCB.base = this.nextOpenMemoryBlock;
             newPCB.limit = newPCB.base + 256;
-            programs[newPCB.PID] = newPCB;
+            newPCB.PC = newPCB.base;
+            //programs[newPCB.PID] = newPCB;
             for (var i = 0; i < program.length; i++) {
-                this.memory.userProgram[i] = program[i];
+                this.memory.userProgram[i + newPCB.base] = program[i];
             }
+            this.nextOpenMemoryBlock = this.findNextOpenBlock();
             this.updateMemoryDisplay();
             return (newPCB.PID).toString()
         }
@@ -41,8 +56,7 @@ module TSOS {
                     return this.memory.userProgram[address];
             }
             else {
-                var decAddress = this.convertHex(address);
-                //checking memory in bounds
+                var decAddress = this.convertHex(address) + executingProgram.base;
                     return this.memory.userProgram[decAddress];
             }
         }
@@ -63,7 +77,8 @@ module TSOS {
         public storeInMemory(beginningAddress, value) {
             var hexValue = value.toString(16).toUpperCase();
             hexValue = Array(2 - (hexValue.length - 1)).join("0") + hexValue;
-            var position = this.getDecFromHex(beginningAddress);
+            alert(executingProgram.base);
+            var position = this.getDecFromHex(beginningAddress) + executingProgram.base;
             this.memory.userProgram[position] = hexValue;
 
         }

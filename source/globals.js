@@ -11,7 +11,7 @@
 // Global CONSTANTS (TypeScript 1.5 introduced const. Very cool.)
 //
 var APP_NAME = "PEAR-OS"; // 'cause Bob and I were at a loss for a better name.
-var APP_VERSION = " over 9000"; // What did you expect?
+var APP_VERSION = " over 9000 TEEEEEST"; // What did you expect?
 var CPU_CLOCK_INTERVAL = 100; // This is in ms (milliseconds) so 1000 = 1 second.
 var TIMER_IRQ = 0; // Pages 23 (timer), 9 (interrupts), and 561 (interrupt priority).
 // NOTE: The timer is different from hardware/host clock pulses. Don't confuse these.
@@ -28,11 +28,10 @@ var Time = null;
 var _CPU; // Utilize TypeScript's type annotation system to ensure that _CPU is an instance of the Cpu class.
 var assemblerCode = "";
 var executingProgram;
-var executingProgramPID;
 var memoryManager;
 var memory;
-//var programs =[];
-var programNumbers = 3;
+var programs = [];
+var programNumbers = 1;
 var memorySize = programNumbers * 256;
 var currentPID = 0;
 var _OSclock = 0; // Page 23.
@@ -65,3 +64,4 @@ var _GLaDOS = null; // If the above is linked in, this is the instantiated insta
 var onDocumentLoad = function () {
     TSOS.Control.hostInit();
 };
+//# sourceMappingURL=globals.js.map
