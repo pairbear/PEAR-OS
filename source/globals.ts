@@ -35,10 +35,10 @@ var _CPU: TSOS.Cpu;  // Utilize TypeScript's type annotation system to ensure th
 var assemblerCode = "";
 var executingProgram;
 var executingProgramPID;
+var currentPID = 0;
 var memoryManager: TSOS.MemoryManager;
 var memory: TSOS.Memory;
-var cpuScheduler: TSOS.cpuScheduler
-//var programs =[];
+var scheduler: TSOS.CPUScheduler;
 var programNumbers = 3;
 var memorySize = programNumbers * 256;
 var currentPID = 0;

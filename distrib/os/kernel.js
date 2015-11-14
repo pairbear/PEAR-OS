@@ -118,6 +118,7 @@ var TSOS;
                     _StdOut.systemOpCodeHandler();
                     break;
                 case CPU_EXECUTE_PROGRAM:
+                    scheduler.runProgram();
                     _CPU.isExecuting = true;
                     break;
                 default:

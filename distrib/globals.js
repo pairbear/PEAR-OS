@@ -29,9 +29,10 @@ var _CPU; // Utilize TypeScript's type annotation system to ensure that _CPU is 
 var assemblerCode = "";
 var executingProgram;
 var executingProgramPID;
+var currentPID = 0;
 var memoryManager;
 var memory;
-//var programs =[];
+var scheduler;
 var programNumbers = 3;
 var memorySize = programNumbers * 256;
 var currentPID = 0;

@@ -45,7 +45,7 @@ var TSOS;
             // TODO: Accumulate CPU usage and profiling statistics here.
             // Do the real work here. Be sure to set this.isExecuting appropriately.
             this.execute(memoryManager.getMemory(this.PC));
-            alert(executingProgram.PC);
+            //this.updateCPU();
             this.updatePCB();
             TSOS.Control.updateAssemblerCode();
             TSOS.Control.updateCPUDisplay();
@@ -62,23 +62,15 @@ var TSOS;
             }
         };
         Cpu.prototype.updatePCB = function () {
-            //update program pcb
-            alert("A");
-            alert(executingProgram.PC);
-            alert("AA");
             executingProgram.PC = _CPU.PC;
-            alert("B");
             executingProgram.Instruction = _CPU.Instruction;
-            alert("C");
             executingProgram.Acc = _CPU.Acc;
-            alert("D");
             executingProgram.Xreg = _CPU.Xreg;
             executingProgram.Yreg = _CPU.Yreg;
             executingProgram.Zflag = _CPU.Zflag;
         };
         Cpu.prototype.execute = function (instructions) {
             this.Instruction = instructions.toUpperCase();
-            //alert(this.Instruction);
             switch (this.Instruction) {
                 case "A9": {
                     //Loads the accumulator with a constant
@@ -142,7 +134,7 @@ var TSOS;
                 }
                 case "00": {
                     //Break
-                    this.updatePCB();
+                    this.updateCPU();
                     assemblerCode = "00 BRK";
                     _KernelInterruptQueue.enqueue(new TSOS.Interrupt(CPU_BRK_IRQ, 2));
                     break;

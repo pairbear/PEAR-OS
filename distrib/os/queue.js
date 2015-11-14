@@ -30,6 +30,19 @@ var TSOS;
             }
             return retVal;
         };
+        Queue.prototype.find = function (pid) {
+            //returns pcb and removes it from the queue
+            var retVal = null;
+            for (var i = 0; i < this.q.length; i++) {
+                alert(this.q[i].PID);
+                if (this.q[i].PID === pid) {
+                    retVal = this.q[i];
+                    if (i > -1)
+                        this.q.splice(i, 1);
+                    return retVal;
+                }
+            }
+        };
         Queue.prototype.toString = function () {
             var retVal = "";
             for (var i in this.q) {
