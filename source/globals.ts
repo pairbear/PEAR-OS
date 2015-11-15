@@ -44,8 +44,10 @@ var scheduler: TSOS.CPUScheduler;
 var programNumbers = 3;
 var memorySize = programNumbers * 256;
 var currentPID = 0;
-
 var quantum: number = 6;
+
+enum State {new, running, ready, done, killed};
+var States =["new", "running", "ready", "done", "killed"];
 
 
 var _OSclock: number = 0;  // Page 23.
