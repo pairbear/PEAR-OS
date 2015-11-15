@@ -183,7 +183,7 @@ var TSOS;
                 }
                 default: {
                     //fucking chicken strips...
-                    scheduler.killProcess();
+                    _CPU.isExecuting = false;
                     _StdOut.putText("Something is borked...");
                     break;
                 }

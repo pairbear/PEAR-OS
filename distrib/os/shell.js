@@ -69,16 +69,26 @@ var TSOS;
             //Initiates the Blue Screen of Death
             sc = new TSOS.ShellCommand(this.shellBSOD, "bsod", " - This tests when the kernel traps an OS error");
             this.commandList[this.commandList.length] = sc;
+            //loads programs into memery
             sc = new TSOS.ShellCommand(this.shellLoad, "load", " - runs a test to validate the user code in HTML5");
             this.commandList[this.commandList.length] = sc;
+            //runs programs from memory
             sc = new TSOS.ShellCommand(this.shellRun, "run", " - runs the loaded user code");
             this.commandList[this.commandList.length] = sc;
+            //runs all programs in memory
             sc = new TSOS.ShellCommand(this.shellRunAll, "runall", " - runs the all the loaded user code");
             this.commandList[this.commandList.length] = sc;
+            //kills an active process
             sc = new TSOS.ShellCommand(this.shellKill, "kill", " - kills running process's");
             this.commandList[this.commandList.length] = sc;
-            // ps  - list the running processes and their IDs
-            // kill <id> - kills the specified process id.
+            //clears the memory
+            sc = new TSOS.ShellCommand(this.shellClearMemory, "clearmemory", " - clears the memory");
+            this.commandList[this.commandList.length] = sc;
+            //set the quantum
+            sc = new TSOS.ShellCommand(this.shellSetQuantum, "quantum", " - sets the quantum for the CPU Scheduler ");
+            this.commandList[this.commandList.length] = sc;
+            sc = new TSOS.ShellCommand(this.shellDisplayRunningProcesses, "ps", " - Displays process currently being executed ");
+            this.commandList[this.commandList.length] = sc;
             //
             // Display the initial prompt.
             this.putPrompt();
@@ -321,15 +331,34 @@ var TSOS;
             }
         };
         Shell.prototype.shellRun = function (args) {
+            _StdOut.putText("Running program " + args);
             executingProgramPID = parseInt(args[0]);
             _KernelInterruptQueue.enqueue(new TSOS.Interrupt(CPU_EXECUTE_PROGRAM, 4));
         };
         Shell.prototype.shellRunAll = function (args) {
+            _StdOut.putText("Running all programs");
             executingProgramPID = parseInt(args[0]);
             _KernelInterruptQueue.enqueue(new TSOS.Interrupt(CPU_EXECUTE_PROGRAM, "all"));
         };
         Shell.prototype.shellKill = function (args) {
-            scheduler.killProcess();
+            _StdOut.putText("Killing Program " + args);
+            var PID = parseInt(args[0]);
+            scheduler.killProcess(PID);
+        };
+        Shell.prototype.shellClearMemory = function (args) {
+            _StdOut.putText("Clearing memory");
+            _KernelInterruptQueue.enqueue(new TSOS.Interrupt(MEMORY_CLEAR_IRQ, 6));
+        };
+        Shell.prototype.shellSetQuantum = function (args) {
+            quantum = args;
+            _StdOut.putText("quantum set to " + args);
+        };
+        Shell.prototype.shellDisplayRunningProcesses = function (args) {
+            var pid = "";
+            for (var i = 0; i < scheduler.readyQueue.getSize(); i++)
+                pid += ", PID: " + scheduler.readyQueue.getPCB(i);
+            _StdOut.putText("Current running processes... ");
+            _StdOut.putText("PID: " + executingProgramPID + pid);
         };
         return Shell;
     })();

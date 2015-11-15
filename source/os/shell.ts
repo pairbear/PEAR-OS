@@ -117,29 +117,47 @@ module TSOS {
                                 " - This tests when the kernel traps an OS error");
             this.commandList[this.commandList.length] = sc;
 
+            //loads programs into memery
             sc = new ShellCommand(this.shellLoad,
                                 "load",
                                 " - runs a test to validate the user code in HTML5");
             this.commandList[this.commandList.length] = sc;
 
+            //runs programs from memory
             sc = new ShellCommand(this.shellRun,
                                 "run",
                                 " - runs the loaded user code");
             this.commandList[this.commandList.length] = sc;
 
+            //runs all programs in memory
             sc = new ShellCommand(this.shellRunAll,
                                  "runall",
                                 " - runs the all the loaded user code");
             this.commandList[this.commandList.length] = sc;
 
+            //kills an active process
             sc =  new ShellCommand(this.shellKill,
                                 "kill",
                                 " - kills running process's");
             this.commandList[this.commandList.length] = sc;
 
+            //clears the memory
+            sc =  new ShellCommand(this.shellClearMemory,
+                "clearmemory",
+                " - clears the memory");
+            this.commandList[this.commandList.length] = sc;
 
-            // ps  - list the running processes and their IDs
-            // kill <id> - kills the specified process id.
+            //set the quantum
+            sc =  new ShellCommand(this.shellSetQuantum,
+                "quantum",
+                " - sets the quantum for the CPU Scheduler ");
+            this.commandList[this.commandList.length] = sc;
+
+            sc =  new ShellCommand(this.shellDisplayRunningProcesses,
+                "ps",
+                " - Displays process currently being executed ");
+            this.commandList[this.commandList.length] = sc;
+
 
             //
             // Display the initial prompt.
@@ -401,18 +419,41 @@ module TSOS {
         }
 
         public shellRun (args) {
+            _StdOut.putText("Running program " + args);
             executingProgramPID = parseInt(args[0]);
             _KernelInterruptQueue.enqueue(new Interrupt(CPU_EXECUTE_PROGRAM, 4));
         }
 
         public shellRunAll (args) {
+            _StdOut.putText("Running all programs");
             executingProgramPID = parseInt(args[0]);
             _KernelInterruptQueue.enqueue(new Interrupt(CPU_EXECUTE_PROGRAM, "all"));
         }
 
 
         public shellKill (args) {
-            scheduler.killProcess();
+            _StdOut.putText("Killing Program " + args);
+            var PID = parseInt(args[0]);
+            scheduler.killProcess(PID);
+        }
+
+        public shellClearMemory (args) {
+            _StdOut.putText("Clearing memory");
+            _KernelInterruptQueue.enqueue(new Interrupt(MEMORY_CLEAR_IRQ, 6));
+
+        }
+
+        public shellSetQuantum (args) {
+            quantum = args
+            _StdOut.putText("quantum set to " + args)
+        }
+
+        public shellDisplayRunningProcesses (args) {
+            var pid = ""
+            for(var i=0; i<scheduler.readyQueue.getSize(); i++)
+                pid += ", PID: " + scheduler.readyQueue.getPCB(i);
+            _StdOut.putText("Current running processes... ");
+            _StdOut.putText("PID: "+executingProgramPID + pid);
         }
 
     }

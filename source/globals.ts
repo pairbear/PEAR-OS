@@ -23,6 +23,7 @@ const CPU_BRK_IRQ: number = 2;
 const CPU_SYS_IRQ: number = 3;
 const CPU_EXECUTE_PROGRAM: number = 4;
 const CONTEXT_SWITCH_IRQ: number = 5;
+const MEMORY_CLEAR_IRQ: number = 6;
 
 //
 // Global Variables
@@ -44,8 +45,6 @@ var programNumbers = 3;
 var memorySize = programNumbers * 256;
 var currentPID = 0;
 
-//enum State {new, ready, running, complete, killed};
-//var States =["new","ready","running","complete", "killed"]
 var quantum: number = 6;
 
 

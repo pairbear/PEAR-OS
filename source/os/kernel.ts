@@ -151,7 +151,13 @@ module TSOS {
                     _CPU.isExecuting = true;
                     break;
                 case CONTEXT_SWITCH_IRQ:
+                    this.krnTrace("swithching process");
                     scheduler.contextSwitch();
+                    break;
+                case MEMORY_CLEAR_IRQ:
+                    memoryManager= new MemoryManager();
+                    memoryManager.init();
+                    scheduler = new CPUScheduler();
                     break;
                 default:
                     this.krnTrapError("Invalid Interrupt Request. irq=" + irq + " params=[" + params + "]");

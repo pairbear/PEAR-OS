@@ -33,6 +33,15 @@ module TSOS {
             return retVal;
         }
 
+
+        public toString() {
+            var retVal = "";
+            for (var i in this.q) {
+                retVal += "[" + this.q[i] + "] ";
+            }
+            return retVal;
+        }
+
         public getPID(pid){
             var retVal = null;
             for (var i =0; i<this.q.length; i++){
@@ -45,14 +54,9 @@ module TSOS {
             }
         }
 
-        public toString() {
-            var retVal = "";
-            for (var i in this.q) {
-                retVal += "[" + this.q[i] + "] ";
-            }
-            return retVal;
+        public getPCB(i) {
+            return this.q[i];
         }
-
 
 
     }

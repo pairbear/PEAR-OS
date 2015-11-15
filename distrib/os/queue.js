@@ -30,6 +30,13 @@ var TSOS;
             }
             return retVal;
         };
+        Queue.prototype.toString = function () {
+            var retVal = "";
+            for (var i in this.q) {
+                retVal += "[" + this.q[i] + "] ";
+            }
+            return retVal;
+        };
         Queue.prototype.getPID = function (pid) {
             var retVal = null;
             for (var i = 0; i < this.q.length; i++) {
@@ -41,12 +48,8 @@ var TSOS;
                 }
             }
         };
-        Queue.prototype.toString = function () {
-            var retVal = "";
-            for (var i in this.q) {
-                retVal += "[" + this.q[i] + "] ";
-            }
-            return retVal;
+        Queue.prototype.getPCB = function (i) {
+            return this.q[i];
         };
         return Queue;
     })();

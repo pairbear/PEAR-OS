@@ -49,9 +49,22 @@ module TSOS {
             _CPU.updateCPU();
         }
 
-        public killProcess() {
-            _CPU.isExecuting = false;
-        }
+        public killProcess(PID) {
+            var currProgram = null;
+            if (executingProgramPID === PID) {
+                //reset the pcb so if the program is restarted it will start from the beginning
+                currProgram = executingProgram;
+
+                //reset the executing program variables
+                executingProgramPID = null;
+                executingProgram = null;
+
+            } else {
+                    //remove the program from the ready queue
+                    currProgram = this.readyQueue.getPID(PID);
+                }
+            }
+
 
         public ReadyQueueDump() :boolean {
             if (this.readyQueue.getSize()===0){

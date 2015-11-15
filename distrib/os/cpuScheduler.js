@@ -39,8 +39,19 @@ var TSOS;
             executingProgramPID = executingProgram.PID;
             _CPU.updateCPU();
         };
-        CPUScheduler.prototype.killProcess = function () {
-            _CPU.isExecuting = false;
+        CPUScheduler.prototype.killProcess = function (PID) {
+            var currProgram = null;
+            if (executingProgramPID === PID) {
+                //reset the pcb so if the program is restarted it will start from the beginning
+                currProgram = executingProgram;
+                //reset the executing program variables
+                executingProgramPID = null;
+                executingProgram = null;
+            }
+            else {
+                //remove the program from the ready queue
+                currProgram = this.readyQueue.getPID(PID);
+            }
         };
         CPUScheduler.prototype.ReadyQueueDump = function () {
             if (this.readyQueue.getSize() === 0) {
