@@ -19,6 +19,8 @@ var KEYBOARD_IRQ = 1;
 var CPU_BRK_IRQ = 2;
 var CPU_SYS_IRQ = 3;
 var CPU_EXECUTE_PROGRAM = 4;
+var CONTEXT_SWITCH_IRQ = 5;
+var MEMORY_CLEAR_IRQ = 6;
 //
 // Global Variables
 // TODO: Make a global object and use that instead of the "_" naming convention in the global namespace.
@@ -29,12 +31,14 @@ var _CPU; // Utilize TypeScript's type annotation system to ensure that _CPU is 
 var assemblerCode = "";
 var executingProgram;
 var executingProgramPID;
+var currentPID = 0;
 var memoryManager;
 var memory;
-//var programs =[];
+var scheduler;
 var programNumbers = 3;
 var memorySize = programNumbers * 256;
 var currentPID = 0;
+var quantum = 6;
 var _OSclock = 0; // Page 23.
 var _Mode = 0; // (currently unused)  0 = Kernel Mode, 1 = User Mode.  See page 21.
 var _Canvas; // Initialized in Control.hostInit().

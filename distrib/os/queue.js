@@ -37,6 +37,20 @@ var TSOS;
             }
             return retVal;
         };
+        Queue.prototype.getPID = function (pid) {
+            var retVal = null;
+            for (var i = 0; i < this.q.length; i++) {
+                if (this.q[i].PID === pid) {
+                    retVal = this.q[i];
+                    if (i > -1)
+                        this.q.splice(i, 1);
+                    return retVal;
+                }
+            }
+        };
+        Queue.prototype.getPCB = function (i) {
+            return this.q[i];
+        };
         return Queue;
     })();
     TSOS.Queue = Queue;

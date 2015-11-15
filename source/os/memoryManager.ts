@@ -40,9 +40,9 @@ module TSOS {
         public loadProgram(program) {
             var newPCB = new TSOS.ProcessControlBlock();
             newPCB.base = this.nextOpenMemoryBlock;
-            newPCB.limit = newPCB.base + 256;
             newPCB.PC = newPCB.base;
-            //programs[newPCB.PID] = newPCB;
+            newPCB.limit = newPCB.base + 256;
+            scheduler.loadProgram(newPCB);
             for (var i = 0; i < program.length; i++) {
                 this.memory.userProgram[i + newPCB.base] = program[i];
             }
@@ -77,7 +77,6 @@ module TSOS {
         public storeInMemory(beginningAddress, value) {
             var hexValue = value.toString(16).toUpperCase();
             hexValue = Array(2 - (hexValue.length - 1)).join("0") + hexValue;
-            alert(executingProgram.base);
             var position = this.getDecFromHex(beginningAddress) + executingProgram.base;
             this.memory.userProgram[position] = hexValue;
 

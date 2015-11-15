@@ -22,6 +22,8 @@ const KEYBOARD_IRQ: number = 1;
 const CPU_BRK_IRQ: number = 2;
 const CPU_SYS_IRQ: number = 3;
 const CPU_EXECUTE_PROGRAM: number = 4;
+const CONTEXT_SWITCH_IRQ: number = 5;
+const MEMORY_CLEAR_IRQ: number = 6;
 
 //
 // Global Variables
@@ -35,13 +37,15 @@ var _CPU: TSOS.Cpu;  // Utilize TypeScript's type annotation system to ensure th
 var assemblerCode = "";
 var executingProgram;
 var executingProgramPID;
+var currentPID = 0;
 var memoryManager: TSOS.MemoryManager;
 var memory: TSOS.Memory;
-var cpuScheduler: TSOS.cpuScheduler
-//var programs =[];
+var scheduler: TSOS.CPUScheduler;
 var programNumbers = 3;
 var memorySize = programNumbers * 256;
 var currentPID = 0;
+
+var quantum: number = 6;
 
 
 var _OSclock: number = 0;  // Page 23.

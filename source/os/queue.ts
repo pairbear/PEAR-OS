@@ -33,6 +33,7 @@ module TSOS {
             return retVal;
         }
 
+
         public toString() {
             var retVal = "";
             for (var i in this.q) {
@@ -40,5 +41,23 @@ module TSOS {
             }
             return retVal;
         }
+
+        public getPID(pid){
+            var retVal = null;
+            for (var i =0; i<this.q.length; i++){
+                if (this.q[i].PID === pid){
+                    retVal = this.q[i];
+                    if (i>-1)
+                        this.q.splice(i, 1);
+                    return retVal;
+                }
+            }
+        }
+
+        public getPCB(i) {
+            return this.q[i];
+        }
+
+
     }
 }
