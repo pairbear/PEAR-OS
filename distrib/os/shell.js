@@ -73,6 +73,10 @@ var TSOS;
             this.commandList[this.commandList.length] = sc;
             sc = new TSOS.ShellCommand(this.shellRun, "run", " - runs the loaded user code");
             this.commandList[this.commandList.length] = sc;
+            sc = new TSOS.ShellCommand(this.shellRunAll, "runall", " - runs the all the loaded user code");
+            this.commandList[this.commandList.length] = sc;
+            sc = new TSOS.ShellCommand(this.shellKill, "kill", " - kills running process's");
+            this.commandList[this.commandList.length] = sc;
             // ps  - list the running processes and their IDs
             // kill <id> - kills the specified process id.
             //
@@ -319,6 +323,13 @@ var TSOS;
         Shell.prototype.shellRun = function (args) {
             executingProgramPID = parseInt(args[0]);
             _KernelInterruptQueue.enqueue(new TSOS.Interrupt(CPU_EXECUTE_PROGRAM, 4));
+        };
+        Shell.prototype.shellRunAll = function (args) {
+            executingProgramPID = parseInt(args[0]);
+            _KernelInterruptQueue.enqueue(new TSOS.Interrupt(CPU_EXECUTE_PROGRAM, "all"));
+        };
+        Shell.prototype.shellKill = function (args) {
+            scheduler.killProcess();
         };
         return Shell;
     })();

@@ -127,6 +127,16 @@ module TSOS {
                                 " - runs the loaded user code");
             this.commandList[this.commandList.length] = sc;
 
+            sc = new ShellCommand(this.shellRunAll,
+                                 "runall",
+                                " - runs the all the loaded user code");
+            this.commandList[this.commandList.length] = sc;
+
+            sc =  new ShellCommand(this.shellKill,
+                                "kill",
+                                " - kills running process's");
+            this.commandList[this.commandList.length] = sc;
+
 
             // ps  - list the running processes and their IDs
             // kill <id> - kills the specified process id.
@@ -393,6 +403,16 @@ module TSOS {
         public shellRun (args) {
             executingProgramPID = parseInt(args[0]);
             _KernelInterruptQueue.enqueue(new Interrupt(CPU_EXECUTE_PROGRAM, 4));
+        }
+
+        public shellRunAll (args) {
+            executingProgramPID = parseInt(args[0]);
+            _KernelInterruptQueue.enqueue(new Interrupt(CPU_EXECUTE_PROGRAM, "all"));
+        }
+
+
+        public shellKill (args) {
+            scheduler.killProcess();
         }
 
     }

@@ -1,25 +1,52 @@
 var TSOS;
 (function (TSOS) {
     var CPUScheduler = (function () {
-        function CPUScheduler(readyQueue, residentQueue, counter) {
+        function CPUScheduler(readyQueue, residentQueue, cycleCounter) {
             if (readyQueue === void 0) { readyQueue = new TSOS.Queue(); }
             if (residentQueue === void 0) { residentQueue = new TSOS.Queue(); }
-            if (counter === void 0) { counter = 0; }
+            if (cycleCounter === void 0) { cycleCounter = 0; }
             this.readyQueue = readyQueue;
             this.residentQueue = residentQueue;
-            this.counter = counter;
+            this.cycleCounter = cycleCounter;
         }
         CPUScheduler.prototype.loadProgram = function (pcb) {
             this.residentQueue.enqueue(pcb);
         };
         CPUScheduler.prototype.runProgram = function () {
-            var currentProgram = this.residentQueue.find(executingProgramPID);
+            var currentProgram = this.residentQueue.getPID(executingProgramPID);
             this.readyQueue.enqueue(currentProgram);
             if (!_CPU.isExecuting) {
-                executingProgram = this.residentQueue.dequeue();
+                executingProgram = this.readyQueue.dequeue();
                 executingProgramPID = executingProgram.PID;
             }
             _CPU.updateCPU();
+        };
+        CPUScheduler.prototype.runAllPrograms = function () {
+            while (!this.residentQueue.isEmpty()) {
+                this.readyQueue.enqueue(this.residentQueue.dequeue());
+            }
+            executingProgram = this.readyQueue.dequeue();
+            executingProgramPID = executingProgram.PID;
+            _CPU.updateCPU();
+        };
+        CPUScheduler.prototype.contextSwitch = function () {
+            if (executingProgram !== null) {
+                //executingProgram.state = State.ready;
+                this.readyQueue.enqueue(executingProgram);
+            }
+            this.cycleCounter = 0;
+            executingProgram = this.readyQueue.dequeue();
+            executingProgramPID = executingProgram.PID;
+            _CPU.updateCPU();
+        };
+        CPUScheduler.prototype.killProcess = function () {
+            _CPU.isExecuting = false;
+        };
+        CPUScheduler.prototype.ReadyQueueDump = function () {
+            if (this.readyQueue.getSize() === 0) {
+                this.cycleCounter = 0;
+            }
+            return this.readyQueue.getSize() === 0;
         };
         return CPUScheduler;
     })();

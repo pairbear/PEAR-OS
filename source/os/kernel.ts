@@ -86,8 +86,12 @@ module TSOS {
                 // TODO: Implement a priority queue based on the IRQ number/id to enforce interrupt priority.
                 var interrupt = _KernelInterruptQueue.dequeue();
                 this.krnInterruptHandler(interrupt.irq, interrupt.params);
-            } else if (_CPU.isExecuting) { // If there are no interrupts then run one CPU cycle if there is anything being processed. {
-                _CPU.cycle();
+            } else if (_CPU.isExecuting) { // If there are no interrupts then run one CPU cycle if there is anything being processed.
+                if (scheduler.cycleCounter < quantum || scheduler.ReadyQueueDump()) {
+                    _CPU.cycle();
+                } else if (!scheduler.ReadyQueueDump()) {
+                    _KernelInterruptQueue.enqueue(new Interrupt(CONTEXT_SWITCH_IRQ, executingProgramPID));
+                }
             } else {                      // If there are no interrupts and there is nothing being executed then just be idle. {
                 this.krnTrace("Idle");
             }
@@ -127,14 +131,27 @@ module TSOS {
                     _StdIn.handleInput();
                     break;
                 case CPU_BRK_IRQ:
-                    _CPU.isExecuting = false;
+                    var currPID = executingProgramPID;
+                    if (scheduler.readyQueue.isEmpty() === true) {
+                        _CPU.isExecuting = false;
+                    } else {
+                        _KernelInterruptQueue.enqueue(new Interrupt(CONTEXT_SWITCH_IRQ, currPID));
+                    }
                     break;
                 case CPU_SYS_IRQ:
                     _StdOut.systemOpCodeHandler();
                     break;
                 case CPU_EXECUTE_PROGRAM:
-                    scheduler.runProgram();
+                    if (params !== "all") {
+                        scheduler.runProgram();
+                    }
+                    else {
+                        scheduler.runAllPrograms();
+                    }
                     _CPU.isExecuting = true;
+                    break;
+                case CONTEXT_SWITCH_IRQ:
+                    scheduler.contextSwitch();
                     break;
                 default:
                     this.krnTrapError("Invalid Interrupt Request. irq=" + irq + " params=[" + params + "]");

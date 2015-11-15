@@ -36,7 +36,6 @@ module TSOS {
         public getPID(pid){
             var retVal = null;
             for (var i =0; i<this.q.length; i++){
-                alert(this.q[i].PID)
                 if (this.q[i].PID === pid){
                     retVal = this.q[i];
                     if (i>-1)

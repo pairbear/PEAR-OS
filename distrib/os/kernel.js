@@ -76,7 +76,12 @@ var TSOS;
                 this.krnInterruptHandler(interrupt.irq, interrupt.params);
             }
             else if (_CPU.isExecuting) {
-                _CPU.cycle();
+                if (scheduler.cycleCounter < quantum || scheduler.ReadyQueueDump()) {
+                    _CPU.cycle();
+                }
+                else if (!scheduler.ReadyQueueDump()) {
+                    _KernelInterruptQueue.enqueue(new TSOS.Interrupt(CONTEXT_SWITCH_IRQ, executingProgramPID));
+                }
             }
             else {
                 this.krnTrace("Idle");
@@ -112,14 +117,28 @@ var TSOS;
                     _StdIn.handleInput();
                     break;
                 case CPU_BRK_IRQ:
-                    _CPU.isExecuting = false;
+                    var currPID = executingProgramPID;
+                    if (scheduler.readyQueue.isEmpty() === true) {
+                        _CPU.isExecuting = false;
+                    }
+                    else {
+                        _KernelInterruptQueue.enqueue(new TSOS.Interrupt(CONTEXT_SWITCH_IRQ, currPID));
+                    }
                     break;
                 case CPU_SYS_IRQ:
                     _StdOut.systemOpCodeHandler();
                     break;
                 case CPU_EXECUTE_PROGRAM:
-                    scheduler.runProgram();
+                    if (params !== "all") {
+                        scheduler.runProgram();
+                    }
+                    else {
+                        scheduler.runAllPrograms();
+                    }
                     _CPU.isExecuting = true;
+                    break;
+                case CONTEXT_SWITCH_IRQ:
+                    scheduler.contextSwitch();
                     break;
                 default:
                     this.krnTrapError("Invalid Interrupt Request. irq=" + irq + " params=[" + params + "]");

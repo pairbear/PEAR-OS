@@ -1,10 +1,11 @@
 var TSOS;
 (function (TSOS) {
     var ProcessControlBlock = (function () {
-        function ProcessControlBlock(PID, Priority, Counter, PC, Acc, Xreg, Yreg, Zflag, base, limit) {
+        function ProcessControlBlock(PID, Priority, 
+            //public cycleCounter: number = 0,
+            PC, Acc, Xreg, Yreg, Zflag, base, limit) {
             if (PID === void 0) { PID = 0; }
             if (Priority === void 0) { Priority = 0; }
-            if (Counter === void 0) { Counter = 0; }
             if (PC === void 0) { PC = 0; }
             if (Acc === void 0) { Acc = 0; }
             if (Xreg === void 0) { Xreg = 0; }
@@ -14,7 +15,6 @@ var TSOS;
             if (limit === void 0) { limit = 0; }
             this.PID = PID;
             this.Priority = Priority;
-            this.Counter = Counter;
             this.PC = PC;
             this.Acc = Acc;
             this.Xreg = Xreg;
