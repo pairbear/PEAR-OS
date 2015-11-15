@@ -113,7 +113,6 @@ var TSOS;
             document.getElementById("assembledCode").innerHTML = assemblerCode;
         };
         Control.updateAssemblerCode = function () {
-            //alert("Assembler code = " + assemblerCode);
             document.getElementById("assembledCode").innerHTML = assemblerCode;
         };
         Control.updateCPUDisplay = function () {
@@ -124,18 +123,14 @@ var TSOS;
             document.getElementById("cpuZ").innerHTML = String(_CPU.Zflag);
         };
         Control.updatePCBDisplay = function () {
-            //document.getElementById("pcbPC").innerHTML = String(programs[executingProgram].PC);
-            //document.getElementById("PCBInstruction").innerHTML = String(programs[executingProgram].Instruction);
-            //document.getElementById("pcbACC").innerHTML = String(programs[executingProgram].Acc);
-            //document.getElementById("pcbX").innerHTML = String(programs[executingProgram].Xreg);
-            //document.getElementById("pcbY").innerHTML = String(programs[executingProgram].Yreg);
-            //document.getElementById("pcbZ").innerHTML = String(programs[executingProgram].Zflag);
+            document.getElementById("pcbPID").innerHTML = String(executingProgram.PID);
             document.getElementById("pcbPC").innerHTML = String(executingProgram.PC);
             document.getElementById("PCBInstruction").innerHTML = String(executingProgram.Instruction);
             document.getElementById("pcbACC").innerHTML = String(executingProgram.Acc);
             document.getElementById("pcbX").innerHTML = String(executingProgram.Xreg);
             document.getElementById("pcbY").innerHTML = String(executingProgram.Yreg);
             document.getElementById("pcbZ").innerHTML = String(executingProgram.Zflag);
+            document.getElementById("pcbState").innerHTML = String(executingProgram.state);
         };
         return Control;
     })();

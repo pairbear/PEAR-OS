@@ -9,7 +9,7 @@ body {
 }
 
 h1 {
-  color: black;
+  color: white;
   font-size: 24pt;
   font-weight: normal;
   font-style: normal;
@@ -17,7 +17,7 @@ h1 {
 }
 
 h2 {
-  color: black;
+  color: white;
   font-size: 20pt;
   font-weight: normal;
   font-style: normal;
@@ -36,12 +36,21 @@ h3 {
   cursor: default;
 }
 
+#assembledCode, #cpuDisplay, #PCBDisplay, #divMemoryInput {
+  color: black;
+  border-color: black;
+}
+
+#time, #status {
+  color: black;
+}
+
 .normal_button {
   width: 100px;
 }
 
 .footerText {
-  color: black;
+  color: white;
   font-family: Arial, Helvetica, sans-serif;
   font-size: 8pt;
   text-align: center;

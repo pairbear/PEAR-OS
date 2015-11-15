@@ -4,6 +4,9 @@
    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
    <meta name="author"             content="Alan G. Labouseur" />
    <link rel="stylesheet" href="tsos.css" type="text/css" media="screen" />
+
+    <!-- bootstrap files -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
    <title>
       Pear-OS
    </title>
@@ -35,8 +38,9 @@
 
    <!-- Other Routines -->
    <script type="text/javascript" src="distrib/utils.js"></script>
+
    <!-- Uncomment this line below to enable GLaDOS testing -->
-   <script type="text/javascript" src="http://www.labouseur.com/courses/os/projects/glados.js"></script>
+   <script type="text/javascript" src="no"></script>
 </head>
 
 <body onload="onDocumentLoad()">
@@ -107,17 +111,18 @@
       </label>
    </div>
 
-    <div id="assembledCode">
+    <div id="assembledCode" style="font-size: medium">
+        Assembler code:
     </div>
-    <div id="cpuDisplay">
+    <div id="cpuDisplay" class="col-md-8">
         <p>CPU Display</p>
-        <table>
+        <table class="table table-bordered">
             <tr>
-                <td>PC</td>
-                <td>ACC</td>
-                <td>X</td>
-                <td>Y</td>
-                <td>Z</td>
+                <td> PC </td>
+                <td> ACC </td>
+                <td> X </td>
+                <td> Y </td>
+                <td> Z </td>
             </tr>
             <tbody>
             <tr>
@@ -133,25 +138,29 @@
         </table>
     </div>
 
-    <div id="PCBDisplay">
+    <div id="PCBDisplay" class="col-md-8">
         <p>PCB Display</p>
-        <table>
+        <table class="table table-bordered">
             <tr>
+                <td>PID</td>
                 <td>PC</td>
                 <td>Instruction</td>
                 <td>ACC</td>
                 <td>X</td>
                 <td>Y</td>
                 <td>Z</td>
+                <td>State</td>
             </tr>
             <tbody>
             <tr>
+                <td id="pcbPID"></td>
                 <td id="pcbPC"></td>
                 <td id="PCBInstruction"></td>
                 <td id="pcbACC"></td>
                 <td id="pcbX"></td>
                 <td id="pcbY"></td>
                 <td id="pcbZ"></td>
+                <td id="pcbState"></td>
 
             </tr>
             </tbody>
@@ -160,17 +169,12 @@
     </div>
 
 
-    <div id="divMemoryInput" style="margin-left:520px;">
+    <div id="divMemoryInput">
        <label>
             Memory
             <br>
             <div id="memoryWrapper">
-                <table id = "memDisplayBox">
-                    <textarea name="taMem"
-                              id  ="taMem"
-                              rows="8"
-                              cols="48"
-                            ></textarea>
+                <table id = "memDisplayBox" class="table table-bordered">
                     <tbody id ="memDisplay">
                     <tr>
                         <td>Memory will be displayed here</td>

@@ -15,6 +15,7 @@ module TSOS {
 
         public runProgram() {
             var currentProgram = this.residentQueue.getPID(executingProgramPID);
+            executingProgram.state = State.ready;
 
             this.readyQueue.enqueue(currentProgram);
 
@@ -58,6 +59,8 @@ module TSOS {
                 //reset the executing program variables
                 executingProgramPID = null;
                 executingProgram = null;
+
+                executingProgram.state = State.killed;
 
             } else {
                     //remove the program from the ready queue
