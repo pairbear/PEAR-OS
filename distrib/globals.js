@@ -44,11 +44,9 @@ var State;
     State[State["new"] = 0] = "new";
     State[State["running"] = 1] = "running";
     State[State["ready"] = 2] = "ready";
-    State[State["done"] = 3] = "done";
-    State[State["killed"] = 4] = "killed";
 })(State || (State = {}));
 ;
-var States = ["new", "running", "ready", "done", "killed"];
+var States = ["new", "running", "ready"];
 var _OSclock = 0; // Page 23.
 var _Mode = 0; // (currently unused)  0 = Kernel Mode, 1 = User Mode.  See page 21.
 var _Canvas; // Initialized in Control.hostInit().

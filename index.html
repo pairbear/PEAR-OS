@@ -78,43 +78,60 @@
              onclick="TSOS.Control.hostBtnReset_click(this);">
    </div>
 
-   <div id="divConsole" style="margin:4px; width:500px; height:500px; float:left;">
+   <div id="divConsole" style="margin:4px; width:500px; height:400px; float:left; ">
       <canvas id="display"
               width="500px"
-              height="500px"
+              height="400px"
               tabindex="3">
       </canvas>
    </div>
 
 
-   <div id="divLog" style="margin-left:520px;">
+   <div id="divLog" class="col-md-4" style="margin-top: -1.5%">
       <label>
-         Host Log
+         <div style="color: white; margin-bottom: -4%;">Host Log</div>
          <br>
          <textarea name="taHostLog"
                    id  ="taHostLog"
-                   rows="26"
-                   cols="48"
-         ></textarea>
-      </label>
-   </div>
-
-   <div id="divUserProgramInput" style="margin-left:520px;">
-      <label>
-         User Program Input
-         <br>
-         <textarea name="taProgramInput"
-                   id  ="taProgramInput"
                    rows="8"
                    cols="48"
          ></textarea>
       </label>
    </div>
 
-    <div id="assembledCode" style="font-size: medium">
-        Assembler code:
+   <div id="divUserProgramInput" class="col-md-4" style="">
+      <label>
+         <div style="color: white; margin-bottom: -4%;" >User Program Input</div>
+         <br>
+         <textarea name="taProgramInput"
+                   id  ="taProgramInput"
+                   rows="10"
+                   cols="48"
+         ></textarea>
+      </label>
+   </div>
+    
+    <div id="divMemoryInput">
+       <label>
+            Memory
+            <br>
+            <div id="memoryWrapper">
+                <table id = "memDisplayBox" class="table table-bordered">
+                    <tbody id ="memDisplay">
+                    <tr>
+                        <td>Memory will be displayed here</td>
+                    <tr>
+                    </tbody>
+                </table>
+            </div>
+        </label>
     </div>
-    <div id="cpuDisplay" class="col-md-8">
+    
+    <div> Instruction:
+        <div id="assembledCode" class="col-md-2" style="margin-top: -8%">
+        </div>
+    </div>
+    <div id="cpuDisplay" class="col-md-6" style="margin-top: -8%">
         <p>CPU Display</p>
         <table class="table table-bordered">
             <tr>
@@ -138,8 +155,8 @@
         </table>
     </div>
 
-    <div id="PCBDisplay" class="col-md-8">
-        <p>PCB Display</p>
+    <div id="RQDisplay" class="col-md-8" >
+        <p>Ready Queue</p>
         <table class="table table-bordered">
             <tr>
                 <td>PID</td>
@@ -151,38 +168,10 @@
                 <td>Z</td>
                 <td>State</td>
             </tr>
-            <tbody>
-            <tr>
-                <td id="pcbPID"></td>
-                <td id="pcbPC"></td>
-                <td id="PCBInstruction"></td>
-                <td id="pcbACC"></td>
-                <td id="pcbX"></td>
-                <td id="pcbY"></td>
-                <td id="pcbZ"></td>
-                <td id="pcbState"></td>
-
-            </tr>
+            <tbody id="RQBox">
             </tbody>
 
         </table>
-    </div>
-
-
-    <div id="divMemoryInput">
-       <label>
-            Memory
-            <br>
-            <div id="memoryWrapper">
-                <table id = "memDisplayBox" class="table table-bordered">
-                    <tbody id ="memDisplay">
-                    <tr>
-                        <td>Memory will be displayed here</td>
-                    <tr>
-                    </tbody>
-                </table>
-            </div>
-        </label>
     </div>
 
 

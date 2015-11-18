@@ -131,7 +131,7 @@ module TSOS {
             if (this.currentYPosition >= _Canvas.height) {
                 var canvas = _DrawingContext.getImageData(0, 0, _Canvas.width, _Canvas.height);
                 this.clearScreen();
-                _DrawingContext.putImageData(canvas, 0, _Canvas.height - this.currentYPosition - 6, 0, 0, _Canvas.width, _Canvas.height);
+                _DrawingContext.putImageData(canvas, 0, _Canvas.height - this.currentYPosition - 12, 0, 0, _Canvas.width, _Canvas.height);
                     this.currentYPosition -= _DefaultFontSize +
                     _DrawingContext.fontDescent(this.currentFont, this.currentFontSize) +
                     _FontHeightMargin;

@@ -49,10 +49,11 @@ var TSOS;
             scheduler.cycleCounter++;
             TSOS.Control.updateAssemblerCode();
             TSOS.Control.updateCPUDisplay();
-            TSOS.Control.updatePCBDisplay();
+            TSOS.Control.updateRQDisplay();
         };
         Cpu.prototype.updateCPU = function () {
             if (this.isExecuting = true) {
+                executingProgram.state = State.running;
                 this.PC = executingProgram.PC;
                 this.Instruction = executingProgram.Instruction;
                 this.Acc = executingProgram.Acc;

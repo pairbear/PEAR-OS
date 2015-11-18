@@ -46,8 +46,8 @@ var memorySize = programNumbers * 256;
 var currentPID = 0;
 var quantum: number = 6;
 
-enum State {new, running, ready, done, killed};
-var States =["new", "running", "ready", "done", "killed"];
+enum State {new, running, ready};
+var States =["new", "running", "ready"];
 
 
 var _OSclock: number = 0;  // Page 23.
