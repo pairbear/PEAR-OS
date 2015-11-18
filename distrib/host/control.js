@@ -122,15 +122,50 @@ var TSOS;
             document.getElementById("cpuY").innerHTML = String(_CPU.Yreg);
             document.getElementById("cpuZ").innerHTML = String(_CPU.Zflag);
         };
-        Control.updatePCBDisplay = function () {
-            document.getElementById("pcbPID").innerHTML = String(executingProgram.PID);
-            document.getElementById("pcbPC").innerHTML = String(executingProgram.PC);
-            document.getElementById("PCBInstruction").innerHTML = String(executingProgram.Instruction);
-            document.getElementById("pcbACC").innerHTML = String(executingProgram.Acc);
-            document.getElementById("pcbX").innerHTML = String(executingProgram.Xreg);
-            document.getElementById("pcbY").innerHTML = String(executingProgram.Yreg);
-            document.getElementById("pcbZ").innerHTML = String(executingProgram.Zflag);
-            document.getElementById("pcbState").innerHTML = String(executingProgram.state);
+        Control.updateRQDisplay = function () {
+            var display = "";
+            //alert(_CPU.isExecuting);
+            if (_CPU.isExecuting) {
+                if (executingProgram !== null) {
+                    display += "<tr>";
+                    display += "<td> " + executingProgram.PID + "</td>";
+                    display += "<td> " + executingProgram.PC + "</td>";
+                    display += "<td> " + executingProgram.Instruction + "</td>";
+                    display += "<td> " + executingProgram.Acc + "</td>";
+                    display += "<td> " + executingProgram.Xreg + "</td>";
+                    display += "<td> " + executingProgram.Yreg + "</td>";
+                    display += "<td> " + executingProgram.Zflag + "</td>";
+                    display += "<td> " + States[executingProgram.state] + "</td>";
+                    display += "<tr>";
+                }
+                for (var i = 0; i < scheduler.readyQueue.getSize(); i++) {
+                    display += "<tr>";
+                    display += "<td> " + scheduler.readyQueue.getPCB(i).PID + "</td>";
+                    display += "<td> " + scheduler.readyQueue.getPCB(i).PC + "</td>";
+                    display += "<td> " + scheduler.readyQueue.getPCB(i).Instruction + "</td>";
+                    display += "<td> " + scheduler.readyQueue.getPCB(i).Acc + "</td>";
+                    display += "<td> " + scheduler.readyQueue.getPCB(i).Xreg + "</td>";
+                    display += "<td> " + scheduler.readyQueue.getPCB(i).Yreg + "</td>";
+                    display += "<td> " + scheduler.readyQueue.getPCB(i).Zflag + "</td>";
+                    display += "<td> " + States[scheduler.readyQueue.getPCB(i).state] + "</td>";
+                    display += "<tr>";
+                }
+                document.getElementById("RQBox").innerHTML = display;
+            }
+            else if (!_CPU.isExecuting) {
+                alert("oh?!");
+                display += "<tr>";
+                display += "<td></td>";
+                display += "<td></td>";
+                display += "<td></td>";
+                display += "<td></td>";
+                display += "<td></td>";
+                display += "<td></td>";
+                display += "<td></td>";
+                display += "<td></td>";
+                display += "<tr>";
+                document.getElementById("RQBox").innerHTML = display;
+            }
         };
         return Control;
     })();

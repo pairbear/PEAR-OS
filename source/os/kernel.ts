@@ -133,10 +133,14 @@ module TSOS {
                 case CPU_BRK_IRQ:
                     var currPID = executingProgramPID;
                     if (scheduler.readyQueue.isEmpty() === true) {
+                        Control.updateRQDisplay;
                         _CPU.isExecuting = false;
+                        Control.updateRQDisplay;
                     } else {
                         _KernelInterruptQueue.enqueue(new Interrupt(CONTEXT_SWITCH_IRQ, currPID));
                     }
+                    executingProgram =null;
+                    executingProgramPID =null;
                     break;
                 case CPU_SYS_IRQ:
                     _StdOut.systemOpCodeHandler();
@@ -151,7 +155,7 @@ module TSOS {
                     _CPU.isExecuting = true;
                     break;
                 case CONTEXT_SWITCH_IRQ:
-                    this.krnTrace("swithching process");
+                    this.krnTrace("switching process");
                     scheduler.contextSwitch();
                     break;
                 case MEMORY_CLEAR_IRQ:

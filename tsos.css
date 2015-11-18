@@ -1,7 +1,7 @@
 /* TSOS.css */
 
 body {
-  background: #909193 url(distrib/images/linen.png) repeat;
+  background: #909193 url(distrib/images/Geometric-Abstract-Shapes-Dark-Background.jpg) repeat;
   font-family: Helvetica, Verdana, Arial, sans-serif;
   font-size: 12pt;
   font-weight: normal;
@@ -36,13 +36,24 @@ h3 {
   cursor: default;
 }
 
-#assembledCode, #cpuDisplay, #PCBDisplay, #divMemoryInput {
-  color: black;
+#assembledCode, #cpuDisplay, #RQDisplay, #divMemoryInput {
+  color: white;
+  font-weight: normal !important;
   border-color: black;
+  text-align: center;
+}
+
+#memoryWrapper{
+  border: 1px solid;
+  border-color: white;
+  overflow-y:auto;
+  max-height:1000px;
+  height: 500px;
+  width:370px;
 }
 
 #time, #status {
-  color: black;
+  color: white;
 }
 
 .normal_button {

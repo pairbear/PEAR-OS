@@ -14,7 +14,7 @@ var TSOS;
         };
         CPUScheduler.prototype.runProgram = function () {
             var currentProgram = this.residentQueue.getPID(executingProgramPID);
-            executingProgram.state = State.ready;
+            //executingProgram.state = State.ready;
             this.readyQueue.enqueue(currentProgram);
             if (!_CPU.isExecuting) {
                 executingProgram = this.readyQueue.dequeue();
@@ -32,7 +32,7 @@ var TSOS;
         };
         CPUScheduler.prototype.contextSwitch = function () {
             if (executingProgram !== null) {
-                //executingProgram.state = State.ready;
+                executingProgram.state = State.ready;
                 this.readyQueue.enqueue(executingProgram);
             }
             this.cycleCounter = 0;
@@ -43,15 +43,10 @@ var TSOS;
         CPUScheduler.prototype.killProcess = function (PID) {
             var currProgram = null;
             if (executingProgramPID === PID) {
-                //reset the pcb so if the program is restarted it will start from the beginning
-                currProgram = executingProgram;
-                //reset the executing program variables
                 executingProgramPID = null;
                 executingProgram = null;
-                executingProgram.state = State.killed;
             }
             else {
-                //remove the program from the ready queue
                 currProgram = this.readyQueue.getPID(PID);
             }
         };
