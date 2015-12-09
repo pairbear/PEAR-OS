@@ -22,7 +22,6 @@ module TSOS {
         public commandList = [];
         public curses = "[fuvg],[cvff],[shpx],[phag],[pbpxfhpxre],[zbgureshpxre],[gvgf]";
         public apologies = "[sorry]";
-        public statusStr = "";
         public G_UserProgram = "";
 
         constructor() {
@@ -117,7 +116,7 @@ module TSOS {
                                 " - This tests when the kernel traps an OS error");
             this.commandList[this.commandList.length] = sc;
 
-            //loads programs into memery
+            //loads programs into memory
             sc = new ShellCommand(this.shellLoad,
                                 "load",
                                 " - runs a test to validate the user code in HTML5");
@@ -143,7 +142,7 @@ module TSOS {
 
             //clears the memory
             sc =  new ShellCommand(this.shellClearMemory,
-                "clearmemory",
+                "clearmem",
                 " - clears the memory");
             this.commandList[this.commandList.length] = sc;
 
@@ -156,6 +155,36 @@ module TSOS {
             sc =  new ShellCommand(this.shellDisplayRunningProcesses,
                 "ps",
                 " - Displays process currently being executed ");
+            this.commandList[this.commandList.length] = sc;
+
+            sc =  new ShellCommand(this.shellselectScheduleType,
+                "scheduletype",
+                " - select rr, fcfs, or priority as your scheduling type");
+            this.commandList[this.commandList.length] = sc;
+
+            sc =  new ShellCommand(this.shellCreate,
+                "create",
+                " - creates a file");
+            this.commandList[this.commandList.length] = sc;
+
+            sc =  new ShellCommand(this.shellRead,
+                "read",
+                " - reads the selected file");
+            this.commandList[this.commandList.length] = sc;
+
+            sc =  new ShellCommand(this.shellWrite,
+                "write",
+                " - writes your text to designated file");
+            this.commandList[this.commandList.length] = sc;
+
+            sc =  new ShellCommand(this.shellDelete,
+                "delete",
+                " - deletes a file");
+            this.commandList[this.commandList.length] = sc;
+
+            sc =  new ShellCommand(this.shellFormat,
+                "format",
+                " - formats the hard drive");
             this.commandList[this.commandList.length] = sc;
 
 
@@ -408,13 +437,15 @@ module TSOS {
 
         public shellLoad(args) {
             var userInput = (<HTMLInputElement>document.getElementById("taProgramInput")).value;
+            var priority = args[0];
+
             this.G_UserProgram = userInput;
 
             if (!userInput.match( /^0|1|2|3|4|5|6|7|8|9|"a"|"b"|"c"|"d"|"e"|"f"| "g"$/)){
                 _StdOut.putText("you call that hex?!")
             } else {
                 var programString = userInput.split(" ");
-                _StdOut.putText("PID: " + memoryManager.loadProgram(programString));
+                _StdOut.putText("PID: " + memoryManager.loadProgram(programString, priority));
             }
         }
 
@@ -454,6 +485,37 @@ module TSOS {
                 pid += ", PID: " + scheduler.readyQueue.getPCB(i);
             _StdOut.putText("Current running processes... ");
             _StdOut.putText("PID: "+executingProgramPID + pid);
+        }
+
+        public shellselectScheduleType (args) {
+            var type = args[0];
+            if (type !== "rr" && type !== "fcfs" && type !== "priority") {
+                _StdOut.putText("That's not a schedule type...")
+            } else {
+                scheduler.schedulerType(type);
+                _StdOut.putText("Schdule type set to " + type)
+            }
+        }
+
+        public shellCreate(args) {
+            var fileName = args[0];
+            
+        }
+
+        public shellRead(args) {
+
+        }
+
+        public shellWrite(args) {
+
+        }
+
+        public shellDelete(args) {
+
+        }
+
+        public shellFormat(args) {
+
         }
 
     }

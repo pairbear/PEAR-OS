@@ -20,7 +20,6 @@ var TSOS;
             this.commandList = [];
             this.curses = "[fuvg],[cvff],[shpx],[phag],[pbpxfhpxre],[zbgureshpxre],[gvgf]";
             this.apologies = "[sorry]";
-            this.statusStr = "";
             this.G_UserProgram = "";
         }
         Shell.prototype.init = function () {
@@ -69,7 +68,7 @@ var TSOS;
             //Initiates the Blue Screen of Death
             sc = new TSOS.ShellCommand(this.shellBSOD, "bsod", " - This tests when the kernel traps an OS error");
             this.commandList[this.commandList.length] = sc;
-            //loads programs into memery
+            //loads programs into memory
             sc = new TSOS.ShellCommand(this.shellLoad, "load", " - runs a test to validate the user code in HTML5");
             this.commandList[this.commandList.length] = sc;
             //runs programs from memory
@@ -82,12 +81,24 @@ var TSOS;
             sc = new TSOS.ShellCommand(this.shellKill, "kill", " - kills running process's");
             this.commandList[this.commandList.length] = sc;
             //clears the memory
-            sc = new TSOS.ShellCommand(this.shellClearMemory, "clearmemory", " - clears the memory");
+            sc = new TSOS.ShellCommand(this.shellClearMemory, "clearmem", " - clears the memory");
             this.commandList[this.commandList.length] = sc;
             //set the quantum
             sc = new TSOS.ShellCommand(this.shellSetQuantum, "quantum", " - sets the quantum for the CPU Scheduler ");
             this.commandList[this.commandList.length] = sc;
             sc = new TSOS.ShellCommand(this.shellDisplayRunningProcesses, "ps", " - Displays process currently being executed ");
+            this.commandList[this.commandList.length] = sc;
+            sc = new TSOS.ShellCommand(this.shellselectScheduleType, "scheduletype", " - select rr, fcfs, or priority as your scheduling type");
+            this.commandList[this.commandList.length] = sc;
+            sc = new TSOS.ShellCommand(this.shellCreate, "create", " - creates a file");
+            this.commandList[this.commandList.length] = sc;
+            sc = new TSOS.ShellCommand(this.shellRead, "read", " - reads the selected file");
+            this.commandList[this.commandList.length] = sc;
+            sc = new TSOS.ShellCommand(this.shellWrite, "write", " - writes your text to designated file");
+            this.commandList[this.commandList.length] = sc;
+            sc = new TSOS.ShellCommand(this.shellDelete, "delete", " - deletes a file");
+            this.commandList[this.commandList.length] = sc;
+            sc = new TSOS.ShellCommand(this.shellFormat, "format", " - formats the hard drive");
             this.commandList[this.commandList.length] = sc;
             //
             // Display the initial prompt.
@@ -321,13 +332,14 @@ var TSOS;
         };
         Shell.prototype.shellLoad = function (args) {
             var userInput = document.getElementById("taProgramInput").value;
+            var priority = args[0];
             this.G_UserProgram = userInput;
             if (!userInput.match(/^0|1|2|3|4|5|6|7|8|9|"a"|"b"|"c"|"d"|"e"|"f"| "g"$/)) {
                 _StdOut.putText("you call that hex?!");
             }
             else {
                 var programString = userInput.split(" ");
-                _StdOut.putText("PID: " + memoryManager.loadProgram(programString));
+                _StdOut.putText("PID: " + memoryManager.loadProgram(programString, priority));
             }
         };
         Shell.prototype.shellRun = function (args) {
@@ -359,6 +371,26 @@ var TSOS;
                 pid += ", PID: " + scheduler.readyQueue.getPCB(i);
             _StdOut.putText("Current running processes... ");
             _StdOut.putText("PID: " + executingProgramPID + pid);
+        };
+        Shell.prototype.shellselectScheduleType = function (args) {
+            var type = args[0];
+            if (type !== "rr" && type !== "fcfs" && type !== "priority") {
+                _StdOut.putText("That's not a schedule type...");
+            }
+            else {
+                scheduler.schedulerType(type);
+                _StdOut.putText("Schdule type set to " + type);
+            }
+        };
+        Shell.prototype.shellCreate = function (args) {
+        };
+        Shell.prototype.shellRead = function (args) {
+        };
+        Shell.prototype.shellWrite = function (args) {
+        };
+        Shell.prototype.shellDelete = function (args) {
+        };
+        Shell.prototype.shellFormat = function (args) {
         };
         return Shell;
     })();

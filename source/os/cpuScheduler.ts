@@ -69,6 +69,18 @@ module TSOS {
             return this.readyQueue.getSize()===0;
         }
 
+        public schedulerType(type) {
+            if (type == "rr") {
+                quantum = 6;
+            } else if (type == "fcfs") {
+                quantum = 1000;
+
+            } else if (type == "priority") {
+                quantum = 1000;
+
+            }
+        }
+
 
     }
 }

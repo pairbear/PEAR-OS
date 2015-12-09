@@ -37,11 +37,12 @@ module TSOS {
         }
 
 
-        public loadProgram(program) {
+        public loadProgram(program, priority) {
             var newPCB = new TSOS.ProcessControlBlock();
             newPCB.base = this.nextOpenMemoryBlock;
             newPCB.PC = newPCB.base;
             newPCB.limit = newPCB.base + 256;
+            newPCB.Priority = priority;
             scheduler.loadProgram(newPCB);
             for (var i = 0; i < program.length; i++) {
                 this.memory.userProgram[i + newPCB.base] = program[i];

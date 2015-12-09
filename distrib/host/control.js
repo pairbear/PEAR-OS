@@ -91,6 +91,8 @@ var TSOS;
             // .. and call the OS Kernel Bootstrap routine.
             _Kernel = new TSOS.Kernel();
             _Kernel.krnBootstrap(); // _GLaDOS.afterStartup() will get called in there, if configured.
+            //initiates the filesystem
+            TSOS.Control.updateHardDrive();
         };
         Control.hostBtnHaltOS_click = function (btn) {
             Control.hostLog("Emergency halt", "host");
@@ -124,7 +126,6 @@ var TSOS;
         };
         Control.updateRQDisplay = function () {
             var display = "";
-            //alert(_CPU.isExecuting);
             if (_CPU.isExecuting) {
                 if (executingProgram !== null) {
                     display += "<tr>";
@@ -153,7 +154,6 @@ var TSOS;
                 document.getElementById("RQBox").innerHTML = display;
             }
             else if (!_CPU.isExecuting) {
-                alert("oh?!");
                 display += "<tr>";
                 display += "<td></td>";
                 display += "<td></td>";
@@ -166,6 +166,32 @@ var TSOS;
                 display += "<tr>";
                 document.getElementById("RQBox").innerHTML = display;
             }
+        };
+        Control.updateHardDrive = function () {
+            var output = "";
+            var block = "";
+            var meta = "";
+            var tsb = "";
+            for (var t = 0; t < _krnHardDrive.tracks; t++) {
+                for (var s = 0; s < _krnHardDrive.sectors; s++) {
+                    for (var b = 0; b < _krnHardDrive.blocks; b++) {
+                        tsb = t + "" + s + "" + b;
+                        block = _krnHardDrive.getDataBytes(tsb);
+                        meta = _krnHardDrive.getMetaData(tsb);
+                        output += "<tr><td>" + t + ":" + s + ":" + b + "</td>";
+                        if (meta.charAt(0) === "1") {
+                            output += "<td>" + "<b>" + meta.charAt(0) + "</b>" + meta.substring(1, 4) + "</td>";
+                            output += "<td>" + block + "</td></tr>";
+                        }
+                        else {
+                            //trick the user into think they're data is deleted
+                            output += "<td>" + "<b>" + meta.charAt(0) + "</b>" + "000" + "</td>";
+                            output += "<td>" + new Array(block.length + 1).join('0') + "</td></tr>";
+                        }
+                    }
+                }
+            }
+            document.getElementById("hardDriveDisplay").innerHTML = output;
         };
         return Control;
     })();

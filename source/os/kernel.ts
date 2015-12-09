@@ -20,6 +20,7 @@ module TSOS {
         // OS Startup and Shutdown Routines
         //
         public krnBootstrap() {      // Page 8. {
+
             Control.hostLog("bootstrap", "host");  // Use hostLog because we ALWAYS want this, even if _Trace is off.
 
             // Initialize our global queues.
@@ -40,6 +41,11 @@ module TSOS {
             _krnKeyboardDriver = new DeviceDriverKeyboard();     // Construct it.
             _krnKeyboardDriver.driverEntry();                    // Call the driverEntry() initialization routine.
             this.krnTrace(_krnKeyboardDriver.status);
+
+            this.krnTrace("Loading the Hard Drive device driver.");
+            _krnHardDrive = new DeviceDriverHardDrive();     // Construct it.
+            _krnHardDrive.driverEntry();                    // Call the driverEntry() initialization routine.
+            this.krnTrace(_krnHardDrive.status);
 
             //
             // ... more?
