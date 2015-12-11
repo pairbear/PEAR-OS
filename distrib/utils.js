@@ -48,6 +48,32 @@ var TSOS;
             var numHex = numDec.toString(16).toUpperCase();
             return "0x" + Array(3 - (numHex.length - 1)).join("0") + numHex;
         };
+        Utils.stringToHexConverter = function (str) {
+            var tempString = "";
+            for (var i = 0; i < str.length; ++i) {
+                tempString += str.charCodeAt(i).toString(16);
+            }
+            return tempString;
+        };
+        Utils.hexToStringConverter = function (str) {
+            var hexString = "";
+            for (var i = 0; i < str.length; ++i) {
+                hexString += String.fromCharCode(parseInt(str.substr(i, 2), 16));
+                ++i;
+            }
+            return hexString;
+        };
+        Utils.splitString = function (data, limit) {
+            var dataArray = [];
+            var strArr = data.split('');
+            for (var i = 0; i < strArr.length; i += limit) {
+                if (i + limit > strArr.length)
+                    dataArray.push(strArr.slice(i, strArr.length).join(""));
+                else
+                    dataArray.push(strArr.slice(i, i + limit).join(""));
+            }
+            return dataArray;
+        };
         return Utils;
     })();
     TSOS.Utils = Utils;

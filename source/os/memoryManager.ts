@@ -32,10 +32,6 @@ module TSOS {
             return null;
     }
 
-        public setNextOpenBlock(pcb) {
-            this.nextOpenMemoryBlock =  pcb.base;
-        }
-
 
         public loadProgram(program, priority) {
             var newPCB = new TSOS.ProcessControlBlock();

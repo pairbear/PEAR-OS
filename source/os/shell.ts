@@ -157,7 +157,7 @@ module TSOS {
                 " - Displays process currently being executed ");
             this.commandList[this.commandList.length] = sc;
 
-            sc =  new ShellCommand(this.shellselectScheduleType,
+            sc =  new ShellCommand(this.shellSelectScheduleType,
                 "scheduletype",
                 " - select rr, fcfs, or priority as your scheduling type");
             this.commandList[this.commandList.length] = sc;
@@ -487,8 +487,9 @@ module TSOS {
             _StdOut.putText("PID: "+executingProgramPID + pid);
         }
 
-        public shellselectScheduleType (args) {
+        public shellSelectScheduleType (args) {
             var type = args[0];
+            scheduleType = type;
             if (type !== "rr" && type !== "fcfs" && type !== "priority") {
                 _StdOut.putText("That's not a schedule type...")
             } else {
@@ -499,23 +500,39 @@ module TSOS {
 
         public shellCreate(args) {
             var fileName = args[0];
-            
+            _StdOut.putText("Creating file " + fileName);
+            _KernelInterruptQueue.enqueue(new Interrupt(CREATE_IRQ, fileName));
         }
 
         public shellRead(args) {
-
+            var fileName = args[0];
+            _StdOut.putText("Reading file " + fileName);
+            _KernelInterruptQueue.enqueue(new Interrupt(READ_IRQ, fileName));
         }
 
         public shellWrite(args) {
-
+            var fileName = args[0];
+            var fileContent="";
+            if (args[1].length > 0) {
+                var fileContent:string = "";
+                for (var i:number = 1; i < args.length; ++i) {
+                    fileContent += args[i] + " ";
+                }
+            }
+            globalFileContent = fileContent
+            _StdOut.putText("writing to file " + fileName);
+            _KernelInterruptQueue.enqueue(new Interrupt(WRITE_IRQ, fileName));
         }
 
         public shellDelete(args) {
-
+            var fileName = args[0];
+            _StdOut.putText("Deleting file " + fileName);
+            _KernelInterruptQueue.enqueue(new Interrupt(DELETE_IRQ, fileName));
         }
 
-        public shellFormat(args) {
-
+        public shellFormat() {
+            _StdOut.putText("Formatting Hard Drive");
+            _KernelInterruptQueue.enqueue(new Interrupt(FORMAT_IRQ, 0));
         }
 
     }

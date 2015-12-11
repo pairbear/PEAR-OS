@@ -2,16 +2,16 @@
 ///<reference path="queue.ts" />
 
 /* ------------
-     Kernel.ts
+ Kernel.ts
 
-     Requires globals.ts
-              queue.ts
+ Requires globals.ts
+ queue.ts
 
-     Routines for the Operating System, NOT the host.
+ Routines for the Operating System, NOT the host.
 
-     This code references page numbers in the text book:
-     Operating System Concepts 8th edition by Silberschatz, Galvin, and Gagne.  ISBN 978-0-470-12872-5
-     ------------ */
+ This code references page numbers in the text book:
+ Operating System Concepts 8th edition by Silberschatz, Galvin, and Gagne.  ISBN 978-0-470-12872-5
+ ------------ */
 
 module TSOS {
 
@@ -33,7 +33,7 @@ module TSOS {
             _Console.init();
 
             // Initialize standard input and output to the _Console.
-            _StdIn  = _Console;
+            _StdIn = _Console;
             _StdOut = _Console;
 
             // Load the Keyboard Device Driver
@@ -82,9 +82,9 @@ module TSOS {
 
         public krnOnCPUClockPulse() {
             /* This gets called from the host hardware simulation every time there is a hardware clock pulse.
-               This is NOT the same as a TIMER, which causes an interrupt and is handled like other interrupts.
-               This, on the other hand, is the clock pulse from the hardware / VM / host that tells the kernel
-               that it has to look for interrupts and process them if it finds any.                           */
+             This is NOT the same as a TIMER, which causes an interrupt and is handled like other interrupts.
+             This, on the other hand, is the clock pulse from the hardware / VM / host that tells the kernel
+             that it has to look for interrupts and process them if it finds any.                           */
 
             // Check for an interrupt, are any. Page 560
             if (_KernelInterruptQueue.getSize() > 0) {
@@ -132,10 +132,12 @@ module TSOS {
                 case TIMER_IRQ:
                     this.krnTimerISR();              // Kernel built-in routine for timers (not the clock).
                     break;
+
                 case KEYBOARD_IRQ:
                     _krnKeyboardDriver.isr(params);   // Kernel mode device driver
                     _StdIn.handleInput();
                     break;
+
                 case CPU_BRK_IRQ:
                     var currPID = executingProgramPID;
                     if (scheduler.readyQueue.isEmpty() === true) {
@@ -145,12 +147,14 @@ module TSOS {
                     } else {
                         _KernelInterruptQueue.enqueue(new Interrupt(CONTEXT_SWITCH_IRQ, currPID));
                     }
-                    executingProgram =null;
-                    executingProgramPID =null;
+                    executingProgram = null;
+                    executingProgramPID = null;
                     break;
+
                 case CPU_SYS_IRQ:
                     _StdOut.systemOpCodeHandler();
                     break;
+
                 case CPU_EXECUTE_PROGRAM:
                     if (params !== "all") {
                         scheduler.runProgram();
@@ -160,15 +164,40 @@ module TSOS {
                     }
                     _CPU.isExecuting = true;
                     break;
+
                 case CONTEXT_SWITCH_IRQ:
                     this.krnTrace("switching process");
                     scheduler.contextSwitch();
                     break;
+
                 case MEMORY_CLEAR_IRQ:
-                    memoryManager= new MemoryManager();
+                    memoryManager = new MemoryManager();
                     memoryManager.init();
                     scheduler = new CPUScheduler();
                     break;
+
+
+                case CREATE_IRQ:
+                    _krnHardDrive.isr(params);
+                    break;
+
+                case READ_IRQ:
+                    _krnHardDrive.isr1(params);
+                    break;
+
+                case WRITE_IRQ:
+                    _krnHardDrive.isr2(params);
+                    break;
+
+                case DELETE_IRQ:
+                    _krnHardDrive.isr3(params);
+                    break;
+
+                case FORMAT_IRQ:
+                    _krnHardDrive.isr4(params);
+                    break;
+
+
                 default:
                     this.krnTrapError("Invalid Interrupt Request. irq=" + irq + " params=[" + params + "]");
             }
@@ -198,9 +227,9 @@ module TSOS {
         //
         // OS Utility Routines
         //
-        public krnTrace(msg: string) {
-             // Check globals to see if trace is set ON.  If so, then (maybe) log the message.
-             if (_Trace) {
+        public krnTrace(msg:string) {
+            // Check globals to see if trace is set ON.  If so, then (maybe) log the message.
+            if (_Trace) {
                 if (msg === "Idle") {
                     // We can't log every idle clock pulse because it would lag the browser very quickly.
                     if (_OSclock % 10 == 0) {
@@ -211,7 +240,7 @@ module TSOS {
                 } else {
                     Control.hostLog(msg, "OS");
                 }
-             }
+            }
         }
 
         public krnTrapError(msg) {

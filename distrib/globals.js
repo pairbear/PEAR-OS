@@ -1,12 +1,12 @@
 /* ------------
-   Globals.ts
+ Globals.ts
 
-   Global CONSTANTS and _Variables.
-   (Global over both the OS and Hardware Simulation / Host.)
+ Global CONSTANTS and _Variables.
+ (Global over both the OS and Hardware Simulation / Host.)
 
-   This code references page numbers in the text book:
-   Operating System Concepts 8th edition by Silberschatz, Galvin, and Gagne.  ISBN 978-0-470-12872-5
-   ------------ */
+ This code references page numbers in the text book:
+ Operating System Concepts 8th edition by Silberschatz, Galvin, and Gagne.  ISBN 978-0-470-12872-5
+ ------------ */
 //
 // Global CONSTANTS (TypeScript 1.5 introduced const. Very cool.)
 //
@@ -21,6 +21,12 @@ var CPU_SYS_IRQ = 3;
 var CPU_EXECUTE_PROGRAM = 4;
 var CONTEXT_SWITCH_IRQ = 5;
 var MEMORY_CLEAR_IRQ = 6;
+//const HARD_DRIVE_IRQ: number = 7;
+var CREATE_IRQ = 7;
+var READ_IRQ = 8;
+var WRITE_IRQ = 9;
+var DELETE_IRQ = 10;
+var FORMAT_IRQ = 11;
 //
 // Global Variables
 // TODO: Make a global object and use that instead of the "_" naming convention in the global namespace.
@@ -39,13 +45,15 @@ var programNumbers = 3;
 var memorySize = programNumbers * 256;
 var currentPID = 0;
 var quantum = 6;
+var fileNamesList = null;
+var globalFileContent = "";
+var scheduleType = "";
 var State;
 (function (State) {
     State[State["new"] = 0] = "new";
     State[State["running"] = 1] = "running";
     State[State["ready"] = 2] = "ready";
 })(State || (State = {}));
-;
 var States = ["new", "running", "ready"];
 var _OSclock = 0; // Page 23.
 var _Mode = 0; // (currently unused)  0 = Kernel Mode, 1 = User Mode.  See page 21.

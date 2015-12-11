@@ -88,7 +88,7 @@ var TSOS;
             this.commandList[this.commandList.length] = sc;
             sc = new TSOS.ShellCommand(this.shellDisplayRunningProcesses, "ps", " - Displays process currently being executed ");
             this.commandList[this.commandList.length] = sc;
-            sc = new TSOS.ShellCommand(this.shellselectScheduleType, "scheduletype", " - select rr, fcfs, or priority as your scheduling type");
+            sc = new TSOS.ShellCommand(this.shellSelectScheduleType, "scheduletype", " - select rr, fcfs, or priority as your scheduling type");
             this.commandList[this.commandList.length] = sc;
             sc = new TSOS.ShellCommand(this.shellCreate, "create", " - creates a file");
             this.commandList[this.commandList.length] = sc;
@@ -372,8 +372,9 @@ var TSOS;
             _StdOut.putText("Current running processes... ");
             _StdOut.putText("PID: " + executingProgramPID + pid);
         };
-        Shell.prototype.shellselectScheduleType = function (args) {
+        Shell.prototype.shellSelectScheduleType = function (args) {
             var type = args[0];
+            scheduleType = type;
             if (type !== "rr" && type !== "fcfs" && type !== "priority") {
                 _StdOut.putText("That's not a schedule type...");
             }
@@ -383,14 +384,36 @@ var TSOS;
             }
         };
         Shell.prototype.shellCreate = function (args) {
+            var fileName = args[0];
+            _StdOut.putText("Creating file " + fileName);
+            _KernelInterruptQueue.enqueue(new TSOS.Interrupt(CREATE_IRQ, fileName));
         };
         Shell.prototype.shellRead = function (args) {
+            var fileName = args[0];
+            _StdOut.putText("Reading file " + fileName);
+            _KernelInterruptQueue.enqueue(new TSOS.Interrupt(READ_IRQ, fileName));
         };
         Shell.prototype.shellWrite = function (args) {
+            var fileName = args[0];
+            var fileContent = "";
+            if (args[1].length > 0) {
+                var fileContent = "";
+                for (var i = 1; i < args.length; ++i) {
+                    fileContent += args[i] + " ";
+                }
+            }
+            globalFileContent = fileContent;
+            _StdOut.putText("writing to file " + fileName);
+            _KernelInterruptQueue.enqueue(new TSOS.Interrupt(WRITE_IRQ, fileName));
         };
         Shell.prototype.shellDelete = function (args) {
+            var fileName = args[0];
+            _StdOut.putText("Deleting file " + fileName);
+            _KernelInterruptQueue.enqueue(new TSOS.Interrupt(DELETE_IRQ, fileName));
         };
-        Shell.prototype.shellFormat = function (args) {
+        Shell.prototype.shellFormat = function () {
+            _StdOut.putText("Formatting Hard Drive");
+            _KernelInterruptQueue.enqueue(new TSOS.Interrupt(FORMAT_IRQ, 0));
         };
         return Shell;
     })();

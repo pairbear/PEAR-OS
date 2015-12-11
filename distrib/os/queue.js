@@ -51,6 +51,16 @@ var TSOS;
         Queue.prototype.getPCB = function (i) {
             return this.q[i];
         };
+        Queue.prototype.setPriorityOrder = function () {
+            this.q.sort(this.comparePriority);
+        };
+        Queue.prototype.comparePriority = function (a, b) {
+            if (a.Priority < b.Priority)
+                return -1;
+            if (a.Priority > b.Priority)
+                return 1;
+            return 0;
+        };
         return Queue;
     })();
     TSOS.Queue = Queue;

@@ -50,5 +50,38 @@ module TSOS {
             return "0x" + Array(3-(numHex.length-1)).join("0") + numHex;
         }
 
+        public static stringToHexConverter(str: string): string {
+            var tempString: string = "";
+            for (var i: number = 0; i < str.length; ++i)
+            {
+                tempString += str.charCodeAt(i).toString(16);
+            }
+            return tempString;
+        }
+
+        public static hexToStringConverter(str: string): string {
+            var hexString: string = "";
+            for (var i: number = 0; i < str.length; ++i)
+            {
+                hexString += String.fromCharCode(parseInt(str.substr(i, 2), 16));
+                ++i;
+            }
+            return hexString;
+        }
+
+        public static stringsplitter(data:string, limit:number){
+            var dataArray =[];
+            var strArr = data.split('');
+            for (var i=0; i<strArr.length;i+=limit){
+                if (i+limit> strArr.length)
+                    dataArray.push(strArr.slice(i, strArr.length).join(""));
+                else
+                    dataArray.push(strArr.slice(i,i+limit).join(""));
+            }
+
+            return dataArray;
+
+        }
+
     }
 }

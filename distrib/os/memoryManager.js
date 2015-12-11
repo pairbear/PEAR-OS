@@ -28,6 +28,7 @@ var TSOS;
             }
             return null;
         };
+        // TODO: delete this?
         MemoryManager.prototype.setNextOpenBlock = function (pcb) {
             this.nextOpenMemoryBlock = pcb.base;
         };

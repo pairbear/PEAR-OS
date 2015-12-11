@@ -1,16 +1,16 @@
 ///<reference path="../globals.ts" />
 ///<reference path="queue.ts" />
 /* ------------
-     Kernel.ts
+ Kernel.ts
 
-     Requires globals.ts
-              queue.ts
+ Requires globals.ts
+ queue.ts
 
-     Routines for the Operating System, NOT the host.
+ Routines for the Operating System, NOT the host.
 
-     This code references page numbers in the text book:
-     Operating System Concepts 8th edition by Silberschatz, Galvin, and Gagne.  ISBN 978-0-470-12872-5
-     ------------ */
+ This code references page numbers in the text book:
+ Operating System Concepts 8th edition by Silberschatz, Galvin, and Gagne.  ISBN 978-0-470-12872-5
+ ------------ */
 var TSOS;
 (function (TSOS) {
     var Kernel = (function () {
@@ -69,9 +69,9 @@ var TSOS;
         };
         Kernel.prototype.krnOnCPUClockPulse = function () {
             /* This gets called from the host hardware simulation every time there is a hardware clock pulse.
-               This is NOT the same as a TIMER, which causes an interrupt and is handled like other interrupts.
-               This, on the other hand, is the clock pulse from the hardware / VM / host that tells the kernel
-               that it has to look for interrupts and process them if it finds any.                           */
+             This is NOT the same as a TIMER, which causes an interrupt and is handled like other interrupts.
+             This, on the other hand, is the clock pulse from the hardware / VM / host that tells the kernel
+             that it has to look for interrupts and process them if it finds any.                           */
             // Check for an interrupt, are any. Page 560
             if (_KernelInterruptQueue.getSize() > 0) {
                 // Process the first interrupt on the interrupt queue.
@@ -153,6 +153,21 @@ var TSOS;
                     memoryManager = new TSOS.MemoryManager();
                     memoryManager.init();
                     scheduler = new TSOS.CPUScheduler();
+                    break;
+                case CREATE_IRQ:
+                    _krnHardDrive.isr(params);
+                    break;
+                case READ_IRQ:
+                    _krnHardDrive.isr1(params);
+                    break;
+                case WRITE_IRQ:
+                    _krnHardDrive.isr2(params);
+                    break;
+                case DELETE_IRQ:
+                    _krnHardDrive.isr3(params);
+                    break;
+                case FORMAT_IRQ:
+                    _krnHardDrive.isr4(params);
                     break;
                 default:
                     this.krnTrapError("Invalid Interrupt Request. irq=" + irq + " params=[" + params + "]");

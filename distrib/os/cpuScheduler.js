@@ -25,6 +25,9 @@ var TSOS;
         CPUScheduler.prototype.runAllPrograms = function () {
             while (!this.residentQueue.isEmpty()) {
                 this.readyQueue.enqueue(this.residentQueue.dequeue());
+                if (scheduleType == "priority") {
+                    this.readyQueue.setPriorityOrder();
+                }
             }
             executingProgram = this.readyQueue.dequeue();
             executingProgramPID = executingProgram.PID;

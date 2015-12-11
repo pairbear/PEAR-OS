@@ -58,6 +58,11 @@ module TSOS {
             return this.q[i];
         }
 
+        public setPriorityOrder() {
+            this.q.sort();
+    }
+
+
 
     }
 }

@@ -14,6 +14,7 @@ module TSOS {
 
 
         public runProgram() {
+
             var currentProgram = this.residentQueue.getPID(executingProgramPID);
             //executingProgram.state = State.ready;
 
@@ -28,8 +29,13 @@ module TSOS {
         }
 
         public runAllPrograms() {
+
             while(!this.residentQueue.isEmpty()){
                 this.readyQueue.enqueue(this.residentQueue.dequeue());
+
+                if (scheduleType == "priority" ) {
+                    this.readyQueue.setPriorityOrder();
+                }
             }
             executingProgram = this.readyQueue.dequeue();
             executingProgramPID = executingProgram.PID;
