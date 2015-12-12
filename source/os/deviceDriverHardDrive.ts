@@ -25,6 +25,7 @@ module TSOS {
         }
 
         public krnHardDriveDriverEntry() {
+            fileNamesList = new Queue();
             this.status = "Hard Drive Loaded";
             this.init(false);
         }
@@ -86,18 +87,24 @@ module TSOS {
             sessionStorage.setItem(tsb, this.getMetaData(tsb) + blockData + new Array(this.dataBits - blockData.length + 1).join('0'));
         }
 
-        public setMetaData(tsb:string, metaData:string){
-            if (this.used(tsb)){
-                sessionStorage.setItem(tsb,"1"+ metaData+ this.getData(tsb));
+        public setMetaData(tsb:string, metaData:string) {
+            if (this.used(tsb)) {
+                sessionStorage.setItem(tsb, "1" + metaData + this.getData(tsb));
             }
             else {
-                sessionStorage.setItem(tsb,"0"+ metaData+ this.getData(tsb));
+                sessionStorage.setItem(tsb, "0" + metaData + this.getData(tsb));
             }
         }
 
-        public setUsedBlock(tsb){
-            sessionStorage.setItem(tsb, "1"+ sessionStorage.getItem(tsb).substring(1));
+        public setUsedBlock(tsb) {
+            sessionStorage.setItem(tsb, "1" + sessionStorage.getItem(tsb).substring(1));
         }
+        
+
+        public getNextTSB(tsb:string) {
+            return this.getMetaData(tsb).substring(1, this.metaData);
+        }
+
 
         public setTSB(type:string) {
             if (type === "file") {
@@ -173,27 +180,55 @@ module TSOS {
 
 
         public createFile(fileName) {
-            var tsb:string = this.getNextFileTSB();
-            var hexName = TSOS.Utils.stringToHexConverter(fileName);
-            var newData = "";
-            newData = hexName + new Array(this.dataBits + 1 - hexName.length).join("0");
-            sessionStorage.setItem(tsb, '1' + "000" + newData);
-            this.setTSB('file');
+            if (this.findFile(fileName) === null) {
+                success = true;
+                var tsb:string = this.getNextFileTSB();
+                var hexName = TSOS.Utils.stringToHexConverter(fileName);
+                var newData = "";
+                newData = hexName + new Array(this.dataBits + 1 - hexName.length).join("0");
+                sessionStorage.setItem(tsb, '1' + "000" + newData);
+                this.setTSB('file');
 
-            TSOS.Control.updateHardDrive();
-
-            return true;
+                TSOS.Control.updateHardDrive();
+            } else {
+                success = false;
+            }
 
 
         }
 
-        public readFile() {
+
+        public readFile(fileName:string):any {
+            var tsb = this.findFile(fileName);
+            var contents = "";
+            var nextTSB = this.getNextTSB(tsb);
+            while (nextTSB != "000") {
+                var hexContents = this.getData(nextTSB);
+                if (hexContents % 2 !== 0) {
+                    hexContents += '0';
+                }
+                contents += TSOS.Utils.hexToStringConverter(hexContents);
+
+                nextTSB = this.getNextTSB(nextTSB);
+            }
+            globalFileContent = contents
+            contents = contents.replace(/\s+/g, '');
+
+            contents = contents.slice(0, 256);
+            var programData = contents.match(/.{2}/g);
+            executingProgramData = programData
             TSOS.Control.updateHardDrive();
+            _KernelInterruptQueue.enqueue(new Interrupt(HARDDRIVE_FILE_CHANGE_OUT_IRQ, 0));
+            return;
+
         }
 
 
         public writeFile(fileName:string) {
-            var fileContent = globalFileContent;
+            if (this.findFile(fileName) === null) {
+                this.createFile(fileName);
+            }
+            var fileContent = TSOS.Utils.stringToHexConverter(globalFileContent);
             var dataArray:string[] = TSOS.Utils.stringsplitter(fileContent, this.dataBits);
             var tsbFile:string = this.findFile(fileName);
             var nextTSB:string = this.getNextDataTSB();
@@ -214,8 +249,21 @@ module TSOS {
         }
 
 
-        public deleteFile() {
+        public deleteFile(fileName:string) {
+
+            var tsb = this.findFile(fileName);
+            var tempTSB1 = tsb;
+            var tempTSB2 = tempTSB1;
+            while (tempTSB1 !== "000") {
+                tempTSB2 = tempTSB1;
+                tempTSB1 = this.getNextTSB(tempTSB2);
+                //this.eraseBlock(tempTSB2);
+                var blankBlock = new Array(this.dataBits + this.metaData + 1).join('0');
+                sessionStorage.setItem(tempTSB2, blankBlock);
+            }
+
             TSOS.Control.updateHardDrive();
+
         }
 
         public formatFile() {

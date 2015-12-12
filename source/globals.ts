@@ -24,12 +24,12 @@ const CPU_SYS_IRQ:number = 3;
 const CPU_EXECUTE_PROGRAM:number = 4;
 const CONTEXT_SWITCH_IRQ:number = 5;
 const MEMORY_CLEAR_IRQ:number = 6;
-//const HARD_DRIVE_IRQ: number = 7;
 const CREATE_IRQ: number = 7;
 const READ_IRQ: number = 8;
 const WRITE_IRQ: number = 9;
 const DELETE_IRQ: number = 10;
 const FORMAT_IRQ: number = 11;
+const HARDDRIVE_FILE_CHANGE_OUT_IRQ: number = 12;
 
 //
 // Global Variables
@@ -43,6 +43,7 @@ var _CPU:TSOS.Cpu;  // Utilize TypeScript's type annotation system to ensure tha
 var assemblerCode = "";
 var executingProgram;
 var executingProgramPID;
+var executingProgramData = null;
 var currentPID = 0;
 var memoryManager:TSOS.MemoryManager;
 var memory:TSOS.Memory;
@@ -51,12 +52,17 @@ var programNumbers = 3;
 var memorySize = programNumbers * 256;
 var currentPID = 0;
 var quantum:number = 6;
-var fileNamesList=null;
+var fileNamesList= null;
 var globalFileContent = "";
 var scheduleType = "";
+var success: boolean;
+var option: boolean
 
 enum State {new, running, ready}
 var States = ["new", "running", "ready"];
+
+enum Locations {memory, hardDrive}
+var LocationsString = ["memory", "hardDrive"];
 
 
 var _OSclock:number = 0;  // Page 23.

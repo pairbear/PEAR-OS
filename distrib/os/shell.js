@@ -100,6 +100,8 @@ var TSOS;
             this.commandList[this.commandList.length] = sc;
             sc = new TSOS.ShellCommand(this.shellFormat, "format", " - formats the hard drive");
             this.commandList[this.commandList.length] = sc;
+            sc = new TSOS.ShellCommand(this.shellLS, "ls", " - shows a list of files on the hard drive");
+            this.commandList[this.commandList.length] = sc;
             //
             // Display the initial prompt.
             this.putPrompt();
@@ -339,7 +341,14 @@ var TSOS;
             }
             else {
                 var programString = userInput.split(" ");
-                _StdOut.putText("PID: " + memoryManager.loadProgram(programString, priority));
+                if (memoryManager.nextOpenMemoryBlock === null) {
+                    globalFileContent = userInput;
+                    _StdOut.putText("Memory full, loading program to Hard drive");
+                    _StdOut.putText("PID: " + scheduler.loadProgramToHardDrive(programString, priority));
+                }
+                else {
+                    _StdOut.putText("PID: " + scheduler.loadProgramToMemory(programString, priority));
+                }
             }
         };
         Shell.prototype.shellRun = function (args) {
@@ -385,13 +394,24 @@ var TSOS;
         };
         Shell.prototype.shellCreate = function (args) {
             var fileName = args[0];
-            _StdOut.putText("Creating file " + fileName);
+            _StdOut.putText("creating file " + fileName);
+            fileNamesList.enqueue(fileName);
             _KernelInterruptQueue.enqueue(new TSOS.Interrupt(CREATE_IRQ, fileName));
+            /*if (success) {
+                _StdOut.putText("Creating file " + fileName);
+            } else {
+                _StdOut.putText("file already exists.");
+            } */
         };
         Shell.prototype.shellRead = function (args) {
             var fileName = args[0];
-            _StdOut.putText("Reading file " + fileName);
+            _StdOut.putText("Reading file " + fileName + ":");
             _KernelInterruptQueue.enqueue(new TSOS.Interrupt(READ_IRQ, fileName));
+            _StdOut.advanceLine();
+            _StdOut.advanceLine();
+            _StdOut.putText(globalFileContent);
+            _StdOut.advanceLine();
+            _StdOut.advanceLine();
         };
         Shell.prototype.shellWrite = function (args) {
             var fileName = args[0];
@@ -414,6 +434,13 @@ var TSOS;
         Shell.prototype.shellFormat = function () {
             _StdOut.putText("Formatting Hard Drive");
             _KernelInterruptQueue.enqueue(new TSOS.Interrupt(FORMAT_IRQ, 0));
+        };
+        Shell.prototype.shellLS = function () {
+            _StdOut.putText("Current files on hard drive:");
+            _StdOut.advanceLine();
+            for (var i = 0; i < fileNamesList.getSize(); i++) {
+                _StdOut.putText(fileNamesList.getPCB(i) + ", ");
+            }
         };
         return Shell;
     })();

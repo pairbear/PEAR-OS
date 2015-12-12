@@ -21,12 +21,12 @@ var CPU_SYS_IRQ = 3;
 var CPU_EXECUTE_PROGRAM = 4;
 var CONTEXT_SWITCH_IRQ = 5;
 var MEMORY_CLEAR_IRQ = 6;
-//const HARD_DRIVE_IRQ: number = 7;
 var CREATE_IRQ = 7;
 var READ_IRQ = 8;
 var WRITE_IRQ = 9;
 var DELETE_IRQ = 10;
 var FORMAT_IRQ = 11;
+var HARDDRIVE_FILE_CHANGE_OUT_IRQ = 12;
 //
 // Global Variables
 // TODO: Make a global object and use that instead of the "_" naming convention in the global namespace.
@@ -37,6 +37,7 @@ var _CPU; // Utilize TypeScript's type annotation system to ensure that _CPU is 
 var assemblerCode = "";
 var executingProgram;
 var executingProgramPID;
+var executingProgramData = null;
 var currentPID = 0;
 var memoryManager;
 var memory;
@@ -48,6 +49,8 @@ var quantum = 6;
 var fileNamesList = null;
 var globalFileContent = "";
 var scheduleType = "";
+var success;
+var option;
 var State;
 (function (State) {
     State[State["new"] = 0] = "new";
@@ -55,6 +58,12 @@ var State;
     State[State["ready"] = 2] = "ready";
 })(State || (State = {}));
 var States = ["new", "running", "ready"];
+var Locations;
+(function (Locations) {
+    Locations[Locations["memory"] = 0] = "memory";
+    Locations[Locations["hardDrive"] = 1] = "hardDrive";
+})(Locations || (Locations = {}));
+var LocationsString = ["memory", "hardDrive"];
 var _OSclock = 0; // Page 23.
 var _Mode = 0; // (currently unused)  0 = Kernel Mode, 1 = User Mode.  See page 21.
 var _Canvas; // Initialized in Control.hostInit().

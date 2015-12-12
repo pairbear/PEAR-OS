@@ -11,7 +11,8 @@ export class ProcessControlBlock {
         public Zflag: number = 0,
         public base: number = 0,
         public limit: number = 0,
-        public state: State =State.new
+        public state: State =State.new,
+        public location: Locations = Locations.memory
 
 ) {
         this.PID = currentPID;

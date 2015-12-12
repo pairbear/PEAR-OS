@@ -169,6 +169,13 @@ var TSOS;
                 case FORMAT_IRQ:
                     _krnHardDrive.isr4(params);
                     break;
+                case HARDDRIVE_FILE_CHANGE_OUT_IRQ: {
+                    this.krnTrace("Loading the changed program into memory.");
+                    memoryManager.loadProgram(executingProgram, executingProgramData);
+                    executingProgram.location = Locations.memory;
+                    _CPU.updateCPU();
+                    break;
+                }
                 default:
                     this.krnTrapError("Invalid Interrupt Request. irq=" + irq + " params=[" + params + "]");
             }

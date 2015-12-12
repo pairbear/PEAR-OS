@@ -33,20 +33,15 @@ module TSOS {
     }
 
 
-        public loadProgram(program, priority) {
-            var newPCB = new TSOS.ProcessControlBlock();
-            newPCB.base = this.nextOpenMemoryBlock;
-            newPCB.PC = newPCB.base;
-            newPCB.limit = newPCB.base + 256;
-            newPCB.Priority = priority;
-            scheduler.loadProgram(newPCB);
-            for (var i = 0; i < program.length; i++) {
-                this.memory.userProgram[i + newPCB.base] = program[i];
+        public loadProgram(currPCB, program){
+            currPCB.location = Locations.memory;
+            for (var i=0; i<program.length; i++){
+                this.memory.userProgram[i+currPCB.base] = program[i];
             }
             this.nextOpenMemoryBlock = this.findNextOpenBlock();
             this.updateMemoryDisplay();
-            return (newPCB.PID).toString()
         }
+
 
         public getMemory(address:any) {
              if (typeof address==="number"){
@@ -77,6 +72,15 @@ module TSOS {
             var position = this.getDecFromHex(beginningAddress) + executingProgram.base;
             this.memory.userProgram[position] = hexValue;
 
+        }
+
+        public getProgram(pcb){
+
+            var program = [];
+            for (var i=pcb.base; i<=pcb.limit; i++){
+                program.push(this.memory.userProgram[i]);
+            }
+            return program;
         }
 
 

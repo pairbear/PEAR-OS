@@ -187,6 +187,13 @@ module TSOS {
                 " - formats the hard drive");
             this.commandList[this.commandList.length] = sc;
 
+            sc =  new ShellCommand(this.shellLS,
+                "ls",
+                " - shows a list of files on the hard drive");
+            this.commandList[this.commandList.length] = sc;
+
+
+
 
             //
             // Display the initial prompt.
@@ -445,7 +452,14 @@ module TSOS {
                 _StdOut.putText("you call that hex?!")
             } else {
                 var programString = userInput.split(" ");
-                _StdOut.putText("PID: " + memoryManager.loadProgram(programString, priority));
+                if (memoryManager.nextOpenMemoryBlock===null) {
+                    globalFileContent = userInput;
+                    _StdOut.putText("Memory full, loading program to Hard drive");
+                    _StdOut.putText("PID: " + scheduler.loadProgramToHardDrive(programString, priority));
+
+                } else {
+                    _StdOut.putText("PID: " + scheduler.loadProgramToMemory(programString, priority));
+                }
             }
         }
 
@@ -500,14 +514,25 @@ module TSOS {
 
         public shellCreate(args) {
             var fileName = args[0];
-            _StdOut.putText("Creating file " + fileName);
+            _StdOut.putText("creating file " + fileName);
+            fileNamesList.enqueue(fileName);
             _KernelInterruptQueue.enqueue(new Interrupt(CREATE_IRQ, fileName));
+            /*if (success) {
+                _StdOut.putText("Creating file " + fileName);
+            } else {
+                _StdOut.putText("file already exists.");
+            } */
         }
 
         public shellRead(args) {
             var fileName = args[0];
-            _StdOut.putText("Reading file " + fileName);
+            _StdOut.putText("Reading file " + fileName + ":");
             _KernelInterruptQueue.enqueue(new Interrupt(READ_IRQ, fileName));
+            _StdOut.advanceLine();
+            _StdOut.advanceLine();
+            _StdOut.putText(globalFileContent);
+            _StdOut.advanceLine();
+            _StdOut.advanceLine();
         }
 
         public shellWrite(args) {
@@ -522,6 +547,7 @@ module TSOS {
             globalFileContent = fileContent
             _StdOut.putText("writing to file " + fileName);
             _KernelInterruptQueue.enqueue(new Interrupt(WRITE_IRQ, fileName));
+
         }
 
         public shellDelete(args) {
@@ -533,6 +559,14 @@ module TSOS {
         public shellFormat() {
             _StdOut.putText("Formatting Hard Drive");
             _KernelInterruptQueue.enqueue(new Interrupt(FORMAT_IRQ, 0));
+        }
+
+        public shellLS() {
+            _StdOut.putText("Current files on hard drive:");
+            _StdOut.advanceLine();
+            for (var i=0; i<fileNamesList.getSize(); i++){
+                _StdOut.putText(fileNamesList.getPCB(i) + ", ");
+            }
         }
 
     }

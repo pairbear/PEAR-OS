@@ -54,7 +54,7 @@ var TSOS;
         Cpu.prototype.updateCPU = function () {
             if (this.isExecuting = true) {
                 executingProgram.state = State.running;
-                this.PC = executingProgram.PC;
+                this.PC = executingProgram.PC + executingProgram.base;
                 this.Instruction = executingProgram.Instruction;
                 this.Acc = executingProgram.Acc;
                 this.Xreg = executingProgram.Xreg;
@@ -63,6 +63,8 @@ var TSOS;
             }
         };
         Cpu.prototype.updatePCB = function () {
+            //debugger;
+            executingProgram;
             executingProgram.PC = _CPU.PC;
             executingProgram.Instruction = _CPU.Instruction;
             executingProgram.Acc = _CPU.Acc;
@@ -71,6 +73,7 @@ var TSOS;
             executingProgram.Zflag = _CPU.Zflag;
         };
         Cpu.prototype.execute = function (instructions) {
+            //debugger;
             this.Instruction = instructions.toUpperCase();
             switch (this.Instruction) {
                 case "A9": {
@@ -134,6 +137,7 @@ var TSOS;
                     break;
                 }
                 case "00": {
+                    debugger;
                     //Break
                     this.updateCPU();
                     assemblerCode = "00 BRK";

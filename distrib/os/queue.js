@@ -52,14 +52,32 @@ var TSOS;
             return this.q[i];
         };
         Queue.prototype.setPriorityOrder = function () {
-            this.q.sort(this.comparePriority);
+            this.q.sort();
         };
-        Queue.prototype.comparePriority = function (a, b) {
-            if (a.Priority < b.Priority)
-                return -1;
-            if (a.Priority > b.Priority)
-                return 1;
-            return 0;
+        Queue.prototype.getAndRemove = function (pid) {
+            //returns pcb and removes it from the queue
+            var retVal = null;
+            if (typeof pid === 'number') {
+                for (var i = 0; i < this.q.length; i++) {
+                    if (this.q[i].pid === pid) {
+                        retVal = this.q[i];
+                        if (i > -1)
+                            this.q.splice(i, 1);
+                        return retVal;
+                    }
+                }
+            }
+            else {
+                for (var i = 0; i < this.q.length; i++) {
+                    if (this.q[i] === pid) {
+                        retVal = this.q[i];
+                        if (i > -1)
+                            this.q.splice(i, 1);
+                        return retVal;
+                    }
+                }
+            }
+            return retVal;
         };
         return Queue;
     })();

@@ -1,7 +1,7 @@
 var TSOS;
 (function (TSOS) {
     var ProcessControlBlock = (function () {
-        function ProcessControlBlock(PID, Priority, PC, Acc, Xreg, Yreg, Zflag, base, limit, state) {
+        function ProcessControlBlock(PID, Priority, PC, Acc, Xreg, Yreg, Zflag, base, limit, state, location) {
             if (PID === void 0) { PID = 0; }
             if (Priority === void 0) { Priority = 0; }
             if (PC === void 0) { PC = 0; }
@@ -12,6 +12,7 @@ var TSOS;
             if (base === void 0) { base = 0; }
             if (limit === void 0) { limit = 0; }
             if (state === void 0) { state = State.new; }
+            if (location === void 0) { location = Locations.memory; }
             this.PID = PID;
             this.Priority = Priority;
             this.PC = PC;
@@ -22,6 +23,7 @@ var TSOS;
             this.base = base;
             this.limit = limit;
             this.state = state;
+            this.location = location;
             this.PID = currentPID;
             currentPID++;
         }

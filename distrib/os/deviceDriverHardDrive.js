@@ -18,6 +18,7 @@ var TSOS;
             _super.call(this, this.krnHardDriveDriverEntry, this.createFile, this.readFile, this.writeFile, this.deleteFile, this.formatFile);
         }
         DeviceDriverHardDrive.prototype.krnHardDriveDriverEntry = function () {
+            fileNamesList = new TSOS.Queue();
             this.status = "Hard Drive Loaded";
             this.init(false);
         };
@@ -76,6 +77,9 @@ var TSOS;
         };
         DeviceDriverHardDrive.prototype.setUsedBlock = function (tsb) {
             sessionStorage.setItem(tsb, "1" + sessionStorage.getItem(tsb).substring(1));
+        };
+        DeviceDriverHardDrive.prototype.getNextTSB = function (tsb) {
+            return this.getMetaData(tsb).substring(1, this.metaData);
         };
         DeviceDriverHardDrive.prototype.setTSB = function (type) {
             if (type === "file") {
@@ -140,21 +144,47 @@ var TSOS;
             return null;
         };
         DeviceDriverHardDrive.prototype.createFile = function (fileName) {
-            var tsb = this.getNextFileTSB();
-            var hexName = TSOS.Utils.stringToHexConverter(fileName);
-            var newData = "";
-            newData = hexName + new Array(this.dataBits + 1 - hexName.length).join("0");
-            sessionStorage.setItem(tsb, '1' + "000" + newData);
-            this.setTSB('file');
-            TSOS.Control.updateHardDrive();
-            return true;
+            if (this.findFile(fileName) === null) {
+                success = true;
+                var tsb = this.getNextFileTSB();
+                var hexName = TSOS.Utils.stringToHexConverter(fileName);
+                var newData = "";
+                newData = hexName + new Array(this.dataBits + 1 - hexName.length).join("0");
+                sessionStorage.setItem(tsb, '1' + "000" + newData);
+                this.setTSB('file');
+                TSOS.Control.updateHardDrive();
+            }
+            else {
+                success = false;
+            }
         };
-        DeviceDriverHardDrive.prototype.readFile = function () {
+        DeviceDriverHardDrive.prototype.readFile = function (fileName) {
+            var tsb = this.findFile(fileName);
+            var contents = "";
+            var nextTSB = this.getNextTSB(tsb);
+            while (nextTSB != "000") {
+                var hexContents = this.getData(nextTSB);
+                if (hexContents % 2 !== 0) {
+                    hexContents += '0';
+                }
+                contents += TSOS.Utils.hexToStringConverter(hexContents);
+                nextTSB = this.getNextTSB(nextTSB);
+            }
+            globalFileContent = contents;
+            contents = contents.replace(/\s+/g, '');
+            contents = contents.slice(0, 256);
+            var programData = contents.match(/.{2}/g);
+            executingProgramData = programData;
             TSOS.Control.updateHardDrive();
+            _KernelInterruptQueue.enqueue(new TSOS.Interrupt(HARDDRIVE_FILE_CHANGE_OUT_IRQ, 0));
+            return;
         };
         DeviceDriverHardDrive.prototype.writeFile = function (fileName) {
-            var fileContent = globalFileContent;
-            var dataArray = TSOS.Utils.splitString(fileContent, this.dataBits);
+            if (this.findFile(fileName) === null) {
+                this.createFile(fileName);
+            }
+            var fileContent = TSOS.Utils.stringToHexConverter(globalFileContent);
+            var dataArray = TSOS.Utils.stringsplitter(fileContent, this.dataBits);
             var tsbFile = this.findFile(fileName);
             var nextTSB = this.getNextDataTSB();
             this.setMetaData(tsbFile, nextTSB);
@@ -171,7 +201,17 @@ var TSOS;
             TSOS.Control.updateHardDrive();
             return true;
         };
-        DeviceDriverHardDrive.prototype.deleteFile = function () {
+        DeviceDriverHardDrive.prototype.deleteFile = function (fileName) {
+            var tsb = this.findFile(fileName);
+            var tempTSB1 = tsb;
+            var tempTSB2 = tempTSB1;
+            while (tempTSB1 !== "000") {
+                tempTSB2 = tempTSB1;
+                tempTSB1 = this.getNextTSB(tempTSB2);
+                //this.eraseBlock(tempTSB2);
+                var blankBlock = new Array(this.dataBits + this.metaData + 1).join('0');
+                sessionStorage.setItem(tempTSB2, blankBlock);
+            }
             TSOS.Control.updateHardDrive();
         };
         DeviceDriverHardDrive.prototype.formatFile = function () {

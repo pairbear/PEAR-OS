@@ -28,23 +28,13 @@ var TSOS;
             }
             return null;
         };
-        // TODO: delete this?
-        MemoryManager.prototype.setNextOpenBlock = function (pcb) {
-            this.nextOpenMemoryBlock = pcb.base;
-        };
-        MemoryManager.prototype.loadProgram = function (program, priority) {
-            var newPCB = new TSOS.ProcessControlBlock();
-            newPCB.base = this.nextOpenMemoryBlock;
-            newPCB.PC = newPCB.base;
-            newPCB.limit = newPCB.base + 256;
-            newPCB.Priority = priority;
-            scheduler.loadProgram(newPCB);
+        MemoryManager.prototype.loadProgram = function (currPCB, program) {
+            currPCB.location = Locations.memory;
             for (var i = 0; i < program.length; i++) {
-                this.memory.userProgram[i + newPCB.base] = program[i];
+                this.memory.userProgram[i + currPCB.base] = program[i];
             }
             this.nextOpenMemoryBlock = this.findNextOpenBlock();
             this.updateMemoryDisplay();
-            return (newPCB.PID).toString();
         };
         MemoryManager.prototype.getMemory = function (address) {
             if (typeof address === "number") {
@@ -69,6 +59,13 @@ var TSOS;
             hexValue = Array(2 - (hexValue.length - 1)).join("0") + hexValue;
             var position = this.getDecFromHex(beginningAddress) + executingProgram.base;
             this.memory.userProgram[position] = hexValue;
+        };
+        MemoryManager.prototype.getProgram = function (pcb) {
+            var program = [];
+            for (var i = pcb.base; i <= pcb.limit; i++) {
+                program.push(this.memory.userProgram[i]);
+            }
+            return program;
         };
         return MemoryManager;
     })();

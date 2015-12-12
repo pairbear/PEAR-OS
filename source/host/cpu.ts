@@ -54,7 +54,7 @@ module TSOS {
         public updateCPU(){
             if (this.isExecuting = true) {
                 executingProgram.state = State.running;
-                this.PC = executingProgram.PC;
+                this.PC = executingProgram.PC+ executingProgram.base;
                 this.Instruction = executingProgram.Instruction;
                 this.Acc = executingProgram.Acc;
                 this.Xreg = executingProgram.Xreg;
@@ -65,6 +65,8 @@ module TSOS {
         }
 
         public updatePCB() {
+            //debugger;
+            executingProgram;
             executingProgram.PC = _CPU.PC;
             executingProgram.Instruction = _CPU.Instruction;
             executingProgram.Acc = _CPU.Acc;
@@ -74,6 +76,7 @@ module TSOS {
         }
 
         public execute(instructions):void {
+            //debugger;
 
             this.Instruction = instructions.toUpperCase();
             switch (this.Instruction) {
@@ -142,6 +145,7 @@ module TSOS {
                     break;
                 }
                 case "00" :{
+                    debugger;
                     //Break
                     this.updateCPU();
                     assemblerCode = "00 BRK";
