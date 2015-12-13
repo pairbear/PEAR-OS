@@ -42,7 +42,9 @@ module TSOS {
             _Kernel.krnTrace('CPU cycle');
             // TODO: Accumulate CPU usage and profiling statistics here.
             // Do the real work here. Be sure to set this.isExecuting appropriately.
+            //debugger;
             this.execute(memoryManager.getMemory(this.PC));
+            //debugger;
             this.updatePCB();
             scheduler.cycleCounter++;
 
@@ -52,22 +54,18 @@ module TSOS {
         }
 
         public updateCPU(){
-            if (this.isExecuting = true) {
                 executingProgram.state = State.running;
-                this.PC = executingProgram.PC+ executingProgram.base;
+                this.PC = executingProgram.PC + executingProgram.base;
                 this.Instruction = executingProgram.Instruction;
                 this.Acc = executingProgram.Acc;
                 this.Xreg = executingProgram.Xreg;
                 this.Yreg = executingProgram.Yreg;
                 this.Zflag = executingProgram.Zflag;
-
-            }
         }
 
         public updatePCB() {
             //debugger;
-            executingProgram;
-            executingProgram.PC = _CPU.PC;
+            executingProgram.PC = _CPU.PC - executingProgram.base;
             executingProgram.Instruction = _CPU.Instruction;
             executingProgram.Acc = _CPU.Acc;
             executingProgram.Xreg = _CPU.Xreg;
@@ -145,7 +143,6 @@ module TSOS {
                     break;
                 }
                 case "00" :{
-                    debugger;
                     //Break
                     this.updateCPU();
                     assemblerCode = "00 BRK";
@@ -169,8 +166,7 @@ module TSOS {
                     if (this.Zflag == 0) {
                         assemblerCode = "D0 BNE $" + memoryManager.getMemory(this.PC + 1);
                         this.PC += memoryManager.convertHex(memoryManager.getMemory(++this.PC)) + 1;
-                        //alert(this.PC)
-                        if (this.PC>= 256) {
+                        if (this.PC>= 256 + executingProgram.base) {
                             this.PC -= 256;
                         }
                     } else {
@@ -196,6 +192,7 @@ module TSOS {
                 }
                 default :{
                     //fucking chicken strips...
+                    alert(instructions);
                     _CPU.isExecuting = false;
                     _StdOut.putText("Something is borked...");
                         break;

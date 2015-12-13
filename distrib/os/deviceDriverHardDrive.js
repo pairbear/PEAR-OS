@@ -159,24 +159,37 @@ var TSOS;
             }
         };
         DeviceDriverHardDrive.prototype.readFile = function (fileName) {
+            //debugger;
             var tsb = this.findFile(fileName);
             var contents = "";
+            var convertedContents = "";
             var nextTSB = this.getNextTSB(tsb);
             while (nextTSB != "000") {
-                var hexContents = this.getData(nextTSB);
-                if (hexContents % 2 !== 0) {
-                    hexContents += '0';
+                if (programChange) {
+                    contents += this.getData(nextTSB);
                 }
-                contents += TSOS.Utils.hexToStringConverter(hexContents);
+                else {
+                    var hexContents = this.getData(nextTSB);
+                    if (hexContents % 2 !== 0) {
+                        hexContents += '0';
+                    }
+                    contents += TSOS.Utils.hexToStringConverter(hexContents);
+                }
                 nextTSB = this.getNextTSB(nextTSB);
             }
-            globalFileContent = contents;
-            contents = contents.replace(/\s+/g, '');
-            contents = contents.slice(0, 256);
-            var programData = contents.match(/.{2}/g);
-            executingProgramData = programData;
-            TSOS.Control.updateHardDrive();
-            _KernelInterruptQueue.enqueue(new TSOS.Interrupt(HARDDRIVE_FILE_CHANGE_OUT_IRQ, 0));
+            convertedContents += TSOS.Utils.hexToStringConverter(contents);
+            globalFileContent = convertedContents;
+            if (programChange) {
+                //debugger;
+                var cleanContent = TSOS.Utils.removeUnwantedSymbols(convertedContents);
+                var cleanestContent = cleanContent.match(/.{2}/g);
+                cleanestContent.slice(0, 256);
+                debugger;
+                executingProgramData = cleanestContent;
+                this.deleteFile(fileName);
+                TSOS.Control.updateHardDrive();
+                _KernelInterruptQueue.enqueue(new TSOS.Interrupt(HARDDRIVE_FILE_CHANGE_OUT_IRQ, 0));
+            }
             return;
         };
         DeviceDriverHardDrive.prototype.writeFile = function (fileName) {

@@ -3,7 +3,7 @@ module TSOS {
 export class ProcessControlBlock {
     constructor (
         public PID: number = 0,
-        public Priority: number = 0,
+        public Priority: number = 4,
         public PC: number = 0,
         public Acc: number = 0,
         public Xreg: number = 0,

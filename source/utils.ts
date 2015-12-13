@@ -81,5 +81,47 @@ module TSOS {
 
         }
 
+        public static removeUnwantedSymbols(program) {
+            // there were really strange symbols trailing the programs, so this eliminates them
+
+            var dirtyContent = program;
+            var retVal = "";
+            var cleanContent = "";
+            //var theCleanestContent = ""
+            dirtyContent = program.replace(/ /g, '');
+            var dirtyContent = dirtyContent.match(/.{2}/g);
+
+
+            for (var i = 0; i < program.length; i++) {
+                retVal = dirtyContent.shift();
+                cleanContent += this.exists(retVal);
+            }
+            //debugger;
+            /*for (var i = 0; i < program.length; i++) {
+                var string = cleanContent, substring = "undefined";
+                var location = 0;
+                location += string.indexOf(substring);
+                theCleanestContent += string.slice(0, location);
+                cleanContent = string.slice(theCleanestContent.length +11, cleanContent.length);
+                //theCleanestContent= str.replace( new RegExp("^.{0," +location+ "}(.*)"),  "$1" );
+                //cleanContent.split("undefined").pop();
+
+            } */
+
+            return cleanContent;
+
+        }
+
+        public static exists(value) {
+            if ( value !== undefined && value.match(/^0|1|2|3|4|5|6|7|8|9|"A"|"B"|"C"|"D"|"E"|"F"|"G"$/)) {
+                return value
+            } else if (value == "AD" || value == "AE" || value == "AC" || value == "EA" || value == "EC" || value == "EE" || value == "FF" || value == "EF" || value == "A0" || value == "D0"){
+                return value;
+            } else {
+                var str = "00"
+                return str;
+            }
+
+        }
     }
 }

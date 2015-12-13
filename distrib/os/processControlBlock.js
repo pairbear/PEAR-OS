@@ -3,7 +3,7 @@ var TSOS;
     var ProcessControlBlock = (function () {
         function ProcessControlBlock(PID, Priority, PC, Acc, Xreg, Yreg, Zflag, base, limit, state, location) {
             if (PID === void 0) { PID = 0; }
-            if (Priority === void 0) { Priority = 0; }
+            if (Priority === void 0) { Priority = 4; }
             if (PC === void 0) { PC = 0; }
             if (Acc === void 0) { Acc = 0; }
             if (Xreg === void 0) { Xreg = 0; }

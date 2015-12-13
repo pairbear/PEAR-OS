@@ -56,10 +56,10 @@ var fileNamesList= null;
 var globalFileContent = "";
 var scheduleType = "";
 var success: boolean;
-var option: boolean
+var programChange: boolean;
 
-enum State {new, running, ready}
-var States = ["new", "running", "ready"];
+enum State {new, running, ready, complete}
+var States = ["new", "running", "ready", "complete"];
 
 enum Locations {memory, hardDrive}
 var LocationsString = ["memory", "hardDrive"];

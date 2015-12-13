@@ -50,14 +50,15 @@ var fileNamesList = null;
 var globalFileContent = "";
 var scheduleType = "";
 var success;
-var option;
+var programChange;
 var State;
 (function (State) {
     State[State["new"] = 0] = "new";
     State[State["running"] = 1] = "running";
     State[State["ready"] = 2] = "ready";
+    State[State["complete"] = 3] = "complete";
 })(State || (State = {}));
-var States = ["new", "running", "ready"];
+var States = ["new", "running", "ready", "complete"];
 var Locations;
 (function (Locations) {
     Locations[Locations["memory"] = 0] = "memory";

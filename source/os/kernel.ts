@@ -15,6 +15,7 @@
 
 module TSOS {
 
+    import Collator = Intl.Collator;
     export class Kernel {
         //
         // OS Startup and Shutdown Routines
@@ -141,9 +142,10 @@ module TSOS {
                 case CPU_BRK_IRQ:
                     var currPID = executingProgramPID;
                     if (scheduler.readyQueue.isEmpty() === true) {
+                        executingProgram.state = State.complete;
+                        memoryManager.clearProgram();
                         Control.updateRQDisplay;
                         _CPU.isExecuting = false;
-                        Control.updateRQDisplay;
                     } else {
                         _KernelInterruptQueue.enqueue(new Interrupt(CONTEXT_SWITCH_IRQ, currPID));
                     }
@@ -171,6 +173,7 @@ module TSOS {
                     break;
 
                 case MEMORY_CLEAR_IRQ:
+                    this.krnTrace("clering memory");
                     memoryManager = new MemoryManager();
                     memoryManager.init();
                     scheduler = new CPUScheduler();
@@ -178,31 +181,42 @@ module TSOS {
 
 
                 case CREATE_IRQ:
+                    this.krnTrace("creating file");
                     _krnHardDrive.isr(params);
                     break;
 
                 case READ_IRQ:
+                    this.krnTrace("reading file");
                     _krnHardDrive.isr1(params);
                     break;
 
                 case WRITE_IRQ:
+                    this.krnTrace("writing file");
                     _krnHardDrive.isr2(params);
                     break;
 
                 case DELETE_IRQ:
+                    this.krnTrace("deleting file");
                     _krnHardDrive.isr3(params);
                     break;
 
                 case FORMAT_IRQ:
+                    this.krnTrace("formatting hard drive");
                     _krnHardDrive.isr4(params);
                     break;
 
                 case HARDDRIVE_FILE_CHANGE_OUT_IRQ:{
                     this.krnTrace("Loading the changed program into memory.");
+                    debugger;
                     memoryManager.loadProgram(executingProgram, executingProgramData);
                     executingProgram.location= Locations.memory;
                     _CPU.updateCPU();
+                    executingProgramData = null;
+                    TSOS.Control.updateAssemblerCode();
+                    TSOS.Control.updateCPUDisplay();
+                    TSOS.Control.updateRQDisplay();
                     break;
+
                 }
 
                 default:

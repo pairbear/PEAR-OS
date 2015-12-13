@@ -344,6 +344,7 @@ var TSOS;
                 if (memoryManager.nextOpenMemoryBlock === null) {
                     globalFileContent = userInput;
                     _StdOut.putText("Memory full, loading program to Hard drive");
+                    _StdOut.advanceLine();
                     _StdOut.putText("PID: " + scheduler.loadProgramToHardDrive(programString, priority));
                 }
                 else {

@@ -99,7 +99,7 @@ module TSOS {
         public setUsedBlock(tsb) {
             sessionStorage.setItem(tsb, "1" + sessionStorage.getItem(tsb).substring(1));
         }
-        
+
 
         public getNextTSB(tsb:string) {
             return this.getMetaData(tsb).substring(1, this.metaData);
@@ -160,6 +160,8 @@ module TSOS {
 
         }
 
+
+
         public findFile(name:string) {
 
             for (var t = 0; t <= 0; t++) {
@@ -180,6 +182,7 @@ module TSOS {
 
 
         public createFile(fileName) {
+            //Creates a file and adds it to the hard drive
             if (this.findFile(fileName) === null) {
                 success = true;
                 var tsb:string = this.getNextFileTSB();
@@ -199,32 +202,53 @@ module TSOS {
 
 
         public readFile(fileName:string):any {
+            //reads the files and outputs them
+            //debugger;
+
             var tsb = this.findFile(fileName);
             var contents = "";
+            var convertedContents = "";
             var nextTSB = this.getNextTSB(tsb);
             while (nextTSB != "000") {
-                var hexContents = this.getData(nextTSB);
-                if (hexContents % 2 !== 0) {
-                    hexContents += '0';
+                if (programChange) {
+                    contents += this.getData(nextTSB);
+
+                } else {
+                    var hexContent = this.getData(nextTSB);
+                    if (hexContent % 2 !== 0) {
+                        hexContent += '0';
+                    }
+                    contents += TSOS.Utils.hexToStringConverter(hexContent);
                 }
-                contents += TSOS.Utils.hexToStringConverter(hexContents);
 
                 nextTSB = this.getNextTSB(nextTSB);
             }
-            globalFileContent = contents
-            contents = contents.replace(/\s+/g, '');
+            convertedContents += Utils.hexToStringConverter(contents)
+            globalFileContent = convertedContents;
 
-            contents = contents.slice(0, 256);
-            var programData = contents.match(/.{2}/g);
-            executingProgramData = programData
-            TSOS.Control.updateHardDrive();
-            _KernelInterruptQueue.enqueue(new Interrupt(HARDDRIVE_FILE_CHANGE_OUT_IRQ, 0));
+            if (programChange) {
+            // if a program is being changed out, grab the contents, and output them globally so they can be used by the hard drive file change out interrupt
+                //debugger;
+                var cleanContent = TSOS.Utils.removeUnwantedSymbols(convertedContents);
+
+                var cleanestContent = cleanContent.match(/.{2}/g);
+                cleanestContent.slice(0, 256)
+                debugger;
+                executingProgramData  = cleanestContent;
+                this.deleteFile(fileName);
+
+                TSOS.Control.updateHardDrive();
+
+                _KernelInterruptQueue.enqueue(new Interrupt(HARDDRIVE_FILE_CHANGE_OUT_IRQ, 0));
+            }
             return;
 
         }
 
 
         public writeFile(fileName:string) {
+            //writes data to a file and if the designated file does not exist, create that file
+
             if (this.findFile(fileName) === null) {
                 this.createFile(fileName);
             }
@@ -250,6 +274,7 @@ module TSOS {
 
 
         public deleteFile(fileName:string) {
+            //deletes files from the hard drive
 
             var tsb = this.findFile(fileName);
             var tempTSB1 = tsb;
@@ -267,6 +292,7 @@ module TSOS {
         }
 
         public formatFile() {
+            //wipes and formats the hard drive
             this.init(true);
             TSOS.Control.updateHardDrive();
             return;

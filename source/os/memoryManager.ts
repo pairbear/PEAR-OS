@@ -25,9 +25,17 @@ module TSOS {
         }
 
         public findNextOpenBlock() {
-            for (var i =0; i< 256 * programNumbers; i+=256){
-                if (this.memory.userProgram[i]==="00")
-                    return i;
+            for (var i=0; i <programNumbers; i++){
+                var emptyBlock=true;
+                var base = 255*i;
+                for (var j =0; j< 256; j++){
+                    if (this.memory.userProgram[base+j]!=="00"){
+                        emptyBlock=false;
+                        break;
+                    }
+                }
+                if (emptyBlock)
+                    return i * (256);
             }
             return null;
     }
@@ -38,6 +46,10 @@ module TSOS {
             for (var i=0; i<program.length; i++){
                 this.memory.userProgram[i+currPCB.base] = program[i];
             }
+
+            for (var j= program.length+currPCB.base;j<currPCB.limit; j++ )
+                this.memory.userProgram[j] ="00";
+
             this.nextOpenMemoryBlock = this.findNextOpenBlock();
             this.updateMemoryDisplay();
         }
@@ -81,6 +93,14 @@ module TSOS {
                 program.push(this.memory.userProgram[i]);
             }
             return program;
+        }
+
+        public clearProgram() {
+            for (var i = executingProgram.base; i<executingProgram.limit; i++){
+                this.memory.userProgram[i] = "00";
+            }
+            this.nextOpenMemoryBlock = this.findNextOpenBlock();
+            this.updateMemoryDisplay();
         }
 
 

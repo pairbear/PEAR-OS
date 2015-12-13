@@ -22,9 +22,22 @@ var TSOS;
             TSOS.Control.updateMemoryDisplay(output);
         };
         MemoryManager.prototype.findNextOpenBlock = function () {
-            for (var i = 0; i < 256 * programNumbers; i += 256) {
-                if (this.memory.userProgram[i] === "00")
+            /*for (var i =0; i< 256 * programNumbers; i+=256){
+                if (this.memory.userProgram[i]==="00")
                     return i;
+            }
+            return null; */
+            for (var i = 0; i < programNumbers; i++) {
+                var blockEmpty = true;
+                var base = 255 * i;
+                for (var j = 0; j < 256; j++) {
+                    if (this.memory.userProgram[base + j] !== "00") {
+                        blockEmpty = false;
+                        break;
+                    }
+                }
+                if (blockEmpty)
+                    return i * (256);
             }
             return null;
         };
@@ -33,6 +46,8 @@ var TSOS;
             for (var i = 0; i < program.length; i++) {
                 this.memory.userProgram[i + currPCB.base] = program[i];
             }
+            for (var j = program.length + currPCB.base; j < currPCB.limit; j++)
+                this.memory.userProgram[j] = "00";
             this.nextOpenMemoryBlock = this.findNextOpenBlock();
             this.updateMemoryDisplay();
         };
@@ -66,6 +81,13 @@ var TSOS;
                 program.push(this.memory.userProgram[i]);
             }
             return program;
+        };
+        MemoryManager.prototype.clearProgram = function () {
+            for (var i = executingProgram.base; i < executingProgram.limit; i++) {
+                this.memory.userProgram[i] = "00";
+            }
+            this.nextOpenMemoryBlock = this.findNextOpenBlock();
+            this.updateMemoryDisplay();
         };
         return MemoryManager;
     })();

@@ -10,17 +10,21 @@ var TSOS;
             this.cycleCounter = cycleCounter;
         }
         CPUScheduler.prototype.loadProgramToMemory = function (program, priority) {
+            //debugger;
             var newPCB = new TSOS.ProcessControlBlock();
             newPCB.location = Locations.memory;
             newPCB.base = memoryManager.nextOpenMemoryBlock;
-            newPCB.PC = newPCB.base;
+            newPCB.PC = 0;
             newPCB.limit = newPCB.base + 256;
-            newPCB.Priority = priority;
+            if (typeof priority !== "undefined") {
+                newPCB.Priority = priority;
+            }
             this.residentQueue.enqueue(newPCB);
             for (var i = 0; i < program.length; i++) {
                 memoryManager.memory.userProgram[i + newPCB.base] = program[i];
             }
             memoryManager.nextOpenMemoryBlock = memoryManager.findNextOpenBlock();
+            memoryManager.loadProgram(newPCB, program);
             memoryManager.updateMemoryDisplay();
             return (newPCB.PID).toString();
         };
@@ -30,7 +34,9 @@ var TSOS;
             newPCB.base = null;
             newPCB.PC = 0;
             newPCB.limit = null;
-            newPCB.Priority = priority;
+            if (typeof priority !== "undefined") {
+                newPCB.Priority = priority;
+            }
             this.residentQueue.enqueue(newPCB);
             memoryManager.nextOpenMemoryBlock = memoryManager.findNextOpenBlock();
             memoryManager.updateMemoryDisplay();
@@ -54,6 +60,7 @@ var TSOS;
             _CPU.updateCPU();
         };
         CPUScheduler.prototype.runAllPrograms = function () {
+            //debugger;
             while (!this.residentQueue.isEmpty()) {
                 this.readyQueue.enqueue(this.residentQueue.dequeue());
                 if (scheduleType == "priority") {
@@ -65,40 +72,47 @@ var TSOS;
             _CPU.updateCPU();
         };
         CPUScheduler.prototype.contextSwitch = function () {
-            executingProgram = this.readyQueue.dequeue();
-            executingProgramPID = executingProgram.PID;
+            //debugger;
             if (executingProgram !== null) {
                 executingProgram.state = State.ready;
                 this.readyQueue.enqueue(executingProgram);
             }
             this.cycleCounter = 0;
+            executingProgram = this.readyQueue.dequeue();
+            executingProgramPID = executingProgram.PID;
+            //debugger;
             if (executingProgram.location === Locations.hardDrive) {
+                programChange = true;
                 _KernelInterruptQueue.enqueue(new TSOS.Interrupt(READ_IRQ, "tempProgram"));
                 if (memoryManager.nextOpenMemoryBlock !== null) {
                     executingProgram.base = memoryManager.nextOpenMemoryBlock;
                     executingProgram.limit = executingProgram.base + 255;
                 }
                 else {
-                    var lastPCB = this.residentQueue.dequeue();
+                    //debugger;
+                    var lastPCB = this.residentQueue.getLastProcess();
                     var useReady = lastPCB === null;
                     if (useReady)
-                        lastPCB = this.readyQueue.dequeue();
+                        lastPCB = this.readyQueue.getLastProcess();
                     var lastProgram = [];
                     lastProgram = memoryManager.getProgram(lastPCB);
+                    lastProgram = lastProgram.slice(0, 256);
                     globalFileContent = lastProgram.join('');
                     executingProgram.base = lastPCB.base;
                     executingProgram.limit = lastPCB.limit;
                     lastPCB.location = Locations.hardDrive;
                     _KernelInterruptQueue.enqueue(new TSOS.Interrupt(WRITE_IRQ, "tempProgram"));
                     if (useReady) {
-                        this.readyQueue.enqueue(lastPCB);
+                        this.readyQueue.addLastProcess(lastPCB);
                     }
                     else {
-                        this.residentQueue.enqueue(lastPCB);
+                        this.residentQueue.addLastProcess(lastPCB);
                     }
                 }
             }
-            _CPU.updateCPU();
+            else {
+                _CPU.updateCPU();
+            }
         };
         CPUScheduler.prototype.killProcess = function (PID) {
             var currProgram = null;
