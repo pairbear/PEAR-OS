@@ -40,9 +40,8 @@ var TSOS;
             var temp = this.getData(tsb);
             temp = temp.replace(/0+$/g, "");
             if (temp.length % 2 !== 0)
-                temp += '0';
-            if (temp === "")
-                return "";
+                if (temp === "")
+                    return "";
             return TSOS.Utils.hexToStringConverter(temp);
         };
         DeviceDriverHardDrive.prototype.getBlock = function (TSB) {
@@ -144,7 +143,9 @@ var TSOS;
             return null;
         };
         DeviceDriverHardDrive.prototype.createFile = function (fileName) {
+            //Creates a file and adds it to the hard drive
             if (this.findFile(fileName) === null) {
+                fileNamesList.enqueue(fileName);
                 success = true;
                 var tsb = this.getNextFileTSB();
                 var hexName = TSOS.Utils.stringToHexConverter(fileName);
@@ -159,7 +160,7 @@ var TSOS;
             }
         };
         DeviceDriverHardDrive.prototype.readFile = function (fileName) {
-            //debugger;
+            //reads the files and outputs them
             var tsb = this.findFile(fileName);
             var contents = "";
             var convertedContents = "";
@@ -169,30 +170,39 @@ var TSOS;
                     contents += this.getData(nextTSB);
                 }
                 else {
-                    var hexContents = this.getData(nextTSB);
-                    if (hexContents % 2 !== 0) {
-                        hexContents += '0';
+                    var hexContent = this.getData(nextTSB);
+                    if (hexContent % 2 !== 0) {
+                        hexContent += '0';
                     }
-                    contents += TSOS.Utils.hexToStringConverter(hexContents);
+                    contents += TSOS.Utils.hexToStringConverter(hexContent);
                 }
                 nextTSB = this.getNextTSB(nextTSB);
             }
-            convertedContents += TSOS.Utils.hexToStringConverter(contents);
-            globalFileContent = convertedContents;
+            debugger;
+            //convertedContents += Utils.hexToStringConverter(contents)
+            //globalFileContent = convertedContents;
+            globalFileContent = contents;
             if (programChange) {
+                // if a program is being changed out, grab the contents, and output them globally so they can be used by the hard drive file change out interrupt
                 //debugger;
-                var cleanContent = TSOS.Utils.removeUnwantedSymbols(convertedContents);
-                var cleanestContent = cleanContent.match(/.{2}/g);
-                cleanestContent.slice(0, 256);
-                debugger;
-                executingProgramData = cleanestContent;
+                /* var cleanContent = TSOS.Utils.removeUnwantedSymbols(convertedContents);
+ 
+                 var cleanestContent = cleanContent.match(/.{2}/g);
+                 cleanestContent.slice(0, 256)
+                 executingProgramData = cleanestContent; */
+                executingProgramData = contents;
                 this.deleteFile(fileName);
                 TSOS.Control.updateHardDrive();
                 _KernelInterruptQueue.enqueue(new TSOS.Interrupt(HARDDRIVE_FILE_CHANGE_OUT_IRQ, 0));
             }
-            return;
+            else {
+                _StdOut.putText(globalFileContent);
+                _StdOut.advanceLine();
+                return;
+            }
         };
         DeviceDriverHardDrive.prototype.writeFile = function (fileName) {
+            //writes data to a file and if the designated file does not exist, create that file
             if (this.findFile(fileName) === null) {
                 this.createFile(fileName);
             }
@@ -215,6 +225,7 @@ var TSOS;
             return true;
         };
         DeviceDriverHardDrive.prototype.deleteFile = function (fileName) {
+            //deletes files from the hard drive
             var tsb = this.findFile(fileName);
             var tempTSB1 = tsb;
             var tempTSB2 = tempTSB1;
@@ -228,6 +239,7 @@ var TSOS;
             TSOS.Control.updateHardDrive();
         };
         DeviceDriverHardDrive.prototype.formatFile = function () {
+            //wipes and formats the hard drive
             this.init(true);
             TSOS.Control.updateHardDrive();
             return;

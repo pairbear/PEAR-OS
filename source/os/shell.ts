@@ -152,44 +152,58 @@ module TSOS {
                 " - sets the quantum for the CPU Scheduler ");
             this.commandList[this.commandList.length] = sc;
 
+            //displays running processes
             sc =  new ShellCommand(this.shellDisplayRunningProcesses,
                 "ps",
                 " - Displays process currently being executed ");
             this.commandList[this.commandList.length] = sc;
 
+            //sets the schedule type
             sc =  new ShellCommand(this.shellSelectScheduleType,
-                "scheduletype",
+                "setschedule",
                 " - select rr, fcfs, or priority as your scheduling type");
             this.commandList[this.commandList.length] = sc;
 
+            //creates a file
             sc =  new ShellCommand(this.shellCreate,
                 "create",
                 " - creates a file");
             this.commandList[this.commandList.length] = sc;
 
+            //reads a file
             sc =  new ShellCommand(this.shellRead,
                 "read",
                 " - reads the selected file");
             this.commandList[this.commandList.length] = sc;
 
+            //writes to a file
             sc =  new ShellCommand(this.shellWrite,
                 "write",
                 " - writes your text to designated file");
             this.commandList[this.commandList.length] = sc;
 
+            //deletes a file
             sc =  new ShellCommand(this.shellDelete,
                 "delete",
                 " - deletes a file");
             this.commandList[this.commandList.length] = sc;
 
+            //formats the hard drive
             sc =  new ShellCommand(this.shellFormat,
                 "format",
                 " - formats the hard drive");
             this.commandList[this.commandList.length] = sc;
 
+            //shows the files in the hard drive
             sc =  new ShellCommand(this.shellLS,
                 "ls",
                 " - shows a list of files on the hard drive");
+            this.commandList[this.commandList.length] = sc;
+
+            // displays the schedule type
+            sc =  new ShellCommand(this.shellGetSchedule,
+                "getschedule",
+                " - shows the current scheduling algorithm");
             this.commandList[this.commandList.length] = sc;
 
 
@@ -516,7 +530,7 @@ module TSOS {
         public shellCreate(args) {
             var fileName = args[0];
             _StdOut.putText("creating file " + fileName);
-            fileNamesList.enqueue(fileName);
+            //fileNamesList.enqueue(fileName);
             _KernelInterruptQueue.enqueue(new Interrupt(CREATE_IRQ, fileName));
             /*if (success) {
                 _StdOut.putText("Creating file " + fileName);
@@ -529,11 +543,6 @@ module TSOS {
             var fileName = args[0];
             _StdOut.putText("Reading file " + fileName + ":");
             _KernelInterruptQueue.enqueue(new Interrupt(READ_IRQ, fileName));
-            _StdOut.advanceLine();
-            _StdOut.advanceLine();
-            _StdOut.putText(globalFileContent);
-            _StdOut.advanceLine();
-            _StdOut.advanceLine();
         }
 
         public shellWrite(args) {
@@ -563,11 +572,19 @@ module TSOS {
         }
 
         public shellLS() {
+            //var files = fileNamesList;
             _StdOut.putText("Current files on hard drive:");
             _StdOut.advanceLine();
-            for (var i=0; i<fileNamesList.getSize(); i++){
-                _StdOut.putText(fileNamesList.getPCB(i) + ", ");
+            for (var i=0; i<fileNamesList.getSize() ; i++){
+                _StdOut.putText(fileNamesList.getPCB(i));
+                if (i<fileNamesList.getSize()-1) (
+                    _StdOut.putText(", ")
+                )
             }
+        }
+
+        public shellGetSchedule() {
+            _StdOut.putText("The current schedule type is " + scheduleType)
         }
 
     }

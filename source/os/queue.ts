@@ -59,7 +59,17 @@ module TSOS {
         }
 
         public setPriorityOrder() {
-            this.q.sort();
+            for (var i = 0; i < this.q.length; i++) {
+                this.q.sort(this.comparePriorityOrder);
+            }
+        }
+
+        public comparePriorityOrder(a,b) {
+            if (a.Priority < b.Priority)
+                return -1;
+            if (a.Priority > b.Priority)
+                return 1;
+            return 0;
         }
 
 

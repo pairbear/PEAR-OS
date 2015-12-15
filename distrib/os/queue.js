@@ -54,7 +54,16 @@ var TSOS;
             return this.q[i];
         };
         Queue.prototype.setPriorityOrder = function () {
-            this.q.sort();
+            for (var i = 0; i < this.q.length; i++) {
+                this.q.sort(this.comparePriorityOrder);
+            }
+        };
+        Queue.prototype.comparePriorityOrder = function (a, b) {
+            if (a.Priority < b.Priority)
+                return -1;
+            if (a.Priority > b.Priority)
+                return 1;
+            return 0;
         };
         Queue.prototype.addLastProcess = function (pcb) {
             this.q.splice(this.lastPCB, 0, pcb);

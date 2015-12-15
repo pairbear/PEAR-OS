@@ -51,9 +51,8 @@ module TSOS {
             var temp = this.getData(tsb);
             temp = temp.replace(/0+$/g, "");
             if (temp.length % 2 !== 0)
-                temp += '0';
-            if (temp === "")
-                return "";
+                if (temp === "")
+                    return "";
             return TSOS.Utils.hexToStringConverter(temp);
         }
 
@@ -161,7 +160,6 @@ module TSOS {
         }
 
 
-
         public findFile(name:string) {
 
             for (var t = 0; t <= 0; t++) {
@@ -184,6 +182,7 @@ module TSOS {
         public createFile(fileName) {
             //Creates a file and adds it to the hard drive
             if (this.findFile(fileName) === null) {
+                fileNamesList.enqueue(fileName);
                 success = true;
                 var tsb:string = this.getNextFileTSB();
                 var hexName = TSOS.Utils.stringToHexConverter(fileName);
@@ -203,7 +202,6 @@ module TSOS {
 
         public readFile(fileName:string):any {
             //reads the files and outputs them
-            //debugger;
 
             var tsb = this.findFile(fileName);
             var contents = "";
@@ -223,25 +221,31 @@ module TSOS {
 
                 nextTSB = this.getNextTSB(nextTSB);
             }
-            convertedContents += Utils.hexToStringConverter(contents)
-            globalFileContent = convertedContents;
+            debugger;
+            //convertedContents += Utils.hexToStringConverter(contents)
+            //globalFileContent = convertedContents;
+            globalFileContent = contents;
 
             if (programChange) {
-            // if a program is being changed out, grab the contents, and output them globally so they can be used by the hard drive file change out interrupt
+                // if a program is being changed out, grab the contents, and output them globally so they can be used by the hard drive file change out interrupt
                 //debugger;
-                var cleanContent = TSOS.Utils.removeUnwantedSymbols(convertedContents);
+               /* var cleanContent = TSOS.Utils.removeUnwantedSymbols(convertedContents);
 
                 var cleanestContent = cleanContent.match(/.{2}/g);
                 cleanestContent.slice(0, 256)
-                debugger;
-                executingProgramData  = cleanestContent;
+                executingProgramData = cleanestContent; */
+                executingProgramData = contents;
                 this.deleteFile(fileName);
 
                 TSOS.Control.updateHardDrive();
 
                 _KernelInterruptQueue.enqueue(new Interrupt(HARDDRIVE_FILE_CHANGE_OUT_IRQ, 0));
+            } else {
+
+                _StdOut.putText(globalFileContent);
+                _StdOut.advanceLine();
+                return;
             }
-            return;
 
         }
 

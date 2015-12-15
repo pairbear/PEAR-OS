@@ -75,6 +75,7 @@ var TSOS;
             return dataArray;
         };
         Utils.removeUnwantedSymbols = function (program) {
+            // there were really strange symbols trailing the programs, so this eliminates them
             var dirtyContent = program;
             var retVal = "";
             var cleanContent = "";

@@ -54,7 +54,7 @@ var currentPID = 0;
 var quantum:number = 6;
 var fileNamesList= null;
 var globalFileContent = "";
-var scheduleType = "";
+var scheduleType = "round robin";
 var success: boolean;
 var programChange: boolean;
 

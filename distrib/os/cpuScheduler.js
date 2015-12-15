@@ -10,6 +10,7 @@ var TSOS;
             this.cycleCounter = cycleCounter;
         }
         CPUScheduler.prototype.loadProgramToMemory = function (program, priority) {
+            //loads a program to memory
             //debugger;
             var newPCB = new TSOS.ProcessControlBlock();
             newPCB.location = Locations.memory;
@@ -29,6 +30,7 @@ var TSOS;
             return (newPCB.PID).toString();
         };
         CPUScheduler.prototype.loadProgramToHardDrive = function (program, priority) {
+            //loads a program to the hard drive
             var newPCB = new TSOS.ProcessControlBlock();
             newPCB.location = Locations.hardDrive;
             newPCB.base = null;
@@ -44,6 +46,7 @@ var TSOS;
             return (newPCB.PID).toString();
         };
         CPUScheduler.prototype.runProgram = function () {
+            //runs a designated process
             var currentProgram = this.residentQueue.getPID(executingProgramPID);
             //executingProgram.state = State.ready;
             this.readyQueue.enqueue(currentProgram);
@@ -60,10 +63,10 @@ var TSOS;
             _CPU.updateCPU();
         };
         CPUScheduler.prototype.runAllPrograms = function () {
-            //debugger;
+            //runs all programs
             while (!this.residentQueue.isEmpty()) {
                 this.readyQueue.enqueue(this.residentQueue.dequeue());
-                if (scheduleType == "priority") {
+                if (scheduleType === "priority") {
                     this.readyQueue.setPriorityOrder();
                 }
             }
@@ -72,6 +75,7 @@ var TSOS;
             _CPU.updateCPU();
         };
         CPUScheduler.prototype.contextSwitch = function () {
+            //switches executing program
             //debugger;
             if (executingProgram !== null) {
                 executingProgram.state = State.ready;
@@ -82,6 +86,7 @@ var TSOS;
             executingProgramPID = executingProgram.PID;
             //debugger;
             if (executingProgram.location === Locations.hardDrive) {
+                //used to exchange files between memory and the hard drive
                 programChange = true;
                 _KernelInterruptQueue.enqueue(new TSOS.Interrupt(READ_IRQ, "tempProgram"));
                 if (memoryManager.nextOpenMemoryBlock !== null) {
@@ -115,6 +120,7 @@ var TSOS;
             }
         };
         CPUScheduler.prototype.killProcess = function (PID) {
+            // kills a running process
             var currProgram = null;
             if (executingProgramPID === PID) {
                 executingProgramPID = null;
@@ -131,6 +137,7 @@ var TSOS;
             return this.readyQueue.getSize() === 0;
         };
         CPUScheduler.prototype.schedulerType = function (type) {
+            // changes the schedule type
             if (type == "rr") {
                 quantum = 6;
             }

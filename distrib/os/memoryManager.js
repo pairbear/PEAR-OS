@@ -22,21 +22,16 @@ var TSOS;
             TSOS.Control.updateMemoryDisplay(output);
         };
         MemoryManager.prototype.findNextOpenBlock = function () {
-            /*for (var i =0; i< 256 * programNumbers; i+=256){
-                if (this.memory.userProgram[i]==="00")
-                    return i;
-            }
-            return null; */
             for (var i = 0; i < programNumbers; i++) {
-                var blockEmpty = true;
+                var emptyBlock = true;
                 var base = 255 * i;
                 for (var j = 0; j < 256; j++) {
                     if (this.memory.userProgram[base + j] !== "00") {
-                        blockEmpty = false;
+                        emptyBlock = false;
                         break;
                     }
                 }
-                if (blockEmpty)
+                if (emptyBlock)
                     return i * (256);
             }
             return null;

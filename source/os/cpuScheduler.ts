@@ -70,11 +70,10 @@ module TSOS {
 
         public runAllPrograms() {
             //runs all programs
-            //debugger;
             while(!this.residentQueue.isEmpty()){
                 this.readyQueue.enqueue(this.residentQueue.dequeue());
 
-                if (scheduleType == "priority" ) {
+                if (scheduleType === "priority" ) {
                     this.readyQueue.setPriorityOrder();
                 }
             }
@@ -152,6 +151,7 @@ module TSOS {
         }
 
         public schedulerType(type) {
+
             // changes the schedule type
             if (type == "rr") {
                 quantum = 6;
@@ -160,6 +160,7 @@ module TSOS {
 
             } else if (type == "priority") {
                 quantum = 1000;
+
 
             }
         }
