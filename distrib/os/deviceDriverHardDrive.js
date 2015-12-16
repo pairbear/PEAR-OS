@@ -171,26 +171,25 @@ var TSOS;
                 }
                 else {
                     var hexContent = this.getData(nextTSB);
+                    hexContent = TSOS.Utils.removeZeroes(hexContent, "0");
                     if (hexContent % 2 !== 0) {
                         hexContent += '0';
                     }
+                    debugger;
                     contents += TSOS.Utils.hexToStringConverter(hexContent);
+                    globalFileContent = contents;
                 }
                 nextTSB = this.getNextTSB(nextTSB);
             }
-            debugger;
-            //convertedContents += Utils.hexToStringConverter(contents)
-            //globalFileContent = convertedContents;
-            globalFileContent = contents;
             if (programChange) {
                 // if a program is being changed out, grab the contents, and output them globally so they can be used by the hard drive file change out interrupt
-                //debugger;
-                /* var cleanContent = TSOS.Utils.removeUnwantedSymbols(convertedContents);
- 
-                 var cleanestContent = cleanContent.match(/.{2}/g);
-                 cleanestContent.slice(0, 256)
-                 executingProgramData = cleanestContent; */
-                executingProgramData = contents;
+                debugger;
+                var cleanContent = TSOS.Utils.removeZeroes(contents, "0");
+                cleanContent += '0';
+                cleanContent = TSOS.Utils.hexToStringConverter(cleanContent);
+                cleanContent = cleanContent.replace(/ /g, '');
+                var cleanestContent = cleanContent.match(/.{2}/g);
+                executingProgramData = cleanestContent;
                 this.deleteFile(fileName);
                 TSOS.Control.updateHardDrive();
                 _KernelInterruptQueue.enqueue(new TSOS.Interrupt(HARDDRIVE_FILE_CHANGE_OUT_IRQ, 0));
@@ -207,7 +206,7 @@ var TSOS;
                 this.createFile(fileName);
             }
             var fileContent = TSOS.Utils.stringToHexConverter(globalFileContent);
-            var dataArray = TSOS.Utils.stringsplitter(fileContent, this.dataBits);
+            var dataArray = TSOS.Utils.stringSplitter(fileContent, this.dataBits);
             var tsbFile = this.findFile(fileName);
             var nextTSB = this.getNextDataTSB();
             this.setMetaData(tsbFile, nextTSB);

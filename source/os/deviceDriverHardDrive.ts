@@ -213,28 +213,29 @@ module TSOS {
 
                 } else {
                     var hexContent = this.getData(nextTSB);
+                    hexContent = Utils.removeZeroes(hexContent, "0");
                     if (hexContent % 2 !== 0) {
                         hexContent += '0';
                     }
+                    debugger;
                     contents += TSOS.Utils.hexToStringConverter(hexContent);
+                    globalFileContent = contents;
                 }
 
                 nextTSB = this.getNextTSB(nextTSB);
             }
-            debugger;
-            //convertedContents += Utils.hexToStringConverter(contents)
-            //globalFileContent = convertedContents;
-            globalFileContent = contents;
+
 
             if (programChange) {
                 // if a program is being changed out, grab the contents, and output them globally so they can be used by the hard drive file change out interrupt
-                //debugger;
-               /* var cleanContent = TSOS.Utils.removeUnwantedSymbols(convertedContents);
-
+                debugger;
+                var cleanContent = Utils.removeZeroes(contents, "0");
+                cleanContent += '0';
+                cleanContent = Utils.hexToStringConverter(cleanContent);
+                cleanContent = cleanContent.replace(/ /g, '');
                 var cleanestContent = cleanContent.match(/.{2}/g);
-                cleanestContent.slice(0, 256)
-                executingProgramData = cleanestContent; */
-                executingProgramData = contents;
+                executingProgramData = cleanestContent;
+
                 this.deleteFile(fileName);
 
                 TSOS.Control.updateHardDrive();
@@ -257,7 +258,7 @@ module TSOS {
                 this.createFile(fileName);
             }
             var fileContent = TSOS.Utils.stringToHexConverter(globalFileContent);
-            var dataArray:string[] = TSOS.Utils.stringsplitter(fileContent, this.dataBits);
+            var dataArray:string[] = TSOS.Utils.stringSplitter(fileContent, this.dataBits);
             var tsbFile:string = this.findFile(fileName);
             var nextTSB:string = this.getNextDataTSB();
             this.setMetaData(tsbFile, nextTSB);

@@ -1,124 +1,126 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-   <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
-   <meta name="author"             content="Alan G. Labouseur" />
-   <link rel="stylesheet" href="tsos.css" type="text/css" media="screen" />
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+    <meta name="author" content="Alan G. Labouseur"/>
+    <link rel="stylesheet" href="tsos.css" type="text/css" media="screen"/>
 
     <!-- bootstrap files -->
     <link href="css/bootstrap.min.css" rel="stylesheet">
-   <title>
-      Pear-OS
-   </title>
+    <title>
+        Pear-OS
+    </title>
 
-   <!-- Globals CONSTANTS and _Variables. Must included be first. -->
-   <script type="text/javascript" src="distrib/globals.js"></script>
+    <!-- Globals CONSTANTS and _Variables. Must included be first. -->
+    <script type="text/javascript" src="distrib/globals.js"></script>
 
-   <!-- Host (Virtual Machine / Hardware Simulation) Routines -->
-   <script type="text/javascript" src="distrib/host/control.js"></script>
-   <script type="text/javascript" src="distrib/host/devices.js"></script>
-   <script type="text/javascript" src="distrib/host/cpu.js"></script>
+    <!-- Host (Virtual Machine / Hardware Simulation) Routines -->
+    <script type="text/javascript" src="distrib/host/control.js"></script>
+    <script type="text/javascript" src="distrib/host/devices.js"></script>
+    <script type="text/javascript" src="distrib/host/cpu.js"></script>
     <script type="text/javascript" src="distrib/host/memory.js"></script>
 
-   <!-- Virtual OS Routines: Make sure Kernel code is last, since it needs those above it. -->
-   <script type="text/javascript" src="distrib/os/interrupt.js"></script>
-   <script type="text/javascript" src="distrib/os/canvastext.js"></script>
-   <script type="text/javascript" src="distrib/os/console.js"></script>
-   <script type="text/javascript" src="distrib/os/deviceDriver.js"></script>
-   <script type="text/javascript" src="distrib/os/deviceDriverKeyboard.js"></script>
-   <script type="text/javascript" src="distrib/os/queue.js"></script>
-   <script type="text/javascript" src="distrib/os/shell.js"></script>
-   <script type="text/javascript" src="distrib/os/shellCommand.js"></script>
-   <script type="text/javascript" src="distrib/os/userCommand.js"></script>
-   <script type="text/javascript" src="distrib/os/kernel.js"></script>
+    <!-- Virtual OS Routines: Make sure Kernel code is last, since it needs those above it. -->
+    <script type="text/javascript" src="distrib/os/interrupt.js"></script>
+    <script type="text/javascript" src="distrib/os/canvastext.js"></script>
+    <script type="text/javascript" src="distrib/os/console.js"></script>
+    <script type="text/javascript" src="distrib/os/deviceDriver.js"></script>
+    <script type="text/javascript" src="distrib/os/deviceDriverKeyboard.js"></script>
+    <script type="text/javascript" src="distrib/os/queue.js"></script>
+    <script type="text/javascript" src="distrib/os/shell.js"></script>
+    <script type="text/javascript" src="distrib/os/shellCommand.js"></script>
+    <script type="text/javascript" src="distrib/os/userCommand.js"></script>
+    <script type="text/javascript" src="distrib/os/kernel.js"></script>
     <script type="text/javascript" src="distrib/os/memoryManager.js"></script>
     <script type="text/javascript" src="distrib/os/processControlBlock.js"></script>
     <script type="text/javascript" src="distrib/os/cpuScheduler.js"></script>
     <script type="text/javascript" src="distrib/os/deviceDriverHardDrive.js"></script>
 
 
-   <!-- Other Routines -->
-   <script type="text/javascript" src="distrib/utils.js"></script>
+    <!-- Other Routines -->
+    <script type="text/javascript" src="distrib/utils.js"></script>
+    <!-- <script type="text/javascript" src="distrib/test.js"></script> -->
 
-   <!-- Uncomment this line below to enable GLaDOS testing -->
-   <!-- <script type="text/javascript" src="http://www.labouseur.com/courses/os/projects/glados.js"></script> -->
+    <!-- Uncomment this line below to enable GLaDOS testing -->
+    <!-- <script type="text/javascript" src="http://www.labouseur.com/courses/os/projects/glados.js"></script> -->
 </head>
 
 <body onload="onDocumentLoad()">
-<div id="time"> Time: </div>
-<div id="status"> Status: </div>
+<div id="time"> Time:</div>
+<div id="status"> Status:</div>
 
 
 <div id="divMain" style="width:100%;">
 
-   <div id="divButtonBar" style="margin:4px;">
-      <input type="button"
-             id = "btnStartOS"
-             name="brnStartOS"
-             class="normal_button"
-             value="Start"
-             tabindex="0"
-             onclick="TSOS.Control.hostBtnStartOS_click(this);">
+    <div id="divButtonBar" style="margin:4px;">
+        <input type="button"
+               id="btnStartOS"
+               name="brnStartOS"
+               class="normal_button"
+               value="Start"
+               tabindex="0"
+               onclick="TSOS.Control.hostBtnStartOS_click(this);">
 
-      <input type="button"
-             id = "btnHaltOS"
-             name="brnHaltOS"
-             class="normal_button"
-             disabled="disabled"
-             value="Halt"
-             tabindex="1"
-             onclick="TSOS.Control.hostBtnHaltOS_click(this);">
+        <input type="button"
+               id="btnHaltOS"
+               name="brnHaltOS"
+               class="normal_button"
+               disabled="disabled"
+               value="Halt"
+               tabindex="1"
+               onclick="TSOS.Control.hostBtnHaltOS_click(this);">
 
-      <input type="button"
-             id = "btnReset"
-             name="brnReset"
-             class="normal_button"
-             disabled="disabled"
-             value="Reset"
-             tabindex="2"
-             onclick="TSOS.Control.hostBtnReset_click(this);">
-   </div>
+        <input type="button"
+               id="btnReset"
+               name="brnReset"
+               class="normal_button"
+               disabled="disabled"
+               value="Reset"
+               tabindex="2"
+               onclick="TSOS.Control.hostBtnReset_click(this);">
+    </div>
 
-   <div id="divConsole" style="margin:4px; width:500px; height:400px; float:left; ">
-      <canvas id="display"
-              width="500px"
-              height="400px"
-              tabindex="3">
-      </canvas>
-   </div>
+    <div id="divConsole" style="margin:4px; width:500px; height:400px; float:left; ">
+        <canvas id="display"
+                width="500px"
+                height="400px"
+                tabindex="3">
+        </canvas>
+    </div>
 
 
-   <div id="divLog" class="col-md-4" style="margin-top: -1.5%">
-      <label>
-         <div style="color: white; margin-bottom: -4%;">Host Log</div>
-         <br>
+    <div id="divLog" class="col-md-4" style="margin-top: -1.5%">
+        <label>
+            <div style="color: white; margin-bottom: -4%;">Host Log</div>
+            <br>
          <textarea name="taHostLog"
-                   id  ="taHostLog"
+                   id="taHostLog"
                    rows="8"
                    cols="48"
          ></textarea>
-      </label>
-   </div>
+        </label>
+    </div>
 
-   <div id="divUserProgramInput" class="col-md-4" style="">
-      <label>
-         <div style="color: white; margin-bottom: -4%;" >User Program Input</div>
-         <br>
+    <div id="divUserProgramInput" class="col-md-4" style="">
+        <label>
+            <div style="color: white; margin-bottom: -4%;">User Program Input</div>
+            <br>
          <textarea name="taProgramInput"
-                   id  ="taProgramInput"
+                   id="taProgramInput"
                    rows="10"
                    cols="48"
          ></textarea>
-      </label>
-   </div>
-    
+        </label>
+    </div>
+
     <div id="divMemoryInput">
-       <label>
+        <label>
             Memory
             <br>
+
             <div id="memoryWrapper">
-                <table id = "memDisplayBox" class="table table-bordered">
-                    <tbody id ="memDisplay">
+                <table id="memDisplayBox" class="table table-bordered">
+                    <tbody id="memDisplay">
                     <tr>
 
                     <tr>
@@ -128,24 +130,26 @@
         </label>
     </div>
 
-    <div id= "hardDrive" class="col-md-7" style="margin-top: -8%">
+    <div id="hardDrive" class="col-md-7" style="margin-top: -8%">
         <div style="font-weight:700">Hard Drive</div>
         <small>
             <div id="hardDriveWrapper">
-                <table id = "hardDriveDisplayBox" class="table table-bordered">
+                <table id="hardDriveDisplayBox" class="table table-bordered">
                     <thead style="font-weight:bold">
                     <tr>
-                        <td>T:S:B</td><td>Meta</td><td>Data</td>
+                        <td>T:S:B</td>
+                        <td>Meta</td>
+                        <td>Data</td>
                     </tr>
                     </thead>
-                    <tbody id ="hardDriveDisplay">
+                    <tbody id="hardDriveDisplay">
                     <tr>Hard Drive</tr>
                     </tbody>
                 </table>
             </div>
         </small>
     </div>
-    
+
     <div id="instruction"> Instruction:
         <div id="assembledCode" class="col-md-2" style="margin-top: 3%">
         </div>
@@ -154,11 +158,11 @@
         <p>CPU Display</p>
         <table class="table table-bordered">
             <tr>
-                <td> PC </td>
-                <td> ACC </td>
-                <td> X </td>
-                <td> Y </td>
-                <td> Z </td>
+                <td> PC</td>
+                <td> ACC</td>
+                <td> X</td>
+                <td> Y</td>
+                <td> Z</td>
             </tr>
             <tbody>
             <tr>
@@ -174,7 +178,7 @@
         </table>
     </div>
 
-    <div id="RQDisplay" class="col-md-8" >
+    <div id="RQDisplay" class="col-md-8">
         <p>Ready Queue</p>
         <table class="table table-bordered">
             <tr>
@@ -198,11 +202,11 @@
 
 
 <p class="footerText" style="clear:both;">
-   <br>
-   Copyright &copy; 2008 - 2015 No Rights Reserved.
-   <br>
-   Reproduction is inhibited without the express written consent of
-   Ted Codd, Stevie Ray Vaughan, and Ian Fleming.
+    <br>
+    Copyright &copy; 2008 - 2015 No Rights Reserved.
+    <br>
+    Reproduction is inhibited without the express written consent of
+    Ted Codd, Stevie Ray Vaughan, and Ian Fleming.
 </p>
 
 </body>
