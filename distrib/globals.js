@@ -49,8 +49,9 @@ var quantum = 6;
 var fileNamesList = null;
 var globalFileContent = "";
 var scheduleType = "round robin";
-var success;
 var programChange;
+// can be used as a boolean for multiple things
+var option;
 var State;
 (function (State) {
     State[State["new"] = 0] = "new";

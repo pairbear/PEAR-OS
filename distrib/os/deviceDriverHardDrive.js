@@ -146,17 +146,23 @@ var TSOS;
             //Creates a file and adds it to the hard drive
             if (this.findFile(fileName) === null) {
                 fileNamesList.enqueue(fileName);
-                success = true;
                 var tsb = this.getNextFileTSB();
                 var hexName = TSOS.Utils.stringToHexConverter(fileName);
                 var newData = "";
                 newData = hexName + new Array(this.dataBits + 1 - hexName.length).join("0");
                 sessionStorage.setItem(tsb, '1' + "000" + newData);
                 this.setTSB('file');
+                if (option) {
+                    _StdOut.putText("Creating file " + fileName);
+                    _StdOut.advanceLine();
+                    _StdOut.putText(">");
+                }
                 TSOS.Control.updateHardDrive();
             }
             else {
-                success = false;
+                _StdOut.putText("file already exists.");
+                _StdOut.advanceLine();
+                _StdOut.putText(">");
             }
         };
         DeviceDriverHardDrive.prototype.readFile = function (fileName) {
@@ -195,14 +201,32 @@ var TSOS;
                 _KernelInterruptQueue.enqueue(new TSOS.Interrupt(HARDDRIVE_FILE_CHANGE_OUT_IRQ, 0));
             }
             else {
-                _StdOut.putText(globalFileContent);
-                _StdOut.advanceLine();
-                return;
+                debugger;
+                if (this.findFile(fileName) === null) {
+                    _StdOut.putText("file does not exist");
+                    _StdOut.advanceLine();
+                    _StdOut.putText(">");
+                }
+                else {
+                    var content = globalFileContent.slice(1, globalFileContent.length - 2);
+                    _StdOut.putText("Reading " + fileName + ":");
+                    _StdOut.advanceLine();
+                    _StdOut.advanceLine();
+                    _StdOut.putText(content);
+                    _StdOut.advanceLine();
+                    _StdOut.advanceLine();
+                    _StdOut.putText(">");
+                }
             }
         };
         DeviceDriverHardDrive.prototype.writeFile = function (fileName) {
             //writes data to a file and if the designated file does not exist, create that file
             if (this.findFile(fileName) === null) {
+                if (option) {
+                    _StdOut.putText("File does not exist, creating file.");
+                    _StdOut.advanceLine();
+                    _StdOut.putText(">");
+                }
                 this.createFile(fileName);
             }
             var fileContent = TSOS.Utils.stringToHexConverter(globalFileContent);
@@ -221,6 +245,12 @@ var TSOS;
             }
             this.setMetaData(prevTSB, "000");
             TSOS.Control.updateHardDrive();
+            if (option) {
+                _StdOut.putText("writing to data to " + fileName);
+                _StdOut.advanceLine();
+                _StdOut.putText(">");
+            }
+            option = false;
             return true;
         };
         DeviceDriverHardDrive.prototype.deleteFile = function (fileName) {
@@ -231,7 +261,6 @@ var TSOS;
             while (tempTSB1 !== "000") {
                 tempTSB2 = tempTSB1;
                 tempTSB1 = this.getNextTSB(tempTSB2);
-                //this.eraseBlock(tempTSB2);
                 var blankBlock = new Array(this.dataBits + this.metaData + 1).join('0');
                 sessionStorage.setItem(tempTSB2, blankBlock);
             }

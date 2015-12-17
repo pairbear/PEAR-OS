@@ -183,17 +183,23 @@ module TSOS {
             //Creates a file and adds it to the hard drive
             if (this.findFile(fileName) === null) {
                 fileNamesList.enqueue(fileName);
-                success = true;
                 var tsb:string = this.getNextFileTSB();
                 var hexName = TSOS.Utils.stringToHexConverter(fileName);
                 var newData = "";
                 newData = hexName + new Array(this.dataBits + 1 - hexName.length).join("0");
                 sessionStorage.setItem(tsb, '1' + "000" + newData);
                 this.setTSB('file');
+                if (option) {
+                    _StdOut.putText("Creating file " + fileName);
+                    _StdOut.advanceLine();
+                    _StdOut.putText(">");
+                }
 
                 TSOS.Control.updateHardDrive();
             } else {
-                success = false;
+                _StdOut.putText("file already exists.");
+                _StdOut.advanceLine();
+                _StdOut.putText(">");
             }
 
 
@@ -202,28 +208,27 @@ module TSOS {
 
         public readFile(fileName:string):any {
             //reads the files and outputs them
+                var tsb = this.findFile(fileName);
+                var contents = "";
+                var convertedContents = "";
+                var nextTSB = this.getNextTSB(tsb);
+                while (nextTSB != "000") {
+                    if (programChange) {
+                        contents += this.getData(nextTSB);
 
-            var tsb = this.findFile(fileName);
-            var contents = "";
-            var convertedContents = "";
-            var nextTSB = this.getNextTSB(tsb);
-            while (nextTSB != "000") {
-                if (programChange) {
-                    contents += this.getData(nextTSB);
-
-                } else {
-                    var hexContent = this.getData(nextTSB);
-                    hexContent = Utils.removeZeroes(hexContent, "0");
-                    if (hexContent % 2 !== 0) {
-                        hexContent += '0';
+                    } else {
+                        var hexContent = this.getData(nextTSB);
+                        hexContent = Utils.removeZeroes(hexContent, "0");
+                        if (hexContent % 2 !== 0) {
+                            hexContent += '0';
+                        }
+                        debugger;
+                        contents += TSOS.Utils.hexToStringConverter(hexContent);
+                        globalFileContent = contents;
                     }
-                    debugger;
-                    contents += TSOS.Utils.hexToStringConverter(hexContent);
-                    globalFileContent = contents;
-                }
 
-                nextTSB = this.getNextTSB(nextTSB);
-            }
+                    nextTSB = this.getNextTSB(nextTSB);
+                }
 
 
             if (programChange) {
@@ -242,10 +247,23 @@ module TSOS {
 
                 _KernelInterruptQueue.enqueue(new Interrupt(HARDDRIVE_FILE_CHANGE_OUT_IRQ, 0));
             } else {
+                debugger;
+                if (this.findFile(fileName) === null) {
+                    _StdOut.putText("file does not exist");
+                    _StdOut.advanceLine();
+                    _StdOut.putText(">");
+                } else {
 
-                _StdOut.putText(globalFileContent);
-                _StdOut.advanceLine();
-                return;
+                    var content = globalFileContent.slice(1, globalFileContent.length-2);
+                    _StdOut.putText("Reading " + fileName + ":");
+                    _StdOut.advanceLine();
+                    _StdOut.advanceLine();
+                    _StdOut.putText(content);
+                    _StdOut.advanceLine();
+                    _StdOut.advanceLine();
+                    _StdOut.putText(">");
+                }
+
             }
 
         }
@@ -255,26 +273,39 @@ module TSOS {
             //writes data to a file and if the designated file does not exist, create that file
 
             if (this.findFile(fileName) === null) {
+                if (option) {
+                    _StdOut.putText("File does not exist, creating file.");
+                    _StdOut.advanceLine();
+                    _StdOut.putText(">");
+                }
                 this.createFile(fileName);
             }
-            var fileContent = TSOS.Utils.stringToHexConverter(globalFileContent);
-            var dataArray:string[] = TSOS.Utils.stringSplitter(fileContent, this.dataBits);
-            var tsbFile:string = this.findFile(fileName);
-            var nextTSB:string = this.getNextDataTSB();
-            this.setMetaData(tsbFile, nextTSB);
-            var prevTSB:string = nextTSB;
-            for (var i = 0; i < dataArray.length; i++) {
-                prevTSB = nextTSB;
-                this.setUsedBlock(prevTSB);
-                this.setTSB('data');
-                var nextTSB = this.getNextDataTSB();
-                this.setMetaData(prevTSB, nextTSB);
-                this.setData(prevTSB, dataArray[i]);
 
+                var fileContent = TSOS.Utils.stringToHexConverter(globalFileContent);
+                var dataArray:string[] = TSOS.Utils.stringSplitter(fileContent, this.dataBits);
+                var tsbFile:string = this.findFile(fileName);
+                var nextTSB:string = this.getNextDataTSB();
+                this.setMetaData(tsbFile, nextTSB);
+                var prevTSB:string = nextTSB;
+                for (var i = 0; i < dataArray.length; i++) {
+                    prevTSB = nextTSB;
+                    this.setUsedBlock(prevTSB);
+                    this.setTSB('data');
+                    var nextTSB = this.getNextDataTSB();
+                    this.setMetaData(prevTSB, nextTSB);
+                    this.setData(prevTSB, dataArray[i]);
+
+                }
+                this.setMetaData(prevTSB, "000");
+                TSOS.Control.updateHardDrive();
+            if (option) {
+                _StdOut.putText("writing to data to " + fileName);
+                _StdOut.advanceLine();
+                _StdOut.putText(">");
             }
-            this.setMetaData(prevTSB, "000");
-            TSOS.Control.updateHardDrive();
-            return true;
+            option = false;
+                return true;
+
         }
 
 
@@ -287,7 +318,6 @@ module TSOS {
             while (tempTSB1 !== "000") {
                 tempTSB2 = tempTSB1;
                 tempTSB1 = this.getNextTSB(tempTSB2);
-                //this.eraseBlock(tempTSB2);
                 var blankBlock = new Array(this.dataBits + this.metaData + 1).join('0');
                 sessionStorage.setItem(tempTSB2, blankBlock);
             }

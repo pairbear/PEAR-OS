@@ -529,19 +529,15 @@ module TSOS {
 
         public shellCreate(args) {
             var fileName = args[0];
-            _StdOut.putText("creating file " + fileName);
-            //fileNamesList.enqueue(fileName);
+            option = true;
             _KernelInterruptQueue.enqueue(new Interrupt(CREATE_IRQ, fileName));
-            /*if (success) {
-                _StdOut.putText("Creating file " + fileName);
-            } else {
-                _StdOut.putText("file already exists.");
-            } */
+
+
         }
 
         public shellRead(args) {
             var fileName = args[0];
-            _StdOut.putText("Reading file " + fileName + ":");
+            option=true;
             _KernelInterruptQueue.enqueue(new Interrupt(READ_IRQ, fileName));
         }
 
@@ -554,9 +550,15 @@ module TSOS {
                     fileContent += args[i] + " ";
                 }
             }
-            globalFileContent = fileContent
-            _StdOut.putText("writing to file " + fileName);
-            _KernelInterruptQueue.enqueue(new Interrupt(WRITE_IRQ, fileName));
+            debugger;
+            if (fileContent.charAt(0) === '"' && fileContent.charAt(fileContent.length-2) === '"' ) {
+                globalFileContent = fileContent
+                option=true;
+                _KernelInterruptQueue.enqueue(new Interrupt(WRITE_IRQ, fileName));
+            } else {
+                _StdOut.putText("Please put quotes around the designated content");
+                _StdOut.advanceLine();
+            }
 
         }
 

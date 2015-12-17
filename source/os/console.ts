@@ -1,13 +1,13 @@
 ///<reference path="../globals.ts" />
 
 /* ------------
-     Console.ts
+ Console.ts
 
-     Requires globals.ts
+ Requires globals.ts
 
-     The OS Console - stdIn and stdOut by default.
-     Note: This is not the Shell. The Shell is the "command line interface" (CLI) or interpreter for this console.
-     ------------ */
+ The OS Console - stdIn and stdOut by default.
+ Note: This is not the Shell. The Shell is the "command line interface" (CLI) or interpreter for this console.
+ ------------ */
 
 module TSOS {
 
@@ -17,46 +17,36 @@ module TSOS {
                     public currentFontSize = _DefaultFontSize,
                     public currentXPosition = 0,
                     public currentYPosition = _DefaultFontSize,
-                    public commandHistory =[""],
+                    public commandHistory = [""],
                     public previousCommands = 0,
-                    public buffer = "") {
+                    public buffer = "",
+                    public previousLine = []) {
         }
 
-        public init(): void {
+        public init():void {
             this.clearScreen();
             this.resetXY();
         }
 
-        private clearScreen(): void {
+        private clearScreen():void {
             _DrawingContext.clearRect(0, 0, _Canvas.width, _Canvas.height);
         }
 
-        private clearLine(): void {
-            //_DrawingContext.clearRect(0, 0, _Canvas.width, _Canvas.height-20);
-            //_DrawingContext.clearRect(this.currentXPosition - 10, this.currentYPosition-10, _Canvas.width, this.currentFontSize);
+        private clearLine():void {
 
-            //clears a line of the console by drawing a rectangle of the console color over it
-            /*_DrawingContext.fillStyle = CONSOLE_BGC;
-            _DrawingContext.fillRect(0, this.currentYPosition - _DefaultFontSize, _Canvas.width, _DefaultFontSize + _FontHeightMargin+1);
-            this.currentXPosition=0;
-            this.buffer="" */
-
-            //clears a line of the console by drawing a rectangle of the console color over it
-            var offset:number = _DrawingContext.measureText(this.currentFont, this.currentFontSize, this.buffer);
-            var xPosition:number = this.currentXPosition - offset;
-            var yPosition:number = this.currentYPosition + 1 - this.currentFontSize;
-            _DrawingContext.clearRect(xPosition, yPosition, this.currentXPosition, this.currentYPosition);
-            this.currentXPosition = xPosition;
+            _DrawingContext.fillStyle = "#DFDBC3";
+            _DrawingContext.fillRect(0, this.currentYPosition - _DefaultFontSize, _Canvas.width, _DefaultFontSize + _FontHeightMargin + 1);
+            this.currentXPosition = 0;
             this.buffer = "";
 
         }
 
-        private resetXY(): void {
+        private resetXY():void {
             this.currentXPosition = 0;
             this.currentYPosition = this.currentFontSize;
         }
 
-        public handleInput(): void {
+        public handleInput():void {
             while (_KernelInputQueue.getSize() > 0) {
                 // Get the next character from the kernel input queue.
                 var chr = _KernelInputQueue.dequeue();
@@ -71,18 +61,17 @@ module TSOS {
                     this.buffer = "";
 
 
-                } else if(chr === String.fromCharCode(8))
-                {
+                } else if (chr === String.fromCharCode(8)) {
                     this.deleteCharacter();
 
                 } else if (chr === String.fromCharCode(38) ||
-                           chr === String.fromCharCode(40) ) {
+                    chr === String.fromCharCode(40)) {
 
                     this.putText("");
                     this.buffer = "";
                     this.getPreviousCommand(chr);
 
-                } else if (chr === String.fromCharCode(8)){
+                } else if (chr === String.fromCharCode(8)) {
 
                     //this.autoComplete(chr);
                 }
@@ -98,7 +87,7 @@ module TSOS {
             }
         }
 
-        public putText(text): void {
+        public putText(text):void {
             // My first inclination here was to write two functions: putChar() and putString().
             // Then I remembered that JavaScript is (sadly) untyped and it won't differentiate
             // between the two.  So rather than be like PHP and write two (or more) functions that
@@ -107,16 +96,42 @@ module TSOS {
             //
             // UPDATE: Even though we are now working in TypeScript, char and string remain undistinguished.
             //         Consider fixing that.
-            if (text !== "") {
-                // Draw the text at the current X and Y coordinates.
-                _DrawingContext.drawText(this.currentFont, this.currentFontSize, this.currentXPosition, this.currentYPosition, text);
-                // Move the current X position.
-                var offset = _DrawingContext.measureText(this.currentFont, this.currentFontSize, text);
-                this.currentXPosition = this.currentXPosition + offset;
-            }
-         }
 
-        public advanceLine(): void {
+            if (text !== "" && text.length === 1) {
+                this.putChar(text);
+
+            }
+            else if (text !== "" && text.length > 1) {
+                var words = text.split(" ");
+                for (var i = 0; i < words.length; i++) {
+                    var word = words[i];
+                    var offset = _DrawingContext.measureText(this.currentFont, this.currentFontSize, word);
+                    if (words.length > 1 && i !== words.length - 1) {
+                        word += " ";
+                    }
+                    if (this.currentXPosition + offset > _Canvas.width) {
+                        this.previousLine.push(this.currentXPosition);
+                    }
+                    for (var j = 0; j < word.length; j++) {
+                        this.putChar(word.charAt(j));
+
+                    }
+                }
+            }
+        }
+
+        public putChar(text:string):void {
+            var offset = _DrawingContext.measureText(this.currentFont, this.currentFontSize, text);
+            if (this.currentXPosition + offset > _Canvas.width) {
+                this.previousLine.push(this.currentXPosition);
+                this.advanceLine();
+            }
+            _DrawingContext.drawText(this.currentFont, this.currentFontSize, this.currentXPosition, this.currentYPosition, text);
+            this.currentXPosition = this.currentXPosition + offset;
+        }
+
+
+        public advanceLine():void {
             this.currentXPosition = 0;
             /*
              * Font size measures from the baseline to the highest point in the font.
@@ -127,29 +142,17 @@ module TSOS {
                 _DrawingContext.fontDescent(this.currentFont, this.currentFontSize) +
                 _FontHeightMargin;
 
-            // This scrolls the canvas, but I would like to work on some of the tight spacing later
+            // This scrolls the canvas
             if (this.currentYPosition >= _Canvas.height) {
                 var canvas = _DrawingContext.getImageData(0, 0, _Canvas.width, _Canvas.height);
                 this.clearScreen();
                 _DrawingContext.putImageData(canvas, 0, _Canvas.height - this.currentYPosition - 12, 0, 0, _Canvas.width, _Canvas.height);
-                    this.currentYPosition -= _DefaultFontSize +
+                this.currentYPosition -= _DefaultFontSize +
                     _DrawingContext.fontDescent(this.currentFont, this.currentFontSize) +
                     _FontHeightMargin;
             }
         }
 
-
-        // this enables the backspace key to delete characters
-        public deleteCharacter(): void {
-            if (this.buffer.length > 0) {
-                var offset:number = _DrawingContext.measureText(this.currentFont, this.currentFontSize, this.buffer.slice(-1));
-                var xPosition:number = this.currentXPosition - offset;
-                var yPosition:number = this.currentYPosition + 1 - this.currentFontSize;
-                _DrawingContext.clearRect(xPosition, yPosition, this.currentXPosition, this.currentYPosition);
-                this.currentXPosition = xPosition;
-                this.buffer = this.buffer.substr(0, this.buffer.length - 1);
-            }
-        }
         // This displays the image for the blue screen of death
         public bsodDisplay(): void {
             var bsodImg = new Image();
@@ -160,9 +163,34 @@ module TSOS {
 
         }
 
+
+        // this enables the backspace key to delete characters
+        public deleteCharacter():void {
+            if (this.buffer.length > 0) {
+                var offset:number = _DrawingContext.measureText(this.currentFont, this.currentFontSize, this.buffer.slice(-1));
+                var roundedXPos = Math.round(this.currentXPosition);
+                if (roundedXPos <0 ) {
+                    this.backLine(offset);
+                }
+                var xPosition:number = this.currentXPosition - offset;
+                var roundedXPos = Math.round(this.currentXPosition);
+                if (roundedXPos <0 )
+                    this.backLine(offset);
+                var yPosition:number = this.currentYPosition + 1 - this.currentFontSize;
+                _DrawingContext.clearRect(xPosition, yPosition, this.currentXPosition, this.currentYPosition);
+                this.currentXPosition = xPosition;
+                this.buffer = this.buffer.substr(0, this.buffer.length - 1);
+            }
+        }
+
+        public backLine(offset): void {
+            this.currentXPosition = this.previousLine.pop() - offset;
+            this.currentYPosition -= _DefaultFontSize + _FontHeightMargin; //decrease y
+        }
+
         // This enables the up and down keys to be used to recall previously used commands
-        public getPreviousCommand(chr): void {
-            if (chr === String.fromCharCode(38) && this.previousCommands > 0) {
+        public getPreviousCommand(chr):void {
+            if ((chr === String.fromCharCode(38)) && (this.previousCommands > 0)) {
                 this.clearLine();
                 this.previousCommands--;
                 _OsShell.putPrompt();
@@ -177,17 +205,17 @@ module TSOS {
             }
         }
 
-        public systemOpCodeHandler(): void {
-            if (_CPU.Xreg===1){
-                this.putText( (_CPU.Yreg).toString());
+        public systemOpCodeHandler():void {
+            if (_CPU.Xreg === 1) {
+                this.putText((_CPU.Yreg).toString());
                 this.advanceLine();
                 _OsShell.putPrompt();
             }
-            else if (_CPU.Xreg ===2){
-                var string ="";
-                var curPos= _CPU.Yreg + executingProgram.base;
+            else if (_CPU.Xreg === 2) {
+                var string = "";
+                var curPos = _CPU.Yreg + executingProgram.base;
                 var curData = memoryManager.getMemory(curPos);
-                while (curData !== "00"){
+                while (curData !== "00") {
                     string += String.fromCharCode(memoryManager.convertHex(curData));
                     curData = memoryManager.getMemory(++curPos);
                 }
@@ -199,4 +227,4 @@ module TSOS {
 
 
     }
- }
+}

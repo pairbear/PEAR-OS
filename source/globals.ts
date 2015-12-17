@@ -55,8 +55,9 @@ var quantum:number = 6;
 var fileNamesList= null;
 var globalFileContent = "";
 var scheduleType = "round robin";
-var success: boolean;
 var programChange: boolean;
+// can be used as a boolean for multiple things
+var option: boolean
 
 enum State {new, running, ready, complete}
 var States = ["new", "running", "ready", "complete"];

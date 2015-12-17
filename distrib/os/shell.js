@@ -406,18 +406,12 @@ var TSOS;
         };
         Shell.prototype.shellCreate = function (args) {
             var fileName = args[0];
-            _StdOut.putText("creating file " + fileName);
-            //fileNamesList.enqueue(fileName);
+            option = true;
             _KernelInterruptQueue.enqueue(new TSOS.Interrupt(CREATE_IRQ, fileName));
-            /*if (success) {
-                _StdOut.putText("Creating file " + fileName);
-            } else {
-                _StdOut.putText("file already exists.");
-            } */
         };
         Shell.prototype.shellRead = function (args) {
             var fileName = args[0];
-            _StdOut.putText("Reading file " + fileName + ":");
+            option = true;
             _KernelInterruptQueue.enqueue(new TSOS.Interrupt(READ_IRQ, fileName));
         };
         Shell.prototype.shellWrite = function (args) {
@@ -429,9 +423,16 @@ var TSOS;
                     fileContent += args[i] + " ";
                 }
             }
-            globalFileContent = fileContent;
-            _StdOut.putText("writing to file " + fileName);
-            _KernelInterruptQueue.enqueue(new TSOS.Interrupt(WRITE_IRQ, fileName));
+            debugger;
+            if (fileContent.charAt(0) === '"' && fileContent.charAt(fileContent.length - 2) === '"') {
+                globalFileContent = fileContent;
+                option = true;
+                _KernelInterruptQueue.enqueue(new TSOS.Interrupt(WRITE_IRQ, fileName));
+            }
+            else {
+                _StdOut.putText("Please put quotes around the designated content");
+                _StdOut.advanceLine();
+            }
         };
         Shell.prototype.shellDelete = function (args) {
             var fileName = args[0];
