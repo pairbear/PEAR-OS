@@ -51,6 +51,7 @@ module TSOS {
                         this.q.splice(i, 1);
                     return retVal;
                 }
+                return true;
             }
         }
 

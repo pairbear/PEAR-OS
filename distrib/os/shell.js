@@ -364,9 +364,15 @@ var TSOS;
             }
         };
         Shell.prototype.shellRun = function (args) {
-            _StdOut.putText("Running program " + args);
-            executingProgramPID = parseInt(args[0]);
-            _KernelInterruptQueue.enqueue(new TSOS.Interrupt(CPU_EXECUTE_PROGRAM, 4));
+            if (args.length > 0) {
+                _StdOut.putText("Running program " + args);
+                executingProgramPID = parseInt(args[0]);
+                _KernelInterruptQueue.enqueue(new TSOS.Interrupt(CPU_EXECUTE_PROGRAM, 4));
+            }
+            else {
+                _StdOut.putText("PID not found");
+                _StdOut.advanceLine();
+            }
         };
         Shell.prototype.shellRunAll = function (args) {
             _StdOut.putText("Running all programs");

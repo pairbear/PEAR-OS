@@ -48,6 +48,7 @@ var TSOS;
                         this.q.splice(i, 1);
                     return retVal;
                 }
+                return true;
             }
         };
         Queue.prototype.getPCB = function (i) {
