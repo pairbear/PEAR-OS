@@ -1,68 +1,82 @@
 /* TSOS.css */
 
 body {
-  background: #909193 url(distrib/images/Geometric-Abstract-Shapes-Dark-Background.jpg) repeat;
-  font-family: Helvetica, Verdana, Arial, sans-serif;
-  font-size: 12pt;
-  font-weight: normal;
-  font-style: normal;
+    background: #909193 url(distrib/images/Geometric-Abstract-Shapes-Dark-Background.jpg) repeat;
+    font-family: Helvetica, Verdana, Arial, sans-serif;
+    font-size: 12pt;
+    font-weight: normal;
+    font-style: normal;
 }
 
 h1 {
-  color: white;
-  font-size: 24pt;
-  font-weight: normal;
-  font-style: normal;
-  border-bottom: 1px solid black;
+    color: white;
+    font-size: 24pt;
+    font-weight: normal;
+    font-style: normal;
+    border-bottom: 1px solid black;
 }
 
 h2 {
-  color: white;
-  font-size: 20pt;
-  font-weight: normal;
-  font-style: normal;
+    color: white;
+    font-size: 20pt;
+    font-weight: normal;
+    font-style: normal;
 }
 
 h3 {
-  font-family: Helvetica, Verdana, Arial, sans-serif;
-  font-size: 16pt;
-  font-weight: normal;
-  font-style: normal;
+    font-family: Helvetica, Verdana, Arial, sans-serif;
+    font-size: 16pt;
+    font-weight: normal;
+    font-style: normal;
 }
 
 #display {
-  background-color:#DFDBC3;
-  border: 2px solid red;
-  cursor: default;
+    background-color: #DFDBC3;
+    border: 2px solid red;
+    cursor: default;
 }
 
-#assembledCode, #cpuDisplay, #RQDisplay, #divMemoryInput {
-  color: white;
-  font-weight: normal !important;
-  border-color: black;
-  text-align: center;
+#assembledCode, #cpuDisplay, #RQDisplay, #divMemoryInput, #HhrdDrive {
+    color: white;
+    font-weight: normal !important;
+    border-color: black;
+    text-align: center;
 }
 
-#memoryWrapper{
-  border: 1px solid;
-  border-color: white;
-  overflow-y:auto;
-  max-height:1000px;
-  height: 500px;
-  width:370px;
+#instruction {
+    color: white;
+}
+
+#memoryWrapper {
+    border: 1px solid;
+    border-color: white;
+    overflow-y: auto;
+    max-height: 1000px;
+    height: 500px;
+    width: 370px;
+}
+
+#hardDriveWrapper {
+    border: 1px solid;
+    border-color: white;
+    color: white;
+    overflow-y: auto;
+    max-height: 1000px;
+    height: 130px;
+    width: 700px;
 }
 
 #time, #status {
-  color: white;
+    color: white;
 }
 
 .normal_button {
-  width: 100px;
+    width: 100px;
 }
 
 .footerText {
-  color: white;
-  font-family: Arial, Helvetica, sans-serif;
-  font-size: 8pt;
-  text-align: center;
+    color: white;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 8pt;
+    text-align: center;
 }

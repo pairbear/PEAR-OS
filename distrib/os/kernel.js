@@ -1,16 +1,16 @@
 ///<reference path="../globals.ts" />
 ///<reference path="queue.ts" />
 /* ------------
-     Kernel.ts
+ Kernel.ts
 
-     Requires globals.ts
-              queue.ts
+ Requires globals.ts
+ queue.ts
 
-     Routines for the Operating System, NOT the host.
+ Routines for the Operating System, NOT the host.
 
-     This code references page numbers in the text book:
-     Operating System Concepts 8th edition by Silberschatz, Galvin, and Gagne.  ISBN 978-0-470-12872-5
-     ------------ */
+ This code references page numbers in the text book:
+ Operating System Concepts 8th edition by Silberschatz, Galvin, and Gagne.  ISBN 978-0-470-12872-5
+ ------------ */
 var TSOS;
 (function (TSOS) {
     var Kernel = (function () {
@@ -36,6 +36,10 @@ var TSOS;
             _krnKeyboardDriver = new TSOS.DeviceDriverKeyboard(); // Construct it.
             _krnKeyboardDriver.driverEntry(); // Call the driverEntry() initialization routine.
             this.krnTrace(_krnKeyboardDriver.status);
+            this.krnTrace("Loading the Hard Drive device driver.");
+            _krnHardDrive = new TSOS.DeviceDriverHardDrive(); // Construct it.
+            _krnHardDrive.driverEntry(); // Call the driverEntry() initialization routine.
+            this.krnTrace(_krnHardDrive.status);
             //
             // ... more?
             //
@@ -65,9 +69,9 @@ var TSOS;
         };
         Kernel.prototype.krnOnCPUClockPulse = function () {
             /* This gets called from the host hardware simulation every time there is a hardware clock pulse.
-               This is NOT the same as a TIMER, which causes an interrupt and is handled like other interrupts.
-               This, on the other hand, is the clock pulse from the hardware / VM / host that tells the kernel
-               that it has to look for interrupts and process them if it finds any.                           */
+             This is NOT the same as a TIMER, which causes an interrupt and is handled like other interrupts.
+             This, on the other hand, is the clock pulse from the hardware / VM / host that tells the kernel
+             that it has to look for interrupts and process them if it finds any.                           */
             // Check for an interrupt, are any. Page 560
             if (_KernelInterruptQueue.getSize() > 0) {
                 // Process the first interrupt on the interrupt queue.
@@ -119,9 +123,10 @@ var TSOS;
                 case CPU_BRK_IRQ:
                     var currPID = executingProgramPID;
                     if (scheduler.readyQueue.isEmpty() === true) {
+                        executingProgram.state = State.complete;
+                        memoryManager.clearProgram();
                         TSOS.Control.updateRQDisplay;
                         _CPU.isExecuting = false;
-                        TSOS.Control.updateRQDisplay;
                     }
                     else {
                         _KernelInterruptQueue.enqueue(new TSOS.Interrupt(CONTEXT_SWITCH_IRQ, currPID));
@@ -146,10 +151,43 @@ var TSOS;
                     scheduler.contextSwitch();
                     break;
                 case MEMORY_CLEAR_IRQ:
+                    this.krnTrace("clering memory");
                     memoryManager = new TSOS.MemoryManager();
                     memoryManager.init();
                     scheduler = new TSOS.CPUScheduler();
                     break;
+                case CREATE_IRQ:
+                    this.krnTrace("creating file");
+                    _krnHardDrive.isr(params);
+                    break;
+                case READ_IRQ:
+                    this.krnTrace("reading file");
+                    _krnHardDrive.isr1(params);
+                    break;
+                case WRITE_IRQ:
+                    this.krnTrace("writing file");
+                    _krnHardDrive.isr2(params);
+                    break;
+                case DELETE_IRQ:
+                    this.krnTrace("deleting file");
+                    _krnHardDrive.isr3(params);
+                    break;
+                case FORMAT_IRQ:
+                    this.krnTrace("formatting hard drive");
+                    _krnHardDrive.isr4(params);
+                    break;
+                case HARDDRIVE_FILE_CHANGE_OUT_IRQ: {
+                    this.krnTrace("Loading the changed program into memory.");
+                    debugger;
+                    memoryManager.loadProgram(executingProgram, executingProgramData);
+                    executingProgram.location = Locations.memory;
+                    _CPU.updateCPU();
+                    executingProgramData = null;
+                    TSOS.Control.updateAssemblerCode();
+                    TSOS.Control.updateCPUDisplay();
+                    TSOS.Control.updateRQDisplay();
+                    break;
+                }
                 default:
                     this.krnTrapError("Invalid Interrupt Request. irq=" + irq + " params=[" + params + "]");
             }

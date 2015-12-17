@@ -2,23 +2,23 @@
 ///<reference path="../os/canvastext.ts" />
 
 /* ------------
-     Control.ts
+ Control.ts
 
-     Requires globals.ts.
+ Requires globals.ts.
 
-     Routines for the hardware simulation, NOT for our client OS itself.
-     These are static because we are never going to instantiate them, because they represent the hardware.
-     In this manner, it's A LITTLE BIT like a hypervisor, in that the Document environment inside a browser
-     is the "bare metal" (so to speak) for which we write code that hosts our client OS.
-     But that analogy only goes so far, and the lines are blurred, because we are using TypeScript/JavaScript
-     in both the host and client environments.
+ Routines for the hardware simulation, NOT for our client OS itself.
+ These are static because we are never going to instantiate them, because they represent the hardware.
+ In this manner, it's A LITTLE BIT like a hypervisor, in that the Document environment inside a browser
+ is the "bare metal" (so to speak) for which we write code that hosts our client OS.
+ But that analogy only goes so far, and the lines are blurred, because we are using TypeScript/JavaScript
+ in both the host and client environments.
 
-     This (and other host/simulation scripts) is the only place that we should see "web" code, such as
-     DOM manipulation and event handling, and so on.  (Index.html is -- obviously -- the only place for markup.)
+ This (and other host/simulation scripts) is the only place that we should see "web" code, such as
+ DOM manipulation and event handling, and so on.  (Index.html is -- obviously -- the only place for markup.)
 
-     This code references page numbers in the text book:
-     Operating System Concepts 8th edition by Silberschatz, Galvin, and Gagne.  ISBN 978-0-470-12872-5
-     ------------ */
+ This code references page numbers in the text book:
+ Operating System Concepts 8th edition by Silberschatz, Galvin, and Gagne.  ISBN 978-0-470-12872-5
+ ------------ */
 
 //
 // Control Services
@@ -27,7 +27,7 @@ module TSOS {
 
     export class Control {
 
-        public static hostInit(): void {
+        public static hostInit():void {
             // This is called from index.html's onLoad event via the onDocumentLoad function pointer.
 
             // Get a global reference to the canvas.  TODO: Should we move this stuff into a Display Device Driver?
@@ -41,7 +41,7 @@ module TSOS {
 
             // Clear the log text box.
             // Use the TypeScript cast to HTMLInputElement
-            (<HTMLInputElement> document.getElementById("taHostLog")).value="";
+            (<HTMLInputElement> document.getElementById("taHostLog")).value = "";
 
             //Adds things to the status bar
             Time = <HTMLDivElement>document.getElementById('time');
@@ -62,17 +62,17 @@ module TSOS {
             }
         }
 
-        public static hostLog(msg: string, source: string = "?"): void {
+        public static hostLog(msg:string, source:string = "?"):void {
             // Note the OS CLOCK.
-            var clock: number = _OSclock;
+            var clock:number = _OSclock;
 
             // Note the REAL clock in milliseconds since January 1, 1970.
-            var now: number = new Date().getTime();
+            var now:number = new Date().getTime();
             var date = new Date();
             Time.textContent = "Time : " + date.toLocaleDateString() + " " + date.toLocaleTimeString();
 
             // Build the log string.
-            var str: string = "({ clock:" + clock + ", source:" + source + ", msg:" + msg + ", now:" + now  + " })"  + "\n";
+            var str:string = "({ clock:" + clock + ", source:" + source + ", msg:" + msg + ", now:" + now + " })" + "\n";
 
             // Update the log console.
             var taLog = <HTMLInputElement> document.getElementById("taHostLog");
@@ -85,7 +85,7 @@ module TSOS {
         //
         // Host Events
         //
-        public static hostBtnStartOS_click(btn): void {
+        public static hostBtnStartOS_click(btn):void {
             // Disable the (passed-in) start button...
             btn.disabled = true;
 
@@ -114,10 +114,13 @@ module TSOS {
             _Kernel = new Kernel();
             _Kernel.krnBootstrap();  // _GLaDOS.afterStartup() will get called in there, if configured.
 
+            //initiates the filesystem
+            TSOS.Control.updateHardDrive();
+
 
         }
 
-        public static hostBtnHaltOS_click(btn): void {
+        public static hostBtnHaltOS_click(btn):void {
             Control.hostLog("Emergency halt", "host");
             Control.hostLog("Attempting Kernel shutdown.", "host");
             // Call the OS shutdown routine.
@@ -127,7 +130,7 @@ module TSOS {
             // TODO: Is there anything else we need to do here?
         }
 
-        public static hostBtnReset_click(btn): void {
+        public static hostBtnReset_click(btn):void {
             // The easiest and most thorough way to do this is to reload (not refresh) the document.
             location.reload(true);
             // That boolean parameter is the 'forceget' flag. When it is true it causes the page to always
@@ -135,8 +138,7 @@ module TSOS {
             // page from its cache, which is not what we want.
         }
 
-        public static updateMemoryDisplay(output)
-        {
+        public static updateMemoryDisplay(output) {
             document.getElementById("memDisplay").innerHTML = output;
             document.getElementById("assembledCode").innerHTML = assemblerCode;
         }
@@ -145,7 +147,7 @@ module TSOS {
             document.getElementById("assembledCode").innerHTML = assemblerCode;
         }
 
-        public  static updateCPUDisplay() {
+        public static updateCPUDisplay() {
             document.getElementById("cpuPC").innerHTML = String(_CPU.PC);
             document.getElementById("cpuACC").innerHTML = String(_CPU.Acc);
             document.getElementById("cpuX").innerHTML = String(_CPU.Xreg);
@@ -153,9 +155,8 @@ module TSOS {
             document.getElementById("cpuZ").innerHTML = String(_CPU.Zflag);
         }
 
-        public  static updateRQDisplay() {
+        public static updateRQDisplay() {
             var display = "";
-            //alert(_CPU.isExecuting);
             if (_CPU.isExecuting) {
 
                 if (executingProgram !== null) {
@@ -185,7 +186,6 @@ module TSOS {
                 }
                 document.getElementById("RQBox").innerHTML = display;
             } else if (!_CPU.isExecuting) {
-                alert("oh?!")
                 display += "<tr>";
                 display += "<td></td>";
                 display += "<td></td>";
@@ -198,6 +198,36 @@ module TSOS {
                 display += "<tr>";
                 document.getElementById("RQBox").innerHTML = display;
             }
+        }
+
+        public static updateHardDrive() {
+            var output = "";
+            var block = "";
+            var meta = "";
+            var tsb = ""
+
+            for (var t = 0; t < _krnHardDrive.tracks; t++) {
+                for (var s = 0; s < _krnHardDrive.sectors; s++) {
+                    for (var b = 0; b < _krnHardDrive.blocks; b++) {
+                        tsb = t + "" + s + "" + b;
+                        block = _krnHardDrive.getData(tsb);
+                        meta = _krnHardDrive.getMetaData(tsb);
+
+                        output += "<tr><td>" + t + ":" + s + ":" + b + "</td>";
+                        if (meta.charAt(0) === "1") {
+                            output += "<td>" + "<b>" + meta.charAt(0) + "</b>" + meta.substring(1, 4) + "</td>";
+                            output += "<td>" + block + "</td></tr>";
+                        }
+                        else {
+                            //trick the user into think they're data is deleted
+                            output += "<td>" + "<b>" + meta.charAt(0) + "</b>" + "000" + "</td>";
+                            output += "<td>" + new Array(block.length + 1).join('0') + "</td></tr>";
+                        }
+
+                    }
+                }
+            }
+            document.getElementById("hardDriveDisplay").innerHTML = output;
         }
 
 

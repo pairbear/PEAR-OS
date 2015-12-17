@@ -22,27 +22,29 @@ var TSOS;
             TSOS.Control.updateMemoryDisplay(output);
         };
         MemoryManager.prototype.findNextOpenBlock = function () {
-            for (var i = 0; i < 256 * programNumbers; i += 256) {
-                if (this.memory.userProgram[i] === "00")
-                    return i;
+            for (var i = 0; i < programNumbers; i++) {
+                var emptyBlock = true;
+                var base = 255 * i;
+                for (var j = 0; j < 256; j++) {
+                    if (this.memory.userProgram[base + j] !== "00") {
+                        emptyBlock = false;
+                        break;
+                    }
+                }
+                if (emptyBlock)
+                    return i * (256);
             }
             return null;
         };
-        MemoryManager.prototype.setNextOpenBlock = function (pcb) {
-            this.nextOpenMemoryBlock = pcb.base;
-        };
-        MemoryManager.prototype.loadProgram = function (program) {
-            var newPCB = new TSOS.ProcessControlBlock();
-            newPCB.base = this.nextOpenMemoryBlock;
-            newPCB.PC = newPCB.base;
-            newPCB.limit = newPCB.base + 256;
-            scheduler.loadProgram(newPCB);
+        MemoryManager.prototype.loadProgram = function (currPCB, program) {
+            currPCB.location = Locations.memory;
             for (var i = 0; i < program.length; i++) {
-                this.memory.userProgram[i + newPCB.base] = program[i];
+                this.memory.userProgram[i + currPCB.base] = program[i];
             }
+            for (var j = program.length + currPCB.base; j < currPCB.limit; j++)
+                this.memory.userProgram[j] = "00";
             this.nextOpenMemoryBlock = this.findNextOpenBlock();
             this.updateMemoryDisplay();
-            return (newPCB.PID).toString();
         };
         MemoryManager.prototype.getMemory = function (address) {
             if (typeof address === "number") {
@@ -67,6 +69,20 @@ var TSOS;
             hexValue = Array(2 - (hexValue.length - 1)).join("0") + hexValue;
             var position = this.getDecFromHex(beginningAddress) + executingProgram.base;
             this.memory.userProgram[position] = hexValue;
+        };
+        MemoryManager.prototype.getProgram = function (pcb) {
+            var program = [];
+            for (var i = pcb.base; i <= pcb.limit; i++) {
+                program.push(this.memory.userProgram[i]);
+            }
+            return program;
+        };
+        MemoryManager.prototype.clearProgram = function () {
+            for (var i = executingProgram.base; i < executingProgram.limit; i++) {
+                this.memory.userProgram[i] = "00";
+            }
+            this.nextOpenMemoryBlock = this.findNextOpenBlock();
+            this.updateMemoryDisplay();
         };
         return MemoryManager;
     })();

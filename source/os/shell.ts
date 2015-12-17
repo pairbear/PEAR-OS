@@ -22,7 +22,6 @@ module TSOS {
         public commandList = [];
         public curses = "[fuvg],[cvff],[shpx],[phag],[pbpxfhpxre],[zbgureshpxre],[gvgf]";
         public apologies = "[sorry]";
-        public statusStr = "";
         public G_UserProgram = "";
 
         constructor() {
@@ -117,7 +116,7 @@ module TSOS {
                                 " - This tests when the kernel traps an OS error");
             this.commandList[this.commandList.length] = sc;
 
-            //loads programs into memery
+            //loads programs into memory
             sc = new ShellCommand(this.shellLoad,
                                 "load",
                                 " - runs a test to validate the user code in HTML5");
@@ -143,7 +142,7 @@ module TSOS {
 
             //clears the memory
             sc =  new ShellCommand(this.shellClearMemory,
-                "clearmemory",
+                "clearmem",
                 " - clears the memory");
             this.commandList[this.commandList.length] = sc;
 
@@ -153,10 +152,61 @@ module TSOS {
                 " - sets the quantum for the CPU Scheduler ");
             this.commandList[this.commandList.length] = sc;
 
+            //displays running processes
             sc =  new ShellCommand(this.shellDisplayRunningProcesses,
                 "ps",
                 " - Displays process currently being executed ");
             this.commandList[this.commandList.length] = sc;
+
+            //sets the schedule type
+            sc =  new ShellCommand(this.shellSelectScheduleType,
+                "setschedule",
+                " - select rr, fcfs, or priority as your scheduling type");
+            this.commandList[this.commandList.length] = sc;
+
+            //creates a file
+            sc =  new ShellCommand(this.shellCreate,
+                "create",
+                " - creates a file");
+            this.commandList[this.commandList.length] = sc;
+
+            //reads a file
+            sc =  new ShellCommand(this.shellRead,
+                "read",
+                " - reads the selected file");
+            this.commandList[this.commandList.length] = sc;
+
+            //writes to a file
+            sc =  new ShellCommand(this.shellWrite,
+                "write",
+                " - writes your text to designated file");
+            this.commandList[this.commandList.length] = sc;
+
+            //deletes a file
+            sc =  new ShellCommand(this.shellDelete,
+                "delete",
+                " - deletes a file");
+            this.commandList[this.commandList.length] = sc;
+
+            //formats the hard drive
+            sc =  new ShellCommand(this.shellFormat,
+                "format",
+                " - formats the hard drive");
+            this.commandList[this.commandList.length] = sc;
+
+            //shows the files in the hard drive
+            sc =  new ShellCommand(this.shellLS,
+                "ls",
+                " - shows a list of files on the hard drive");
+            this.commandList[this.commandList.length] = sc;
+
+            // displays the schedule type
+            sc =  new ShellCommand(this.shellGetSchedule,
+                "getschedule",
+                " - shows the current scheduling algorithm");
+            this.commandList[this.commandList.length] = sc;
+
+
 
 
             //
@@ -408,13 +458,23 @@ module TSOS {
 
         public shellLoad(args) {
             var userInput = (<HTMLInputElement>document.getElementById("taProgramInput")).value;
+            var priority = args[0];
+
             this.G_UserProgram = userInput;
 
             if (!userInput.match( /^0|1|2|3|4|5|6|7|8|9|"a"|"b"|"c"|"d"|"e"|"f"| "g"$/)){
                 _StdOut.putText("you call that hex?!")
             } else {
                 var programString = userInput.split(" ");
-                _StdOut.putText("PID: " + memoryManager.loadProgram(programString));
+                if (memoryManager.nextOpenMemoryBlock===null) {
+                    globalFileContent = userInput;
+                    _StdOut.putText("Memory full, loading program to Hard drive");
+                    _StdOut.advanceLine();
+                    _StdOut.putText("PID: " + scheduler.loadProgramToHardDrive(programString, priority));
+
+                } else {
+                    _StdOut.putText("PID: " + scheduler.loadProgramToMemory(programString, priority));
+                }
             }
         }
 
@@ -454,6 +514,79 @@ module TSOS {
                 pid += ", PID: " + scheduler.readyQueue.getPCB(i);
             _StdOut.putText("Current running processes... ");
             _StdOut.putText("PID: "+executingProgramPID + pid);
+        }
+
+        public shellSelectScheduleType (args) {
+            var type = args[0];
+            scheduleType = type;
+            if (type !== "rr" && type !== "fcfs" && type !== "priority") {
+                _StdOut.putText("That's not a schedule type...")
+            } else {
+                scheduler.schedulerType(type);
+                _StdOut.putText("Schdule type set to " + type)
+            }
+        }
+
+        public shellCreate(args) {
+            var fileName = args[0];
+            option = true;
+            _KernelInterruptQueue.enqueue(new Interrupt(CREATE_IRQ, fileName));
+
+
+        }
+
+        public shellRead(args) {
+            var fileName = args[0];
+            option=true;
+            _KernelInterruptQueue.enqueue(new Interrupt(READ_IRQ, fileName));
+        }
+
+        public shellWrite(args) {
+            var fileName = args[0];
+            var fileContent="";
+            if (args[1].length > 0) {
+                var fileContent:string = "";
+                for (var i:number = 1; i < args.length; ++i) {
+                    fileContent += args[i] + " ";
+                }
+            }
+            debugger;
+            if (fileContent.charAt(0) === '"' && fileContent.charAt(fileContent.length-2) === '"' ) {
+                globalFileContent = fileContent
+                option=true;
+                _KernelInterruptQueue.enqueue(new Interrupt(WRITE_IRQ, fileName));
+            } else {
+                _StdOut.putText("Please put quotes around the designated content");
+                _StdOut.advanceLine();
+            }
+
+        }
+
+        public shellDelete(args) {
+            var fileName = args[0];
+            _StdOut.putText("Deleting file " + fileName);
+            _KernelInterruptQueue.enqueue(new Interrupt(DELETE_IRQ, fileName));
+        }
+
+        public shellFormat() {
+            _StdOut.putText("Formatting Hard Drive");
+            _KernelInterruptQueue.enqueue(new Interrupt(FORMAT_IRQ, 0));
+        }
+
+        public shellLS() {
+            //var files = fileNamesList;
+            _StdOut.putText("Current files on hard drive:");
+            _StdOut.advanceLine();
+            for (var i=0; i<fileNamesList.getSize() ; i++){
+                _StdOut.putText(fileNamesList.getPCB(i));
+                if (i<fileNamesList.getSize()-1) (
+                    _StdOut.putText(", ")
+                )
+            }
+        }
+
+        public shellGetSchedule() {
+            _StdOut.putText("The current schedule type is " + scheduleType)
         }
 
     }

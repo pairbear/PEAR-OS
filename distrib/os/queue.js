@@ -1,18 +1,20 @@
 /* ------------
-   Queue.ts
+ Queue.ts
 
-   A simple Queue, which is really just a dressed-up JavaScript Array.
-   See the Javascript Array documentation at
-   https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array
-   Look at the push and shift methods, as they are the least obvious here.
+ A simple Queue, which is really just a dressed-up JavaScript Array.
+ See the Javascript Array documentation at
+ https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array
+ Look at the push and shift methods, as they are the least obvious here.
 
-   ------------ */
+ ------------ */
 var TSOS;
 (function (TSOS) {
     var Queue = (function () {
-        function Queue(q) {
+        function Queue(q, lastPCB) {
             if (q === void 0) { q = new Array(); }
+            if (lastPCB === void 0) { lastPCB = null; }
             this.q = q;
+            this.lastPCB = lastPCB;
         }
         Queue.prototype.getSize = function () {
             return this.q.length;
@@ -50,6 +52,33 @@ var TSOS;
         };
         Queue.prototype.getPCB = function (i) {
             return this.q[i];
+        };
+        Queue.prototype.setPriorityOrder = function () {
+            for (var i = 0; i < this.q.length; i++) {
+                this.q.sort(this.comparePriorityOrder);
+            }
+        };
+        Queue.prototype.comparePriorityOrder = function (a, b) {
+            if (a.Priority < b.Priority)
+                return -1;
+            if (a.Priority > b.Priority)
+                return 1;
+            return 0;
+        };
+        Queue.prototype.addLastProcess = function (pcb) {
+            this.q.splice(this.lastPCB, 0, pcb);
+            this.lastPCB = null;
+        };
+        Queue.prototype.getLastProcess = function () {
+            var retVal = null;
+            for (var i = 0; i < this.q.length; i++) {
+                if (this.q[i].location === Locations.memory) {
+                    retVal = this.q[i];
+                    this.lastPCB = i;
+                }
+            }
+            this.q.splice(this.lastPCB, 1);
+            return retVal;
         };
         return Queue;
     })();

@@ -25,31 +25,35 @@ module TSOS {
         }
 
         public findNextOpenBlock() {
-            for (var i =0; i< 256 * programNumbers; i+=256){
-                if (this.memory.userProgram[i]==="00")
-                    return i;
+            for (var i=0; i <programNumbers; i++){
+                var emptyBlock=true;
+                var base = 255*i;
+                for (var j =0; j< 256; j++){
+                    if (this.memory.userProgram[base+j]!=="00"){
+                        emptyBlock=false;
+                        break;
+                    }
+                }
+                if (emptyBlock)
+                    return i * (256);
             }
             return null;
     }
 
-        public setNextOpenBlock(pcb) {
-            this.nextOpenMemoryBlock =  pcb.base;
-        }
 
-
-        public loadProgram(program) {
-            var newPCB = new TSOS.ProcessControlBlock();
-            newPCB.base = this.nextOpenMemoryBlock;
-            newPCB.PC = newPCB.base;
-            newPCB.limit = newPCB.base + 256;
-            scheduler.loadProgram(newPCB);
-            for (var i = 0; i < program.length; i++) {
-                this.memory.userProgram[i + newPCB.base] = program[i];
+        public loadProgram(currPCB, program){
+            currPCB.location = Locations.memory;
+            for (var i=0; i<program.length; i++){
+                this.memory.userProgram[i+currPCB.base] = program[i];
             }
+
+            for (var j= program.length+currPCB.base;j<currPCB.limit; j++ )
+                this.memory.userProgram[j] ="00";
+
             this.nextOpenMemoryBlock = this.findNextOpenBlock();
             this.updateMemoryDisplay();
-            return (newPCB.PID).toString()
         }
+
 
         public getMemory(address:any) {
              if (typeof address==="number"){
@@ -80,6 +84,23 @@ module TSOS {
             var position = this.getDecFromHex(beginningAddress) + executingProgram.base;
             this.memory.userProgram[position] = hexValue;
 
+        }
+
+        public getProgram(pcb){
+
+            var program = [];
+            for (var i=pcb.base; i<=pcb.limit; i++){
+                program.push(this.memory.userProgram[i]);
+            }
+            return program;
+        }
+
+        public clearProgram() {
+            for (var i = executingProgram.base; i<executingProgram.limit; i++){
+                this.memory.userProgram[i] = "00";
+            }
+            this.nextOpenMemoryBlock = this.findNextOpenBlock();
+            this.updateMemoryDisplay();
         }
 
 

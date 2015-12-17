@@ -44,7 +44,9 @@ var TSOS;
             _Kernel.krnTrace('CPU cycle');
             // TODO: Accumulate CPU usage and profiling statistics here.
             // Do the real work here. Be sure to set this.isExecuting appropriately.
+            //debugger;
             this.execute(memoryManager.getMemory(this.PC));
+            //debugger;
             this.updatePCB();
             scheduler.cycleCounter++;
             TSOS.Control.updateAssemblerCode();
@@ -52,18 +54,17 @@ var TSOS;
             TSOS.Control.updateRQDisplay();
         };
         Cpu.prototype.updateCPU = function () {
-            if (this.isExecuting = true) {
-                executingProgram.state = State.running;
-                this.PC = executingProgram.PC;
-                this.Instruction = executingProgram.Instruction;
-                this.Acc = executingProgram.Acc;
-                this.Xreg = executingProgram.Xreg;
-                this.Yreg = executingProgram.Yreg;
-                this.Zflag = executingProgram.Zflag;
-            }
+            executingProgram.state = State.running;
+            this.PC = executingProgram.PC + executingProgram.base;
+            this.Instruction = executingProgram.Instruction;
+            this.Acc = executingProgram.Acc;
+            this.Xreg = executingProgram.Xreg;
+            this.Yreg = executingProgram.Yreg;
+            this.Zflag = executingProgram.Zflag;
         };
         Cpu.prototype.updatePCB = function () {
-            executingProgram.PC = _CPU.PC;
+            //debugger;
+            executingProgram.PC = _CPU.PC - executingProgram.base;
             executingProgram.Instruction = _CPU.Instruction;
             executingProgram.Acc = _CPU.Acc;
             executingProgram.Xreg = _CPU.Xreg;
@@ -71,6 +72,7 @@ var TSOS;
             executingProgram.Zflag = _CPU.Zflag;
         };
         Cpu.prototype.execute = function (instructions) {
+            //debugger;
             this.Instruction = instructions.toUpperCase();
             switch (this.Instruction) {
                 case "A9": {
@@ -158,8 +160,7 @@ var TSOS;
                     if (this.Zflag == 0) {
                         assemblerCode = "D0 BNE $" + memoryManager.getMemory(this.PC + 1);
                         this.PC += memoryManager.convertHex(memoryManager.getMemory(++this.PC)) + 1;
-                        //alert(this.PC)
-                        if (this.PC >= 256) {
+                        if (this.PC >= 256 + executingProgram.base) {
                             this.PC -= 256;
                         }
                     }
@@ -184,6 +185,7 @@ var TSOS;
                 }
                 default: {
                     //fucking chicken strips...
+                    alert(instructions);
                     _CPU.isExecuting = false;
                     _StdOut.putText("Something is borked...");
                     break;

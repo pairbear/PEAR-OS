@@ -20,7 +20,6 @@ var TSOS;
             this.commandList = [];
             this.curses = "[fuvg],[cvff],[shpx],[phag],[pbpxfhpxre],[zbgureshpxre],[gvgf]";
             this.apologies = "[sorry]";
-            this.statusStr = "";
             this.G_UserProgram = "";
         }
         Shell.prototype.init = function () {
@@ -69,7 +68,7 @@ var TSOS;
             //Initiates the Blue Screen of Death
             sc = new TSOS.ShellCommand(this.shellBSOD, "bsod", " - This tests when the kernel traps an OS error");
             this.commandList[this.commandList.length] = sc;
-            //loads programs into memery
+            //loads programs into memory
             sc = new TSOS.ShellCommand(this.shellLoad, "load", " - runs a test to validate the user code in HTML5");
             this.commandList[this.commandList.length] = sc;
             //runs programs from memory
@@ -82,12 +81,37 @@ var TSOS;
             sc = new TSOS.ShellCommand(this.shellKill, "kill", " - kills running process's");
             this.commandList[this.commandList.length] = sc;
             //clears the memory
-            sc = new TSOS.ShellCommand(this.shellClearMemory, "clearmemory", " - clears the memory");
+            sc = new TSOS.ShellCommand(this.shellClearMemory, "clearmem", " - clears the memory");
             this.commandList[this.commandList.length] = sc;
             //set the quantum
             sc = new TSOS.ShellCommand(this.shellSetQuantum, "quantum", " - sets the quantum for the CPU Scheduler ");
             this.commandList[this.commandList.length] = sc;
+            //displays running processes
             sc = new TSOS.ShellCommand(this.shellDisplayRunningProcesses, "ps", " - Displays process currently being executed ");
+            this.commandList[this.commandList.length] = sc;
+            //sets the schedule type
+            sc = new TSOS.ShellCommand(this.shellSelectScheduleType, "setschedule", " - select rr, fcfs, or priority as your scheduling type");
+            this.commandList[this.commandList.length] = sc;
+            //creates a file
+            sc = new TSOS.ShellCommand(this.shellCreate, "create", " - creates a file");
+            this.commandList[this.commandList.length] = sc;
+            //reads a file
+            sc = new TSOS.ShellCommand(this.shellRead, "read", " - reads the selected file");
+            this.commandList[this.commandList.length] = sc;
+            //writes to a file
+            sc = new TSOS.ShellCommand(this.shellWrite, "write", " - writes your text to designated file");
+            this.commandList[this.commandList.length] = sc;
+            //deletes a file
+            sc = new TSOS.ShellCommand(this.shellDelete, "delete", " - deletes a file");
+            this.commandList[this.commandList.length] = sc;
+            //formats the hard drive
+            sc = new TSOS.ShellCommand(this.shellFormat, "format", " - formats the hard drive");
+            this.commandList[this.commandList.length] = sc;
+            //shows the files in the hard drive
+            sc = new TSOS.ShellCommand(this.shellLS, "ls", " - shows a list of files on the hard drive");
+            this.commandList[this.commandList.length] = sc;
+            // displays the schedule type
+            sc = new TSOS.ShellCommand(this.shellGetSchedule, "getschedule", " - shows the current scheduling algorithm");
             this.commandList[this.commandList.length] = sc;
             //
             // Display the initial prompt.
@@ -321,13 +345,22 @@ var TSOS;
         };
         Shell.prototype.shellLoad = function (args) {
             var userInput = document.getElementById("taProgramInput").value;
+            var priority = args[0];
             this.G_UserProgram = userInput;
             if (!userInput.match(/^0|1|2|3|4|5|6|7|8|9|"a"|"b"|"c"|"d"|"e"|"f"| "g"$/)) {
                 _StdOut.putText("you call that hex?!");
             }
             else {
                 var programString = userInput.split(" ");
-                _StdOut.putText("PID: " + memoryManager.loadProgram(programString));
+                if (memoryManager.nextOpenMemoryBlock === null) {
+                    globalFileContent = userInput;
+                    _StdOut.putText("Memory full, loading program to Hard drive");
+                    _StdOut.advanceLine();
+                    _StdOut.putText("PID: " + scheduler.loadProgramToHardDrive(programString, priority));
+                }
+                else {
+                    _StdOut.putText("PID: " + scheduler.loadProgramToMemory(programString, priority));
+                }
             }
         };
         Shell.prototype.shellRun = function (args) {
@@ -359,6 +392,69 @@ var TSOS;
                 pid += ", PID: " + scheduler.readyQueue.getPCB(i);
             _StdOut.putText("Current running processes... ");
             _StdOut.putText("PID: " + executingProgramPID + pid);
+        };
+        Shell.prototype.shellSelectScheduleType = function (args) {
+            var type = args[0];
+            scheduleType = type;
+            if (type !== "rr" && type !== "fcfs" && type !== "priority") {
+                _StdOut.putText("That's not a schedule type...");
+            }
+            else {
+                scheduler.schedulerType(type);
+                _StdOut.putText("Schdule type set to " + type);
+            }
+        };
+        Shell.prototype.shellCreate = function (args) {
+            var fileName = args[0];
+            option = true;
+            _KernelInterruptQueue.enqueue(new TSOS.Interrupt(CREATE_IRQ, fileName));
+        };
+        Shell.prototype.shellRead = function (args) {
+            var fileName = args[0];
+            option = true;
+            _KernelInterruptQueue.enqueue(new TSOS.Interrupt(READ_IRQ, fileName));
+        };
+        Shell.prototype.shellWrite = function (args) {
+            var fileName = args[0];
+            var fileContent = "";
+            if (args[1].length > 0) {
+                var fileContent = "";
+                for (var i = 1; i < args.length; ++i) {
+                    fileContent += args[i] + " ";
+                }
+            }
+            debugger;
+            if (fileContent.charAt(0) === '"' && fileContent.charAt(fileContent.length - 2) === '"') {
+                globalFileContent = fileContent;
+                option = true;
+                _KernelInterruptQueue.enqueue(new TSOS.Interrupt(WRITE_IRQ, fileName));
+            }
+            else {
+                _StdOut.putText("Please put quotes around the designated content");
+                _StdOut.advanceLine();
+            }
+        };
+        Shell.prototype.shellDelete = function (args) {
+            var fileName = args[0];
+            _StdOut.putText("Deleting file " + fileName);
+            _KernelInterruptQueue.enqueue(new TSOS.Interrupt(DELETE_IRQ, fileName));
+        };
+        Shell.prototype.shellFormat = function () {
+            _StdOut.putText("Formatting Hard Drive");
+            _KernelInterruptQueue.enqueue(new TSOS.Interrupt(FORMAT_IRQ, 0));
+        };
+        Shell.prototype.shellLS = function () {
+            //var files = fileNamesList;
+            _StdOut.putText("Current files on hard drive:");
+            _StdOut.advanceLine();
+            for (var i = 0; i < fileNamesList.getSize(); i++) {
+                _StdOut.putText(fileNamesList.getPCB(i));
+                if (i < fileNamesList.getSize() - 1)
+                    (_StdOut.putText(", "));
+            }
+        };
+        Shell.prototype.shellGetSchedule = function () {
+            _StdOut.putText("The current schedule type is " + scheduleType);
         };
         return Shell;
     })();

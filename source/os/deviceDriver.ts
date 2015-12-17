@@ -11,7 +11,12 @@ module TSOS {
         public preemptable = false;
 
         constructor(public driverEntry = null,
-                    public isr = null) {
+                    public isr = null,
+                    public isr1 = null,
+                    public isr2 = null,
+                    public isr3 = null,
+                    public isr4 = null,
+                    public isr5 = null) {
         }
     }
 }

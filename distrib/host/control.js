@@ -1,23 +1,23 @@
 ///<reference path="../globals.ts" />
 ///<reference path="../os/canvastext.ts" />
 /* ------------
-     Control.ts
+ Control.ts
 
-     Requires globals.ts.
+ Requires globals.ts.
 
-     Routines for the hardware simulation, NOT for our client OS itself.
-     These are static because we are never going to instantiate them, because they represent the hardware.
-     In this manner, it's A LITTLE BIT like a hypervisor, in that the Document environment inside a browser
-     is the "bare metal" (so to speak) for which we write code that hosts our client OS.
-     But that analogy only goes so far, and the lines are blurred, because we are using TypeScript/JavaScript
-     in both the host and client environments.
+ Routines for the hardware simulation, NOT for our client OS itself.
+ These are static because we are never going to instantiate them, because they represent the hardware.
+ In this manner, it's A LITTLE BIT like a hypervisor, in that the Document environment inside a browser
+ is the "bare metal" (so to speak) for which we write code that hosts our client OS.
+ But that analogy only goes so far, and the lines are blurred, because we are using TypeScript/JavaScript
+ in both the host and client environments.
 
-     This (and other host/simulation scripts) is the only place that we should see "web" code, such as
-     DOM manipulation and event handling, and so on.  (Index.html is -- obviously -- the only place for markup.)
+ This (and other host/simulation scripts) is the only place that we should see "web" code, such as
+ DOM manipulation and event handling, and so on.  (Index.html is -- obviously -- the only place for markup.)
 
-     This code references page numbers in the text book:
-     Operating System Concepts 8th edition by Silberschatz, Galvin, and Gagne.  ISBN 978-0-470-12872-5
-     ------------ */
+ This code references page numbers in the text book:
+ Operating System Concepts 8th edition by Silberschatz, Galvin, and Gagne.  ISBN 978-0-470-12872-5
+ ------------ */
 //
 // Control Services
 //
@@ -91,6 +91,8 @@ var TSOS;
             // .. and call the OS Kernel Bootstrap routine.
             _Kernel = new TSOS.Kernel();
             _Kernel.krnBootstrap(); // _GLaDOS.afterStartup() will get called in there, if configured.
+            //initiates the filesystem
+            TSOS.Control.updateHardDrive();
         };
         Control.hostBtnHaltOS_click = function (btn) {
             Control.hostLog("Emergency halt", "host");
@@ -124,7 +126,6 @@ var TSOS;
         };
         Control.updateRQDisplay = function () {
             var display = "";
-            //alert(_CPU.isExecuting);
             if (_CPU.isExecuting) {
                 if (executingProgram !== null) {
                     display += "<tr>";
@@ -153,7 +154,6 @@ var TSOS;
                 document.getElementById("RQBox").innerHTML = display;
             }
             else if (!_CPU.isExecuting) {
-                alert("oh?!");
                 display += "<tr>";
                 display += "<td></td>";
                 display += "<td></td>";
@@ -166,6 +166,32 @@ var TSOS;
                 display += "<tr>";
                 document.getElementById("RQBox").innerHTML = display;
             }
+        };
+        Control.updateHardDrive = function () {
+            var output = "";
+            var block = "";
+            var meta = "";
+            var tsb = "";
+            for (var t = 0; t < _krnHardDrive.tracks; t++) {
+                for (var s = 0; s < _krnHardDrive.sectors; s++) {
+                    for (var b = 0; b < _krnHardDrive.blocks; b++) {
+                        tsb = t + "" + s + "" + b;
+                        block = _krnHardDrive.getData(tsb);
+                        meta = _krnHardDrive.getMetaData(tsb);
+                        output += "<tr><td>" + t + ":" + s + ":" + b + "</td>";
+                        if (meta.charAt(0) === "1") {
+                            output += "<td>" + "<b>" + meta.charAt(0) + "</b>" + meta.substring(1, 4) + "</td>";
+                            output += "<td>" + block + "</td></tr>";
+                        }
+                        else {
+                            //trick the user into think they're data is deleted
+                            output += "<td>" + "<b>" + meta.charAt(0) + "</b>" + "000" + "</td>";
+                            output += "<td>" + new Array(block.length + 1).join('0') + "</td></tr>";
+                        }
+                    }
+                }
+            }
+            document.getElementById("hardDriveDisplay").innerHTML = output;
         };
         return Control;
     })();

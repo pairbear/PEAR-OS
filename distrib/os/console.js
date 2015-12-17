@@ -1,16 +1,16 @@
 ///<reference path="../globals.ts" />
 /* ------------
-     Console.ts
+ Console.ts
 
-     Requires globals.ts
+ Requires globals.ts
 
-     The OS Console - stdIn and stdOut by default.
-     Note: This is not the Shell. The Shell is the "command line interface" (CLI) or interpreter for this console.
-     ------------ */
+ The OS Console - stdIn and stdOut by default.
+ Note: This is not the Shell. The Shell is the "command line interface" (CLI) or interpreter for this console.
+ ------------ */
 var TSOS;
 (function (TSOS) {
     var Console = (function () {
-        function Console(currentFont, currentFontSize, currentXPosition, currentYPosition, commandHistory, previousCommands, buffer) {
+        function Console(currentFont, currentFontSize, currentXPosition, currentYPosition, commandHistory, previousCommands, buffer, previousLine) {
             if (currentFont === void 0) { currentFont = _DefaultFontFamily; }
             if (currentFontSize === void 0) { currentFontSize = _DefaultFontSize; }
             if (currentXPosition === void 0) { currentXPosition = 0; }
@@ -18,6 +18,7 @@ var TSOS;
             if (commandHistory === void 0) { commandHistory = [""]; }
             if (previousCommands === void 0) { previousCommands = 0; }
             if (buffer === void 0) { buffer = ""; }
+            if (previousLine === void 0) { previousLine = []; }
             this.currentFont = currentFont;
             this.currentFontSize = currentFontSize;
             this.currentXPosition = currentXPosition;
@@ -25,6 +26,7 @@ var TSOS;
             this.commandHistory = commandHistory;
             this.previousCommands = previousCommands;
             this.buffer = buffer;
+            this.previousLine = previousLine;
         }
         Console.prototype.init = function () {
             this.clearScreen();
@@ -34,19 +36,9 @@ var TSOS;
             _DrawingContext.clearRect(0, 0, _Canvas.width, _Canvas.height);
         };
         Console.prototype.clearLine = function () {
-            //_DrawingContext.clearRect(0, 0, _Canvas.width, _Canvas.height-20);
-            //_DrawingContext.clearRect(this.currentXPosition - 10, this.currentYPosition-10, _Canvas.width, this.currentFontSize);
-            //clears a line of the console by drawing a rectangle of the console color over it
-            /*_DrawingContext.fillStyle = CONSOLE_BGC;
-            _DrawingContext.fillRect(0, this.currentYPosition - _DefaultFontSize, _Canvas.width, _DefaultFontSize + _FontHeightMargin+1);
-            this.currentXPosition=0;
-            this.buffer="" */
-            //clears a line of the console by drawing a rectangle of the console color over it
-            var offset = _DrawingContext.measureText(this.currentFont, this.currentFontSize, this.buffer);
-            var xPosition = this.currentXPosition - offset;
-            var yPosition = this.currentYPosition + 1 - this.currentFontSize;
-            _DrawingContext.clearRect(xPosition, yPosition, this.currentXPosition, this.currentYPosition);
-            this.currentXPosition = xPosition;
+            _DrawingContext.fillStyle = "#DFDBC3";
+            _DrawingContext.fillRect(0, this.currentYPosition - _DefaultFontSize, _Canvas.width, _DefaultFontSize + _FontHeightMargin + 1);
+            this.currentXPosition = 0;
             this.buffer = "";
         };
         Console.prototype.resetXY = function () {
@@ -96,13 +88,34 @@ var TSOS;
             //
             // UPDATE: Even though we are now working in TypeScript, char and string remain undistinguished.
             //         Consider fixing that.
-            if (text !== "") {
-                // Draw the text at the current X and Y coordinates.
-                _DrawingContext.drawText(this.currentFont, this.currentFontSize, this.currentXPosition, this.currentYPosition, text);
-                // Move the current X position.
-                var offset = _DrawingContext.measureText(this.currentFont, this.currentFontSize, text);
-                this.currentXPosition = this.currentXPosition + offset;
+            if (text !== "" && text.length === 1) {
+                this.putChar(text);
             }
+            else if (text !== "" && text.length > 1) {
+                var words = text.split(" ");
+                for (var i = 0; i < words.length; i++) {
+                    var word = words[i];
+                    var offset = _DrawingContext.measureText(this.currentFont, this.currentFontSize, word);
+                    if (words.length > 1 && i !== words.length - 1) {
+                        word += " ";
+                    }
+                    if (this.currentXPosition + offset > _Canvas.width) {
+                        this.previousLine.push(this.currentXPosition);
+                    }
+                    for (var j = 0; j < word.length; j++) {
+                        this.putChar(word.charAt(j));
+                    }
+                }
+            }
+        };
+        Console.prototype.putChar = function (text) {
+            var offset = _DrawingContext.measureText(this.currentFont, this.currentFontSize, text);
+            if (this.currentXPosition + offset > _Canvas.width) {
+                this.previousLine.push(this.currentXPosition);
+                this.advanceLine();
+            }
+            _DrawingContext.drawText(this.currentFont, this.currentFontSize, this.currentXPosition, this.currentYPosition, text);
+            this.currentXPosition = this.currentXPosition + offset;
         };
         Console.prototype.advanceLine = function () {
             this.currentXPosition = 0;
@@ -114,7 +127,7 @@ var TSOS;
             this.currentYPosition += _DefaultFontSize +
                 _DrawingContext.fontDescent(this.currentFont, this.currentFontSize) +
                 _FontHeightMargin;
-            // This scrolls the canvas, but I would like to work on some of the tight spacing later
+            // This scrolls the canvas
             if (this.currentYPosition >= _Canvas.height) {
                 var canvas = _DrawingContext.getImageData(0, 0, _Canvas.width, _Canvas.height);
                 this.clearScreen();
@@ -122,17 +135,6 @@ var TSOS;
                 this.currentYPosition -= _DefaultFontSize +
                     _DrawingContext.fontDescent(this.currentFont, this.currentFontSize) +
                     _FontHeightMargin;
-            }
-        };
-        // this enables the backspace key to delete characters
-        Console.prototype.deleteCharacter = function () {
-            if (this.buffer.length > 0) {
-                var offset = _DrawingContext.measureText(this.currentFont, this.currentFontSize, this.buffer.slice(-1));
-                var xPosition = this.currentXPosition - offset;
-                var yPosition = this.currentYPosition + 1 - this.currentFontSize;
-                _DrawingContext.clearRect(xPosition, yPosition, this.currentXPosition, this.currentYPosition);
-                this.currentXPosition = xPosition;
-                this.buffer = this.buffer.substr(0, this.buffer.length - 1);
             }
         };
         // This displays the image for the blue screen of death
@@ -143,9 +145,31 @@ var TSOS;
             };
             bsodImg.src = "http://i.imgur.com/3SXEdEA.jpg";
         };
+        // this enables the backspace key to delete characters
+        Console.prototype.deleteCharacter = function () {
+            if (this.buffer.length > 0) {
+                var offset = _DrawingContext.measureText(this.currentFont, this.currentFontSize, this.buffer.slice(-1));
+                var roundedXPos = Math.round(this.currentXPosition);
+                if (roundedXPos < 0) {
+                    this.backLine(offset);
+                }
+                var xPosition = this.currentXPosition - offset;
+                var roundedXPos = Math.round(this.currentXPosition);
+                if (roundedXPos < 0)
+                    this.backLine(offset);
+                var yPosition = this.currentYPosition + 1 - this.currentFontSize;
+                _DrawingContext.clearRect(xPosition, yPosition, this.currentXPosition, this.currentYPosition);
+                this.currentXPosition = xPosition;
+                this.buffer = this.buffer.substr(0, this.buffer.length - 1);
+            }
+        };
+        Console.prototype.backLine = function (offset) {
+            this.currentXPosition = this.previousLine.pop() - offset;
+            this.currentYPosition -= _DefaultFontSize + _FontHeightMargin; //decrease y
+        };
         // This enables the up and down keys to be used to recall previously used commands
         Console.prototype.getPreviousCommand = function (chr) {
-            if (chr === String.fromCharCode(38) && this.previousCommands > 0) {
+            if ((chr === String.fromCharCode(38)) && (this.previousCommands > 0)) {
                 this.clearLine();
                 this.previousCommands--;
                 _OsShell.putPrompt();
