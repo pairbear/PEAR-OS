@@ -564,7 +564,6 @@ module TSOS {
 
         public shellDelete(args) {
             var fileName = args[0];
-            _StdOut.putText("Deleting file " + fileName);
             _KernelInterruptQueue.enqueue(new Interrupt(DELETE_IRQ, fileName));
         }
 
@@ -574,7 +573,6 @@ module TSOS {
         }
 
         public shellLS() {
-            //var files = fileNamesList;
             _StdOut.putText("Current files on hard drive:");
             _StdOut.advanceLine();
             for (var i=0; i<fileNamesList.getSize() ; i++){

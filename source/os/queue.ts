@@ -90,5 +90,19 @@ module TSOS {
             return retVal;
         }
 
+        public removeFile(file){
+
+            var retVal = null;
+                for (var i =0; i<this.q.length; i++){
+                    if (this.q[i] === file){
+                        retVal = this.q[i];
+                        if (i>-1)
+                            this.q.splice(i, 1);
+                        return retVal;
+                    }
+                }
+            return retVal;
+        }
+
     }
 }

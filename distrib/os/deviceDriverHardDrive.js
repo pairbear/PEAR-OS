@@ -255,20 +255,32 @@ var TSOS;
         };
         DeviceDriverHardDrive.prototype.deleteFile = function (fileName) {
             //deletes files from the hard drive
-            var tsb = this.findFile(fileName);
-            var tempTSB1 = tsb;
-            var tempTSB2 = tempTSB1;
-            while (tempTSB1 !== "000") {
-                tempTSB2 = tempTSB1;
-                tempTSB1 = this.getNextTSB(tempTSB2);
-                var blankBlock = new Array(this.dataBits + this.metaData + 1).join('0');
-                sessionStorage.setItem(tempTSB2, blankBlock);
+            if (this.findFile(fileName) === null) {
+                _StdOut.putText("File does not exist");
+                _StdOut.advanceLine();
+                _StdOut.putText(">");
             }
-            TSOS.Control.updateHardDrive();
+            else {
+                var tsb = this.findFile(fileName);
+                var tempTSB1 = tsb;
+                var tempTSB2 = tempTSB1;
+                while (tempTSB1 !== "000") {
+                    tempTSB2 = tempTSB1;
+                    tempTSB1 = this.getNextTSB(tempTSB2);
+                    var blankBlock = new Array(this.dataBits + this.metaData + 1).join('0');
+                    sessionStorage.setItem(tempTSB2, blankBlock);
+                }
+                fileNamesList.removeFile(fileName);
+                _StdOut.putText("Deleting file " + fileName);
+                _StdOut.advanceLine();
+                _StdOut.putText(">");
+                TSOS.Control.updateHardDrive();
+            }
         };
         DeviceDriverHardDrive.prototype.formatFile = function () {
             //wipes and formats the hard drive
             this.init(true);
+            fileNamesList = null;
             TSOS.Control.updateHardDrive();
             return;
         };

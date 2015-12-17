@@ -436,7 +436,6 @@ var TSOS;
         };
         Shell.prototype.shellDelete = function (args) {
             var fileName = args[0];
-            _StdOut.putText("Deleting file " + fileName);
             _KernelInterruptQueue.enqueue(new TSOS.Interrupt(DELETE_IRQ, fileName));
         };
         Shell.prototype.shellFormat = function () {
@@ -444,7 +443,6 @@ var TSOS;
             _KernelInterruptQueue.enqueue(new TSOS.Interrupt(FORMAT_IRQ, 0));
         };
         Shell.prototype.shellLS = function () {
-            //var files = fileNamesList;
             _StdOut.putText("Current files on hard drive:");
             _StdOut.advanceLine();
             for (var i = 0; i < fileNamesList.getSize(); i++) {
