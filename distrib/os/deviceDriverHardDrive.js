@@ -270,17 +270,19 @@ var TSOS;
                     var blankBlock = new Array(this.dataBits + this.metaData + 1).join('0');
                     sessionStorage.setItem(tempTSB2, blankBlock);
                 }
-                fileNamesList.removeFile(fileName);
-                _StdOut.putText("Deleting file " + fileName);
-                _StdOut.advanceLine();
-                _StdOut.putText(">");
+                if (option) {
+                    fileNamesList.removeFile(fileName);
+                    _StdOut.putText("Deleting file " + fileName);
+                    _StdOut.advanceLine();
+                    _StdOut.putText(">");
+                }
                 TSOS.Control.updateHardDrive();
             }
         };
         DeviceDriverHardDrive.prototype.formatFile = function () {
             //wipes and formats the hard drive
             this.init(true);
-            fileNamesList = null;
+            //fileNamesList = null;
             TSOS.Control.updateHardDrive();
             return;
         };
